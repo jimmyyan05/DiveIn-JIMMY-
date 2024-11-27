@@ -528,7 +528,7 @@ if (isset($_GET["p"])) {
                     </div>
 
                     <!-- 服務列表 開始 -->
-                    <table class="table table-hover">
+                    <table class="table table-style table-hover">
                         <tr>
                             <th>編號</th>
                             <th>名稱</th>
