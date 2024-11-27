@@ -18,7 +18,8 @@ $article = $_POST["activityArticle"];
 $sql1 = "UPDATE activity SET name='$name', activityCategorySmall_id='$categorySmall', signUpDate='$signDate', signUpEndDate='$signEndDate', startDate='$startDate', endDate='$signEndDate', price='$price', description='$article' WHERE id = $activityId";
 
 if($conn->query($sql1) === TRUE){
-    echo "新資料輸入成功";
+    // echo "新資料輸入成功";
+    header("location: activity.php");
 } else {
     echo "Error:".$sql."<br>".$conn->error;
     exit;
@@ -26,7 +27,7 @@ if($conn->query($sql1) === TRUE){
 
 // print_r($_FILES["myFile"]);
 
-print_r($_FILES["myFile"]);
+// print_r($_FILES["myFile"]);
 
 if ($_FILES["myFile"]["error"] == 0) {
     // echo "有收到！";
@@ -42,18 +43,20 @@ if ($_FILES["myFile"]["error"] == 0) {
     $sql2 = "UPDATE activity_image SET imgUrl='$fullimageName' WHERE activity_id = $activityId ";
 
     if ($conn->query($sql2) === TRUE) {
-        echo "新資料輸入成功";
+        // echo "新資料輸入成功";
+    header("location: activity.php");
     } else {
         echo "Error:" . $sql . "<br>" . $conn->error;
         exit;
     }
 } else {
     // echo "沒有";
-    var_dump($_FILES["myFile"]["error"]);
+    // var_dump($_FILES["myFile"]["error"]);
     exit;
 };
 
 
+
 $conn->close();
 
-header("location: activity.php");
+

@@ -37,12 +37,19 @@ $per_page = 5;
 
 
 
+$sqlAll="SELECT * FROM activity WHERE isDeleted=0";
+$resultAll=$conn->query($sqlAll);
+$allActivitysCount=$resultAll->num_rows;
+// echo"$allActivitysCount";
 
+if(!isset($_GET["p"])){
+    header("location: activity.php?p=1");
+};
 
 if (isset($_GET["p"])) {
     $p = $_GET["p"];
     $start_item = ($p - 1) * $per_page;
-    
+
     $sql = "SELECT 
     activity.*, 
     activity_category_small.name AS smallCategory_name,
@@ -63,7 +70,7 @@ if (isset($_GET["p"])) {
     $activityCount = $result->num_rows;
     $activitys = $result->fetch_all(MYSQLI_ASSOC);
 
-    $total_page = ceil($activityCount / $per_page);
+    $total_page = ceil($allActivitysCount / $per_page);
 
     if ($activityCount === 0) {
         echo "沒有找到活動資料";
@@ -520,7 +527,7 @@ if (isset($_GET["p"])) {
                         </div>
                     </div>
 
-                    <!-- 服務列表 -->
+                    <!-- 服務列表 開始 -->
                     <table class="table table-hover">
                         <tr>
                             <th>編號</th>
@@ -680,10 +687,34 @@ if (isset($_GET["p"])) {
                                         </div>
                                     </div>
                                 </div>
-
                             </tr>
                         <?php endforeach; ?>
                     </table>
+                    <!-- 服務列表 結束 -->
+
+                    <!-- 做出頁籤 -->
+                    <div class="d-flex justify-content-center">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="activity.php?p=<?=$_GET["p"]-1?>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <?php for ($i = 1; $i <= $total_page; $i++): ?>
+                                    <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
+                                        <a class="page-link" href="activity.php?p=<?=$i?>"><?=$i?></a>
+                                    </li>
+                                <?php endfor; ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="activity.php?p=<?=$_GET["p"]+1?>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                    </div>
+                    <!-- 頁籤結束 -->
+
 
 
                 </div>
