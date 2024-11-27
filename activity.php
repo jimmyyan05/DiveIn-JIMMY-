@@ -35,17 +35,39 @@ $whereClause = "";
 
 $per_page = 5;
 
-if(isset($_GET["p"])){
-    $p=$_GET["p"];
-    $start_item = ($p-1) * $per_page;
-    $total_page = ceil($activityCount / $per_page);
-    $sql_perpage="SELECT *.activity 
-    WHERE activity.isDeleted=0 
-    LIMIT $start_item , $per_page
-    ";
-    $perpage_result=$conn->query($sql_perpage);
-    $perpage_activitys=$perpage_result->fetch_all(MYSQLI_ASSOC);
 
+
+
+
+if (isset($_GET["p"])) {
+    $p = $_GET["p"];
+    $start_item = ($p - 1) * $per_page;
+    
+    $sql = "SELECT 
+    activity.*, 
+    activity_category_small.name AS smallCategory_name,
+    activity_category_big.name AS bigCategory_name,
+    activity_category_big.id AS big_id,
+        (SELECT activity_image.imgUrl FROM activity_image 
+        WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
+        LIMIT 1) AS main_image
+        FROM activity
+    JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+    JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+    WHERE activity.isDeleted=0
+    LIMIT $start_item,$per_page
+    $whereClause";
+
+    $result = $conn->query($sql);
+
+    $activityCount = $result->num_rows;
+    $activitys = $result->fetch_all(MYSQLI_ASSOC);
+
+    $total_page = ceil($activityCount / $per_page);
+
+    if ($activityCount === 0) {
+        echo "沒有找到活動資料";
+    }
 }
 
 
@@ -58,29 +80,30 @@ if(isset($_GET["p"])){
 // JOIN activity_image ON activity.id = activity_image.activity_id
 // $whereClause
 // ";
-$sql = "SELECT 
-    activity.*, 
-    activity_category_small.name AS smallCategory_name,
-    activity_category_big.name AS bigCategory_name,
-    activity_category_big.id AS big_id,
+// $sql = "SELECT 
+//     activity.*, 
+//     activity_category_small.name AS smallCategory_name,
+//     activity_category_big.name AS bigCategory_name,
+//     activity_category_big.id AS big_id,
 
-    (SELECT activity_image.imgUrl FROM activity_image 
-     WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
-     LIMIT 1) AS main_image
-FROM activity
-JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
-JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
-WHERE activity.isDeleted=0
-$whereClause";
+//     (SELECT activity_image.imgUrl FROM activity_image 
+//      WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
+//      LIMIT 1) AS main_image
+// FROM activity
+// JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+// JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+// WHERE activity.isDeleted=0
+// $whereClause";
 
-$result = $conn->query($sql);
+// $result = $conn->query($sql);
 
-$activityCount = $result->num_rows;
-$activitys = $result->fetch_all(MYSQLI_ASSOC);
+// $activityCount = $result->num_rows;
+// $activitys = $result->fetch_all(MYSQLI_ASSOC);
 
-if ($activityCount === 0) {
-    echo "沒有找到活動資料";
-}
+// if ($activityCount === 0) {
+//     echo "沒有找到活動資料";
+// }
+
 
 ?>
 
