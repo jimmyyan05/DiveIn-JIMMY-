@@ -33,6 +33,22 @@ foreach ($categories as $category) {
 
 $whereClause = "";
 
+$per_page = 5;
+
+if(isset($_GET["p"])){
+    $p=$_GET["p"];
+    $start_item = ($p-1) * $per_page;
+    $total_page = ceil($activityCount / $per_page);
+    $sql_perpage="SELECT *.activity 
+    WHERE activity.isDeleted=0 
+    LIMIT $start_item , $per_page
+    ";
+    $perpage_result=$conn->query($sql_perpage);
+    $perpage_activitys=$perpage_result->fetch_all(MYSQLI_ASSOC);
+
+}
+
+
 // $sql="SELECT 
 // activity.*, 
 // activity_category_small.name AS smallCategory_name,
@@ -46,7 +62,7 @@ $sql = "SELECT
     activity.*, 
     activity_category_small.name AS smallCategory_name,
     activity_category_big.name AS bigCategory_name,
-activity_category_big.id AS big_id,
+    activity_category_big.id AS big_id,
 
     (SELECT activity_image.imgUrl FROM activity_image 
      WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
