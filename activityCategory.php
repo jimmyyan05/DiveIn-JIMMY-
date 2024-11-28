@@ -390,7 +390,7 @@ require_once("../create/db_project_connect.php");
                     </nav>
 
                     <!-- 服務類別 -->
-                    <div class="container row justify-content-around gx-2">
+                    <div class="row justify-content-start gx-2">
                         <div class="col-4 mt-2 ">
                             <button class="btn btn-info w-100">大類別</button>
                         </div>
@@ -402,13 +402,10 @@ require_once("../create/db_project_connect.php");
                         </div>
                         <div class="col-4 mt-2 ">
                             <button class="btn btn-info w-100">大類別</button>
-                        </div><div class="col-4 mt-2 ">
-                            <button class="btn btn-info w-100">大類別</button>
                         </div>
                         <div class="col-4 mt-2 ">
                             <button class="btn btn-info w-100">大類別</button>
                         </div>
-                        
                     </div>
 
 

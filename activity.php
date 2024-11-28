@@ -37,19 +37,51 @@ $per_page = 5;
 
 
 
-$sqlAll="SELECT * FROM activity WHERE isDeleted=0";
-$resultAll=$conn->query($sqlAll);
-$allActivitysCount=$resultAll->num_rows;
+
 // echo"$allActivitysCount";
 
-if(!isset($_GET["p"])){
-    header("location: activity.php?p=1");
-};
+if (isset($_GET["search"])) {
+    if ($_GET["search"] == "") {
+        header("location:activity.php");
+    };
+    if (!isset($_GET["p"])) {
+        header("location:activity.php?p=1&search=".$_GET["search"]);
+    } else {
+        $p = $_GET["p"];
+    }
+    $search = $_GET["search"];
+    $start_item = ($p - 1) * $per_page;
+    $sqlAll = "SELECT * FROM activity WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0";
+    $resultAll = $conn->query($sqlAll);
+    $allActivitysCount = $resultAll->num_rows;
+    // $sql = "SELECT * FROM users WHERE name LIKE '%$search%' AND is_deleted=0";
+    $sql = "SELECT 
+    activity.*, 
+    activity_category_small.name AS smallCategory_name,
+    activity_category_big.name AS bigCategory_name,
+    activity_category_big.id AS big_id,
+        (SELECT activity_image.imgUrl FROM activity_image 
+        WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
+        LIMIT 1) AS main_image
+        FROM activity
+    JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+    JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+    WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0 
+    LIMIT $start_item,$per_page
+    $whereClause";
 
-if (isset($_GET["p"])) {
+    $result = $conn->query($sql);
+
+    $activityCount = $result->num_rows;
+    $activitys = $result->fetch_all(MYSQLI_ASSOC);
+
+    $total_page = ceil($allActivitysCount / $per_page);
+} elseif (isset($_GET["p"])) {
+    $sqlAll = "SELECT * FROM activity WHERE isDeleted=0";
+    $resultAll = $conn->query($sqlAll);
+    $allActivitysCount = $resultAll->num_rows;
     $p = $_GET["p"];
     $start_item = ($p - 1) * $per_page;
-
     $sql = "SELECT 
     activity.*, 
     activity_category_small.name AS smallCategory_name,
@@ -71,11 +103,44 @@ if (isset($_GET["p"])) {
     $activitys = $result->fetch_all(MYSQLI_ASSOC);
 
     $total_page = ceil($allActivitysCount / $per_page);
+} else {
+    header("location: activity.php?p=1");
+};
 
-    if ($activityCount === 0) {
-        echo "沒有找到活動資料";
-    }
-}
+// if (isset($_GET["p"])) {
+//     $p = $_GET["p"];
+//     $start_item = ($p - 1) * $per_page;
+// }
+
+
+
+// $sql = "SELECT 
+// activity.*, 
+// activity_category_small.name AS smallCategory_name,
+// activity_category_big.name AS bigCategory_name,
+// activity_category_big.id AS big_id,
+//     (SELECT activity_image.imgUrl FROM activity_image 
+//     WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
+//     LIMIT 1) AS main_image
+//     FROM activity
+// JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+// JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+// WHERE activity.isDeleted=0
+// LIMIT $start_item,$per_page
+// $whereClause";
+
+// $result = $conn->query($sql);
+
+// $activityCount = $result->num_rows;
+// $activitys = $result->fetch_all(MYSQLI_ASSOC);
+
+// $total_page = ceil($allActivitysCount / $per_page);
+
+// if ($activityCount === 0) {
+//     echo "沒有找到活動資料";
+// };
+
+
 
 
 // $sql="SELECT 
@@ -500,17 +565,22 @@ if (isset($_GET["p"])) {
                     </nav>
 
                     <!-- 搜尋列 -->
-                    <div class="row justify-content-between">
-
-                        <form class="col-2">
+                    <div class="row justify-content-start">
+                        <form class="col-2 d-flex justify-content-start" action="" method="get">
                             <div class="input-group mb-3 search-bar justify-content-end gx-0">
-                                <input type="text" class="form-control" placeholder="輸入活動關鍵字"
-                                    aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入活動關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
+                                    aria-label="Recipient's username" aria-describedby="basic-addon2" name="search" <?php if (isset($_GET["search"])): ?> value="<?= $_GET["search"] ?>" <?php endif; ?>>
                                 <div class="input-group-append p-0">
-                                    <button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
                             </div>
+                            <?php if (isset($_GET["search"])): ?>
+                                <div class="ms-1">
+                                    <a href="activity.php" class="btn btn-secondary"><i class="fa-solid fa-xmark"></i></a>
+                                </div>
+                            <?php endif; ?>
                         </form>
+
                     </div>
 
                     <!-- 新增課程按鈕及排序按鈕 -->
@@ -528,191 +598,198 @@ if (isset($_GET["p"])) {
                     </div>
 
                     <!-- 服務列表 開始 -->
-                    <table class="table table-style table-hover">
-                        <tr>
-                            <th>編號</th>
-                            <th>名稱</th>
-                            <th>圖片</th>
-                            <th>類型</th>
-                            <th>子分類</th>
-                            <th>報名日期</th>
-                            <th>活動時間</th>
-                            <th>費用</th>
-                            <th>狀態</th>
-                            <th>編輯</th>
-                        </tr>
-                        <?php foreach ($activitys as $activity): ?>
+                    <?php if ($activityCount > 0): ?>
+                        <table class="table table-style table-hover">
                             <tr>
-                                <td><?= $activity["id"] ?></td>
-                                <td><?= $activity["name"] ?></td>
-                                <td>
-                                    <div class="activity-img"><img class="mx-auto" src="img/activity/<?= $activity["main_image"] ?>" alt=""></div>
-                                </td>
-                                <td><?= $activity["bigCategory_name"] ?></td>
-                                <td><?= $activity["smallCategory_name"] ?></td>
-                                <td><?= $activity["signUpDate"] ?><br>|<br><?= $activity["signUpEndDate"] ?></td>
-                                <td>
-                                    <?php if ($activity["startDate"] == $activity["endDate"]): ?>
-                                        <?= $activity["startDate"] ?>
-                                    <?php else: ?>
-                                        <?= $activity["startDate"] ?><br>|<br><?= $activity["endDate"] ?>
-                                    <?php endif; ?>
-                                </td>
+                                <th>編號</th>
+                                <th>名稱</th>
+                                <th>圖片</th>
+                                <th>類型</th>
+                                <th>子分類</th>
+                                <th>報名日期</th>
+                                <th>活動時間</th>
+                                <th>費用</th>
+                                <th>狀態</th>
+                                <th>編輯</th>
+                            </tr>
+                            <?php foreach ($activitys as $activity): ?>
+                                <tr>
+                                    <td><?= $activity["id"] ?></td>
+                                    <td><?= $activity["name"] ?></td>
+                                    <td>
+                                        <div class="activity-img"><img class="mx-auto" src="img/activity/<?= $activity["main_image"] ?>" alt=""></div>
+                                    </td>
+                                    <td><?= $activity["bigCategory_name"] ?></td>
+                                    <td><?= $activity["smallCategory_name"] ?></td>
+                                    <td><?= $activity["signUpDate"] ?><br>|<br><?= $activity["signUpEndDate"] ?></td>
+                                    <td>
+                                        <?php if ($activity["startDate"] == $activity["endDate"]): ?>
+                                            <?= $activity["startDate"] ?>
+                                        <?php else: ?>
+                                            <?= $activity["startDate"] ?><br>|<br><?= $activity["endDate"] ?>
+                                        <?php endif; ?>
+                                    </td>
 
-                                <td>$<?= number_format($activity["price"]) ?>
+                                    <td>$<?= number_format($activity["price"]) ?>
 
-                                </td>
-                                <td>
-                                    <?php
-                                    $now = strtotime('now');
-                                    if ($now < strtotime($activity["signUpDate"])) {
-                                        echo "尚未開始報名";
-                                    } elseif (strtotime($activity["signUpDate"]) < $now && $now < strtotime($activity["signUpEndDate"])) {
-                                        echo "活動報名中";
-                                    } elseif (strtotime($activity["signUpEndDate"]) < $now && $now < strtotime($activity["startDate"])) {
-                                        echo "報名結束，等待活動開始";
-                                    } elseif (strtotime($activity["startDate"]) < $now && $now < strtotime($activity["endDate"])) {
-                                        echo "活動進行中！";
-                                    } else {
-                                        echo "活動結束";
-                                    }
-                                    ?>
-                                </td>
-                                <td>
-                                    <!-- 修改按鈕，跳出modal -->
-                                    <button id="change-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal<?= $activity["id"] ?>"><i class="fa-solid fa-pen-to-square fa-fw"></i></button>
-                                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $activity["id"] ?>"><i class="fa-solid fa-trash-can fa-fw"></i></button>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $now = strtotime('now');
+                                        if ($now < strtotime($activity["signUpDate"])) {
+                                            echo "尚未開始報名";
+                                        } elseif (strtotime($activity["signUpDate"]) < $now && $now < strtotime($activity["signUpEndDate"])) {
+                                            echo "活動報名中";
+                                        } elseif (strtotime($activity["signUpEndDate"]) < $now && $now < strtotime($activity["startDate"])) {
+                                            echo "報名結束，等待活動開始";
+                                        } elseif (strtotime($activity["startDate"]) < $now && $now < strtotime($activity["endDate"])) {
+                                            echo "活動進行中！";
+                                        } else {
+                                            echo "活動結束";
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <!-- 修改按鈕，跳出modal -->
+                                        <button id="change-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal<?= $activity["id"] ?>"><i class="fa-solid fa-pen-to-square fa-fw"></i></button>
+                                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $activity["id"] ?>"><i class="fa-solid fa-trash-can fa-fw"></i></button>
 
-                                </td>
+                                    </td>
 
-                                <!-- 修改用的modal -->
-                                <div class="modal fade" id="updateModal<?= $activity["id"] ?>" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="updateModalLabel">更新項目資訊</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <!-- 修改用的modal -->
+                                    <div class="modal fade" id="updateModal<?= $activity["id"] ?>" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="updateModalLabel">更新項目資訊</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <!-- 修改服務資訊內容的form -->
+                                                <form class="py-2" action="doUpdateActivity.php" method="post" enctype="multipart/form-data">
+                                                    <!-- 隱藏活動 ID -->
+                                                    <input type="hidden" name="activityID" value="<?= $activity['id'] ?>">
+                                                    <div class="modal-body">
+                                                        <div class="mb-2">
+                                                            <div class="bg-light update-img d-flex justify-content-center mb-2 rounded">
+                                                                <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
+                                                            </div>
+                                                            <label for="" class="form-label">修改圖片</label>
+                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <label for="" class="form-label">服務名稱</label>
+                                                            <input type="text" class="form-control" name="activityName" value="<?= $activity["name"] ?>" placeholder="請輸入新的名稱">
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">服務類型</label>
+                                                                <select class="form-control " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>">
+                                                                    <!--<select class="form-control " name="activityCategoryBig">-->
+                                                                    <option selected>請選擇服務類型</option>
+                                                                    <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
+                                                                        <option value="<?= $big_id ?>" <?= $big_id == $activity["big_id"] ? "selected" : "" ?>><?= $big_data["name"] ?></option>
+                                                                    <?php endforeach; ?>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">服務類別</label>
+                                                                <select class="form-control" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>">
+                                                                    <option value="<?= $activity['smallCategory_name'] ?>" selected><?= $activity['smallCategory_name'] ?></option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <label for="" class="form-label">費用</label>
+                                                            <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1">
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">報名開始日</label>
+                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>">
+                                                            </div>
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">報名截止日</label>
+                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">活動開始時間</label>
+                                                                <input type="datetime-local" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>">
+                                                            </div>
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">活動結束時間</label>
+                                                                <input type="datetime-local" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="" class="form-label">活動介紹</label>
+                                                            <textarea class="form-control" name="activityArticle" rows="5"><?= $activity["description"] ?></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                        <button type="submit" class="btn btn-primary">儲存修改</button>
+                                                    </div>
+                                                </form>
+
                                             </div>
-                                            <!-- 修改服務資訊內容的form -->
-                                            <form class="py-2" action="doUpdateActivity.php" method="post" enctype="multipart/form-data">
-                                                <!-- 隱藏活動 ID -->
-                                                <input type="hidden" name="activityID" value="<?= $activity['id'] ?>">
+                                        </div>
+                                    </div>
+
+                                    <!-- 刪除的recheck modal -->
+                                    <div class="modal fade" id="deleteModal<?= $activity["id"] ?>" tabindex="-1" aria-labelledby="deleteModallLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModallLabel">將此項目移至垃圾桶</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
                                                 <div class="modal-body">
-                                                    <div class="mb-2">
-                                                        <div class="bg-light update-img d-flex justify-content-center mb-2 rounded">
-                                                            <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
-                                                        </div>
-                                                        <label for="" class="form-label">修改圖片</label>
-                                                        <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label for="" class="form-label">服務名稱</label>
-                                                        <input type="text" class="form-control" name="activityName" value="<?= $activity["name"] ?>" placeholder="請輸入新的名稱">
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="mb-2 col">
-                                                            <label for="" class="form-label">服務類型</label>
-                                                            <select class="form-control " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>">
-                                                                <!--<select class="form-control " name="activityCategoryBig">-->
-                                                                <option selected>請選擇服務類型</option>
-                                                                <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
-                                                                    <option value="<?= $big_id ?>" <?= $big_id == $activity["big_id"] ? "selected" : "" ?>><?= $big_data["name"] ?></option>
-                                                                <?php endforeach; ?>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-2 col">
-                                                            <label for="" class="form-label">服務類別</label>
-                                                            <select class="form-control" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>">
-                                                                <option value="<?= $activity['smallCategory_name'] ?>" selected><?= $activity['smallCategory_name'] ?></option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label for="" class="form-label">費用</label>
-                                                        <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1">
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="mb-2 col">
-                                                            <label for="" class="form-label">報名開始日</label>
-                                                            <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>">
-                                                        </div>
-                                                        <div class="mb-2 col">
-                                                            <label for="" class="form-label">報名截止日</label>
-                                                            <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="mb-2 col">
-                                                            <label for="" class="form-label">活動開始時間</label>
-                                                            <input type="datetime-local" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>">
-                                                        </div>
-                                                        <div class="mb-2 col">
-                                                            <label for="" class="form-label">活動結束時間</label>
-                                                            <input type="datetime-local" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>">
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="" class="form-label">活動介紹</label>
-                                                        <textarea class="form-control" name="activityArticle" rows="5"><?= $activity["description"] ?></textarea>
-                                                    </div>
+                                                    您是否確認要將此項目移至垃圾桶？
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                    <button type="submit" class="btn btn-primary">儲存修改</button>
+                                                    <form action="doDelete.php" method="post">
+                                                        <input type="hidden" name="activityID" value="<?= $activity["id"] ?>">
+                                                        <button type="submit" class="btn btn-danger" name="deleted" value="1">確認</button>
+                                                    </form>
                                                 </div>
-                                            </form>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 刪除的recheck modal -->
-                                <div class="modal fade" id="deleteModal<?= $activity["id"] ?>" tabindex="-1" aria-labelledby="deleteModallLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModallLabel">將此項目移至垃圾桶</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                您是否確認要將此項目移至垃圾桶？
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                <form action="doDelete.php" method="post">
-                                                    <input type="hidden" name="activityID" value="<?= $activity["id"] ?>">
-                                                    <button type="submit" class="btn btn-danger" name="deleted" value="1">確認</button>
-                                                </form>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </tr>
-                        <?php endforeach; ?>
-                    </table>
-                    <!-- 服務列表 結束 -->
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                        <!-- 服務列表 結束 -->
+                    <?php else: ?>
+                        <div class="text-danger">沒有找到相關資料！</div>
+                    <?php endif; ?>
+
 
                     <!-- 做出頁籤 -->
-                    <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link" href="activity.php?p=<?=$_GET["p"]-1?>" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <?php for ($i = 1; $i <= $total_page; $i++): ?>
-                                    <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
-                                        <a class="page-link" href="activity.php?p=<?=$i?>"><?=$i?></a>
-                                    </li>
-                                <?php endfor; ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="activity.php?p=<?=$_GET["p"]+1?>" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                    </div>
+                    <?php if ($total_page > 1): ?>
+                        <div class="d-flex justify-content-center">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <!-- <li class="page-item">
+                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] - 1 ?>" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li> -->
+                                    <?php for ($i = 1; $i <= $total_page; $i++): ?>
+                                        <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
+                                            <a class="page-link" href="activity.php?p=<?= $i ?><?php if(isset($_GET["search"])): ?><?="&search=".$_GET["search"]?><?php endif;?>"><?= $i ?></a>
+                                        </li>
+                                    <?php endfor; ?>
+                                    <!-- <li class="page-item">
+                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] + 1 ?>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li> -->
+                                </ul>
+                        </div>
+                    <?php endif; ?>
                     <!-- 頁籤結束 -->
 
 
