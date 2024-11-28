@@ -43,7 +43,7 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
 // 獲取總數（包括搜尋條件）
 $sqlAll = "SELECT COUNT(*) AS total 
           FROM activity_teacher 
-          WHERE 1 $searchCondition";
+          WHERE 1 $searchCondition"; 
 $resultAll = $conn->query($sqlAll);
 $teachersCount = $resultAll->fetch_assoc()['total'];
 
@@ -54,7 +54,7 @@ $sql = "SELECT
         FROM activity_teacher
         LEFT JOIN activity_teacher_image 
             ON activity_teacher_image.teacher_id = activity_teacher.id
-        $whereClause
+        WHERE 1 $searchCondition $whereClause 
         LIMIT $start_item, $per_page";
 
 $result = $conn->query($sql);
@@ -452,7 +452,7 @@ $total_page = ceil($teachersCount / $per_page);
                     </nav>
 
                     <!-- 搜尋列 -->
-                    <!-- <div class="row justify-content-start">
+                    <div class="row justify-content-start">
                         <form class="col-2 d-flex justify-content-start" action="" method="get">
                             <div class="input-group mb-3 search-bar justify-content-end gx-0">
                                 <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入活動關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
@@ -467,7 +467,7 @@ $total_page = ceil($teachersCount / $per_page);
                                 </div>
                             <?php endif; ?>
                         </form>
-                    </div> -->
+                    </div>
 
                     <!-- 新增課程按鈕及排序按鈕 -->
                     <div class="d-flex justify-content-between my-2">

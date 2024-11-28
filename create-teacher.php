@@ -1,14 +1,14 @@
 <?php
 require_once("../create/db_project_connect.php");
 
-$sql = "SELECT activity_teacher.*, 
-        activity_teacher_image.imageUrl AS image
-        FROM activity_teacher
-        JOIN activity_teacher_image 
-        ON activity_teacher_image.teacher_id = activity_teacher.id";
-$result = $conn->query($sql);
-$teachers = $result->fetch_all(MYSQLI_ASSOC);
-$teachersCount = $result->num_rows;
+// $sql = "SELECT activity_teacher.*, 
+//         activity_teacher_image.imageUrl AS image
+//         FROM activity_teacher
+//         JOIN activity_teacher_image 
+//         ON activity_teacher_image.teacher_id = activity_teacher.id";
+// $result = $conn->query($sql);
+// $teachers = $result->fetch_all(MYSQLI_ASSOC);
+// $teachersCount = $result->num_rows;
 
 ?>
 
@@ -58,7 +58,7 @@ $teachersCount = $result->num_rows;
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -198,7 +198,7 @@ $teachersCount = $result->num_rows;
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button class="btn btn-info" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
@@ -223,7 +223,7 @@ $teachersCount = $result->num_rows;
                                             placeholder="Search for..." aria-label="Search"
                                             aria-describedby="basic-addon2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
+                                            <button class="btn btn-info" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
                                         </div>
@@ -248,7 +248,7 @@ $teachersCount = $result->num_rows;
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
+                                        <div class="icon-circle bg-info">
                                             <i class="fas fa-file-alt text-white"></i>
                                         </div>
                                     </div>
@@ -396,85 +396,56 @@ $teachersCount = $result->num_rows;
                             <li class="breadcrumb-item active" aria-current="page">新增師資</li>
                         </ol>
                     </nav>
-                    <a href="teacher.php" class="btn btn-primary mb-3" title="返回師資列表"><i class="fa-solid fa-reply fa-fw"></i></a>
+                    <a href="teacher.php" class="btn btn-info mb-3" title="返回師資列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <div class="container bg-white">
-                        <form class="py-2" action="doCreateActivity.php" method="post" enctype="multipart/form-data">
-                            
+                        <form class="py-2" action="doCreateTeacher.php" method="post" enctype="multipart/form-data">
+
                             <div class="mb-2">
                                 <div class="bg-light update-img d-flex justify-content-center mb-2">
-                                    <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
+                                    <img id="previewImage" src="img/teacher/<?= $teacher["main_image"] ?>" alt="">
                                 </div>
                                 <label for="" class="form-label">新增圖片</label>
                                 <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
                             </div>
-
+                            <div class="mb-2 row">
+                                <div class="col">
+                                    <label for="" class="form-label">教練姓名</label>
+                                    <input type="text" class="form-control" name="teacherName" placeholder="請輸入教練姓名">
+                                </div>
+                                <div class="col">
+                                    <label for="" class="form-label">教練性別</label>
+                                    <select class="form-control" name="sex" id="">
+                                        <option selected>請選擇教練性別</option>
+                                        <option value="1">男性</option>
+                                        <option value="2">女性</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="mb-2">
-                                <label for="" class="form-label">服務名稱</label>
-                                <input type="text" class="form-control" name="activityName" placeholder="請輸入服務名稱">
+                                <label for="" class="form-label">教練聯絡方式</label>
+                                <input type="text" class="form-control" name="teacherEmail"  placeholder="請輸入教練的電子信箱">
                             </div>
-
-                            <!-- 下拉式選單 -->
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="mb-2 col">
-                                    <label for="" class="form-label">服務類型</label>
-                                    <select class="form-control" name="activityCategoryBig" id="activityCategoryBig">
-                                        <option selected>請選擇服務類型</option>
-                                        <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
-                                            <option value="<?= $big_id ?>"><?= $big_data["name"] ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <label for="" class="form-label">教練年資</label>
+                                    <input type="text" class="form-control" name="teacherYears" placeholder="請輸入教練年資">
                                 </div>
-
                                 <div class="mb-2 col">
-                                    <label for="" class="form-label">服務類別</label>
-                                    <select class="form-control" name="activityCategorySmall" id="activityCategorySmall" disabled>
-                                        <option selected>請先選擇服務類型</option>
+                                    <label for="" class="form-label">教練等級</label>
+                                    <select class="form-control" name="level" id="">
+                                        <option select>請選擇教練等級</option>
+                                        <option value="1">OWSI 開放水域潛水教練</option>
+                                        <option value="2">MSDT 潛水大師教練</option>
+                                        <option value="3">教練開發課程助教</option>
+                                        <option value="4">潛水大師教練</option>
+                                        <option value="5">課程總監</option>
                                     </select>
                                 </div>
                             </div>
-                            <!-- <div class="row">
-                                <div class="mb-2 col">
-                                    <label for="" class="form-label">地點</label>
-                                    <select class="form-control" name="activityLocation" id="">
-                                        <option selected>請選擇</option>
-                                        <option value="1">選項 1</option>
-                                    </select>
-                                </div> -->
-                            <div class="mb-2">
-                                <label for="" class="form-label">費用</label>
-                                <input type="number" class="form-control" name="activityPrice" placeholder="請輸入金額" min="1" step="1">
-                            </div>
-                            <!-- </div> -->
-
-                            <div class="row">
-                                <div class="mb-2 col">
-                                    <label for="" class="form-label">報名開始日</label>
-                                    <input type="date" class="form-control" name="activitySignDate">
+                                <div class="text-center">
+                                    <button class="btn btn-info w-100" type="submit">送出</button>
                                 </div>
-                                <div class="mb-2 col">
-                                    <label for="" class="form-label">報名截止日</label>
-                                    <input type="date" class="form-control" name="activitySignEndDate">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="mb-2 col">
-                                    <label for="" class="form-label">活動開始時間</label>
-                                    <input type="datetime-local" class="form-control" name="activityStartDate">
-                                </div>
-                                <div class="mb-2 col">
-                                    <label for="" class="form-label">活動結束時間</label>
-                                    <input type="datetime-local" class="form-control" name="activityEndDate">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="form-label">活動介紹</label>
-                                <textarea class="form-control" name="activityArticle" rows="5"></textarea>
-                            </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary w-100" type="submit">送出</button>
-
-                            </div>
                         </form>
                     </div>
 
@@ -520,7 +491,7 @@ $teachersCount = $result->num_rows;
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-info" href="login.html">Logout</a>
                 </div>
             </div>
         </div>
