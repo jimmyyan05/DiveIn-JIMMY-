@@ -44,8 +44,19 @@ if (isset($_GET["search"])) {
     if ($_GET["search"] == "") {
         header("location:activity.php");
     };
+    if (isset($_GET["order"])) {
+        $order = $_GET["order"];
+        switch ($order) {
+            case 1:
+                $whereClause = "ORDER BY startDate ASC";
+                break;
+            case 2:
+                $whereClause = "ORDER BY startDate DESC";
+                break;
+        }
+    }
     if (!isset($_GET["p"])) {
-        header("location:activity.php?p=1&search=".$_GET["search"]);
+        header("location:activity.php?p=1&search=" . $_GET["search"]);
     } else {
         $p = $_GET["p"];
     }
@@ -67,8 +78,9 @@ if (isset($_GET["search"])) {
     JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
     JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
     WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0 
+    $whereClause
     LIMIT $start_item,$per_page
-    $whereClause";
+    ";
 
     $result = $conn->query($sql);
 
@@ -77,6 +89,17 @@ if (isset($_GET["search"])) {
 
     $total_page = ceil($allActivitysCount / $per_page);
 } elseif (isset($_GET["p"])) {
+    if (isset($_GET["order"])) {
+        $order = $_GET["order"];
+        switch ($order) {
+            case 1:
+                $whereClause = "ORDER BY startDate ASC";
+                break;
+            case 2:
+                $whereClause = "ORDER BY startDate DESC";
+                break;
+        }
+    }
     $sqlAll = "SELECT * FROM activity WHERE isDeleted=0";
     $resultAll = $conn->query($sqlAll);
     $allActivitysCount = $resultAll->num_rows;
@@ -94,8 +117,9 @@ if (isset($_GET["search"])) {
     JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
     JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
     WHERE activity.isDeleted=0
+    $whereClause
     LIMIT $start_item,$per_page
-    $whereClause";
+    ";
 
     $result = $conn->query($sql);
 
@@ -226,7 +250,7 @@ if (isset($_GET["search"])) {
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -391,7 +415,7 @@ if (isset($_GET["search"])) {
                                             placeholder="Search for..." aria-label="Search"
                                             aria-describedby="basic-addon2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
+                                            <button class="btn btn-info" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
                                         </div>
@@ -416,7 +440,7 @@ if (isset($_GET["search"])) {
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
+                                        <div class="icon-circle bg-info">
                                             <i class="fas fa-file-alt text-white"></i>
                                         </div>
                                     </div>
@@ -585,11 +609,17 @@ if (isset($_GET["search"])) {
 
                     <!-- 新增課程按鈕及排序按鈕 -->
                     <div class="d-flex justify-content-between my-2">
-                        <a href="create-activity.php" class="btn btn-primary"><i class="fa-solid fa-plus fa-fw"></i>新增服務</a>
+                        <a href="create-activity.php" class="btn btn-info"><i class="fa-solid fa-plus fa-fw"></i>新增服務</a>
                         <div class="d-flex justify-content-center">
+                            <?php if (isset($_GET["order"])): ?>
+                                <div class="me-2">
+                                    <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>" class="btn btn-secondary"><i class="fa-solid fa-xmark"></i></a>
+                                </div>
+                            <?php endif; ?>
+
                             <div class="btn-group ">
-                                <button class="btn btn-primary">活動時間 <i class="fa-solid fa-arrow-down-short-wide"></i></button>
-                                <button class="btn btn-primary">活動時間 <i class="fa-solid fa-arrow-down-wide-short"></i></button>
+                                <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=1" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 1): ?> active<?php endif; ?>" id="sort-time-down">活動時間 <i class="fa-solid fa-arrow-down-1-9"></i></a>
+                                <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=2" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 2): ?> active<?php endif; ?>" id="sort-time-up">活動時間 <i class="fa-solid fa-arrow-up-1-9"></i></a>
                             </div>
                             <div class="ms-2">
                                 <a href="isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
@@ -599,7 +629,7 @@ if (isset($_GET["search"])) {
 
                     <!-- 服務列表 開始 -->
                     <?php if ($activityCount > 0): ?>
-                        <table class="table table-style table-hover">
+                        <table id="activity-table" class="table table-style table-hover">
                             <tr>
                                 <th>編號</th>
                                 <th>名稱</th>
@@ -651,7 +681,7 @@ if (isset($_GET["search"])) {
                                     </td>
                                     <td>
                                         <!-- 修改按鈕，跳出modal -->
-                                        <button id="change-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal<?= $activity["id"] ?>"><i class="fa-solid fa-pen-to-square fa-fw"></i></button>
+                                        <button id="change-btn" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#updateModal<?= $activity["id"] ?>"><i class="fa-solid fa-pen-to-square fa-fw"></i></button>
                                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $activity["id"] ?>"><i class="fa-solid fa-trash-can fa-fw"></i></button>
 
                                     </td>
@@ -729,7 +759,7 @@ if (isset($_GET["search"])) {
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                        <button type="submit" class="btn btn-primary">儲存修改</button>
+                                                        <button type="submit" class="btn btn-info">儲存修改</button>
                                                     </div>
                                                 </form>
 
@@ -772,21 +802,26 @@ if (isset($_GET["search"])) {
                         <div class="d-flex justify-content-center">
                             <nav aria-label="Page navigation">
                                 <ul class="pagination">
-                                    <!-- <li class="page-item">
-                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] - 1 ?>" aria-label="Previous">
+                                    <?php if($p-1>0):?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] - 1 ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
-                                    </li> -->
+                                    </li>
+                                    <?php endif;?>
                                     <?php for ($i = 1; $i <= $total_page; $i++): ?>
-                                        <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>">
-                                            <a class="page-link" href="activity.php?p=<?= $i ?><?php if(isset($_GET["search"])): ?><?="&search=".$_GET["search"]?><?php endif;?>"><?= $i ?></a>
+                                        <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>"><a class="page-link" href="activity.php?p=<?= $i ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>">
+                                                <?= $i ?>
+                                            </a>
                                         </li>
                                     <?php endfor; ?>
-                                    <!-- <li class="page-item">
-                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] + 1 ?>" aria-label="Next">
+                                    <?php if($p+1<=$total_page):?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] + 1 ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
-                                    </li> -->
+                                    </li>
+                                    <?php endif; ?>
                                 </ul>
                         </div>
                     <?php endif; ?>
@@ -835,7 +870,7 @@ if (isset($_GET["search"])) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-info" href="login.html">Logout</a>
                 </div>
             </div>
         </div>
@@ -893,6 +928,22 @@ if (isset($_GET["search"])) {
                 }
             });
         <?php endforeach; ?>
+
+
+        //排序按鈕的點擊效果
+        // const timeDown=document.querySelector("#sort-time-down")
+        // const timeUp=document.querySelector("#sort-time-up")
+
+        // timeDown.addEventListener("click",function(){
+        //     timeUp.classList.remove('active')
+        //     timeDown.classList.add('active')
+        // })
+
+        // timeUp.addEventListener("click",function(){
+        //     timeDown.classList.remove('active')
+        //     timeUp.classList.add('active')
+
+        // })
 
 
 
