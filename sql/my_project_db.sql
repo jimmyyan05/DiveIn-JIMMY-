@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2024-11-27 20:47:07
+-- 產生時間： 2024-11-28 20:07:36
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.2.12
 
@@ -36,6 +36,7 @@ CREATE TABLE `activity` (
   `startDate` datetime DEFAULT NULL,
   `endDate` datetime DEFAULT NULL,
   `price` int(10) UNSIGNED DEFAULT NULL,
+  `activity_teacher_id` int(11) NOT NULL,
   `location` varchar(50) NOT NULL,
   `description` varchar(255) NOT NULL,
   `article_id` int(10) UNSIGNED DEFAULT NULL,
@@ -46,15 +47,15 @@ CREATE TABLE `activity` (
 -- 傾印資料表的資料 `activity`
 --
 
-INSERT INTO `activity` (`id`, `name`, `activityCategorySmall_id`, `signUpDate`, `signUpEndDate`, `startDate`, `endDate`, `price`, `location`, `description`, `article_id`, `isDeleted`) VALUES
-(1, '小琉球體驗潛水', 5, '2024-10-01', '2024-12-31', '2025-01-01 10:00:00', '2024-12-31 00:00:00', 2500, '', '你是否怕水，卻又想一窺蔚藍的海底世界呢？ 你是否猶豫，到底要不要考一張潛水證照呢？ 體驗潛水，是你最好的選擇！ 專業教練耐心為你講解小學生都可以聽懂的課程， 用簡單又幽默的方式一對一帶你認識裝備、適應呼吸、水下手勢溝通，  即使不會游泳，也能嘗試潛入深海與海龜共游 10歲到70歲都可以嘗試的小琉球必玩水上活動。', NULL, 0),
-(2, '小琉球岸潛活動', 5, '2024-10-01', '2024-10-31', '2024-11-01 00:00:00', '2024-11-02 00:00:00', 1000, '', '', NULL, 0),
-(3, '水肺潛水體驗課程(泳池)', 1, '2024-12-01', '2024-12-31', '2025-01-01 00:00:00', '2025-01-01 00:00:00', 1500, '', '', NULL, 0),
-(4, '美人魚 體驗潛水', 3, '2024-11-01', '2024-11-24', '2024-12-01 00:00:00', '2024-12-02 00:00:00', 1500, '', '', NULL, 0),
-(5, 'Level 1自由潛水認證課程', 2, '2024-10-01', '2024-11-30', '2024-12-10 13:30:00', '2024-11-30 00:00:00', 12800, '', '多種潛水系統DIWA, PADI, SSI, AIDA…任您挑選\r\n扎實訓練課程讓您安心考取國際證照\r\n專業教練小班制教學且彈性上課時間\r\n趕緊報名一起解鎖水下新技能吧！', NULL, 0),
-(6, '修改課程名稱修改課程名稱修改課程名稱修改課程名稱修改課程名稱修改課程名稱', 5, '2024-11-14', '2024-11-20', '2024-11-20 19:19:00', '2024-11-20 00:00:00', 9999, '', '修改123', NULL, 0),
-(8, '2346', 2, '0000-00-00', '0000-00-00', '2024-11-28 10:14:00', '0000-00-00 00:00:00', 500, '', '', NULL, 0),
-(9, '5487974', 3, '2024-11-06', '2024-11-28', '2024-12-19 04:19:00', '2024-11-28 00:00:00', 999, '', '', NULL, 0);
+INSERT INTO `activity` (`id`, `name`, `activityCategorySmall_id`, `signUpDate`, `signUpEndDate`, `startDate`, `endDate`, `price`, `activity_teacher_id`, `location`, `description`, `article_id`, `isDeleted`) VALUES
+(1, '小琉球體驗潛水', 5, '2024-10-01', '2024-12-31', '2025-01-01 10:00:00', '2024-12-31 00:00:00', 2500, 0, '', '你是否怕水，卻又想一窺蔚藍的海底世界呢？ 你是否猶豫，到底要不要考一張潛水證照呢？ 體驗潛水，是你最好的選擇！ 專業教練耐心為你講解小學生都可以聽懂的課程， 用簡單又幽默的方式一對一帶你認識裝備、適應呼吸、水下手勢溝通，  即使不會游泳，也能嘗試潛入深海與海龜共游 10歲到70歲都可以嘗試的小琉球必玩水上活動。', NULL, 0),
+(2, '小琉球岸潛活動', 5, '2024-10-01', '2024-10-31', '2024-11-01 00:00:00', '2024-11-02 00:00:00', 1000, 0, '', '', NULL, 0),
+(3, '水肺潛水體驗課程(泳池)', 1, '2024-12-01', '2024-12-31', '2025-01-01 00:00:00', '2025-01-01 00:00:00', 1500, 0, '', '', NULL, 0),
+(4, '美人魚 體驗潛水', 3, '2024-11-01', '2024-11-24', '2024-12-01 00:00:00', '2024-12-02 00:00:00', 1500, 0, '', '', NULL, 0),
+(5, 'Level 1自由潛水認證課程', 2, '2024-10-01', '2024-11-30', '2024-12-10 13:30:00', '2024-11-30 00:00:00', 12800, 0, '', '多種潛水系統DIWA, PADI, SSI, AIDA…任您挑選\r\n扎實訓練課程讓您安心考取國際證照\r\n專業教練小班制教學且彈性上課時間\r\n趕緊報名一起解鎖水下新技能吧！', NULL, 0),
+(6, '修改課程名稱修改課程名稱修改課程名稱修改課程名稱修改課程名稱修改課程名稱', 5, '2024-11-14', '2024-11-20', '2024-11-20 19:19:00', '2024-11-20 00:00:00', 9999, 0, '', '修改123', NULL, 0),
+(8, '水', 2, '0000-00-00', '0000-00-00', '2024-11-28 10:14:00', '0000-00-00 00:00:00', 500, 0, '', '', NULL, 0),
+(9, '水水', 5, '2024-11-06', '2024-11-28', '2024-12-19 04:19:00', '2024-11-28 00:00:00', 999, 0, '', '', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -158,6 +159,60 @@ CREATE TABLE `activity_order_detail` (
   `createdAt` datetime DEFAULT NULL,
   `updateAt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `activity_teacher`
+--
+
+CREATE TABLE `activity_teacher` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `sex` int(11) NOT NULL,
+  `level` int(11) NOT NULL,
+  `years` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `activity_teacher`
+--
+
+INSERT INTO `activity_teacher` (`id`, `name`, `email`, `sex`, `level`, `years`) VALUES
+(1, '張一', 'hua@test.com', 1, 5, 10),
+(2, '陳二', 'cheng@test.com', 1, 3, 3);
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `activity_teacher_image`
+--
+
+CREATE TABLE `activity_teacher_image` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `teacher_id` int(11) NOT NULL,
+  `imageUrl` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `activity_teacher_image`
+--
+
+INSERT INTO `activity_teacher_image` (`id`, `name`, `teacher_id`, `imageUrl`) VALUES
+(1, '張一教練', 1, 'bin-1.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `activity_teacher_specialty`
+--
+
+CREATE TABLE `activity_teacher_specialty` (
+  `id` int(11) NOT NULL,
+  `name` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -471,6 +526,24 @@ ALTER TABLE `activity_order_detail`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 資料表索引 `activity_teacher`
+--
+ALTER TABLE `activity_teacher`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 資料表索引 `activity_teacher_image`
+--
+ALTER TABLE `activity_teacher_image`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 資料表索引 `activity_teacher_specialty`
+--
+ALTER TABLE `activity_teacher_specialty`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 資料表索引 `article`
 --
 ALTER TABLE `article`
@@ -623,6 +696,24 @@ ALTER TABLE `activity_order`
 --
 ALTER TABLE `activity_order_detail`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `activity_teacher`
+--
+ALTER TABLE `activity_teacher`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `activity_teacher_image`
+--
+ALTER TABLE `activity_teacher_image`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `activity_teacher_specialty`
+--
+ALTER TABLE `activity_teacher_specialty`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `article`
