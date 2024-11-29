@@ -1,6 +1,6 @@
 <?php
 
-require_once("articleConnect.php");
+require_once("../db_project_connect.php");
 
 // 檢查是否有搜尋字串
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
@@ -32,11 +32,8 @@ $result = $conn->query($sql);
 
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
-
 
 <head>
 
@@ -72,21 +69,37 @@ $result = $conn->query($sql);
             <div id="content">
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <div class="d-flex justify-content-between align-items-center mb-2 mt-2">
-                        <h1 class="h3 text-gray-800">文章列表</h1>
-                        <form class="form-inline" method="get" action="articleList.php">
-                            <div class="input-group">
-                                <input type="text" name="search" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" value="<?php echo htmlspecialchars($searchTerm); ?>">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fas fa-search fa-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    <h1 class="h3 text-gray-800 mb-4">文章列表</h1>
+
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
+                        <!-- 搜尋與新增按鈕 -->
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <!-- 左侧按钮组 -->
+                            <div class="d-flex gap-2">
+                                <a href="articleCreate.php" class="btn bg-info text-white">
+                                    <i class="fa-solid fa-circle-plus"></i> 新增文章
+                                </a>
+                                <a href="articleList.php" class="btn bg-info text-white">
+                                    <i class="fa-solid fa-list-ul"></i> 全部文章
+                                </a>
+                            </div>
+                            <!-- 右侧搜索框 -->
+                            <form class="form-inline" method="get" action="articleList.php">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control bg-light border-0 small"
+                                        placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2"
+                                        value="<?php echo htmlspecialchars($searchTerm); ?>">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- 表格 -->
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
