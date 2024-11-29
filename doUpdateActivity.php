@@ -1,5 +1,5 @@
 <?php
-require_once("../create/db_project_connect.php");
+require_once("../db_project_connect.php");
 
 
 // print_r($_POST);

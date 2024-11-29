@@ -1,6 +1,6 @@
 <?php
 
-require_once("../create/db_project_connect.php");
+require_once("../db_project_connect.php");
 
 
 $activityID=$_POST["activityID"];
