@@ -1,21 +1,53 @@
 <?php
 require_once("../db_project_connect.php");
 
-$sql = "SELECT order_list.*, 
-    GROUP_CONCAT(DISTINCT product_order.id) AS product_ids, 
-    GROUP_CONCAT(DISTINCT rent_order.id) AS rent_ids, 
-    GROUP_CONCAT(DISTINCT activity_order.id) AS activity_ids 
-FROM order_list 
-LEFT JOIN product_order ON order_list.product_order_id = product_order.id
-LEFT JOIN rent_order ON order_list.rent_order_id = rent_order.id 
-LEFT JOIN activity_order ON order_list.activity_order_id = activity_order.id
-GROUP BY order_list.id";
-
+// 獲取所有訂單信息
+$sql = "SELECT 
+    orders.*, 
+    users.name AS user_name,
+    users.email AS user_email,
+    product_orders.product_status,
+    rental_orders.rental_status,
+    activity_orders.activity_status,
+    (
+        SELECT SUM(price * quantity)
+        FROM order_items
+        WHERE order_id = orders.id
+    ) AS total_amount,
+    (
+        SELECT GROUP_CONCAT(DISTINCT item_type)
+        FROM order_items
+        WHERE order_id = orders.id
+    ) AS order_types
+FROM orders
+LEFT JOIN users ON orders.member_id = users.id
+LEFT JOIN product_orders ON orders.product_order_id = product_orders.id
+LEFT JOIN rental_orders ON orders.rental_order_id = rental_orders.id
+LEFT JOIN activity_orders ON orders.activity_order_id = activity_orders.id
+ORDER BY orders.created_at DESC";
 
 $result = $conn->query($sql);
 $orderCount = $result->num_rows;
-$rows = $result->fetch_all(MYSQLI_ASSOC);
+$orders = $result->fetch_all(MYSQLI_ASSOC);
+
+// 狀態樣式函數
+function getStatusClass($status)
+{
+    switch ($status) {
+        case 'processing':
+            return 'bg-info';
+        case 'completed':
+            return 'bg-success';
+        case 'cancelled':
+            return 'bg-danger';
+        case 'pending':
+            return 'bg-warning';
+        default:
+            return 'bg-secondary';
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -266,49 +298,17 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                     <!-- DataTales Example -->
                     <div class="card mb-4">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">共計<?= $orderCount ?>樣商品</h6>
-                            <div>
-                                <form class="d-flex align-items-center m-0" method="GET">
-                                    <!-- 大類別選擇 -->
-                                    <div class="input-group input-group-sm">
-                                        <select class="form-select  me-2" aria-label="大類別選擇" name="big_category" id="big_category">
-                                            <option value="">全部大類別</option>
-                                            <?php foreach ($big_categories as $category): ?>
-                                                <option value="<?= $category['id'] ?>" <?= (isset($_GET['big_category']) && $_GET['big_category'] == $category['id']) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($category['name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
+                            <h6 class="m-0 font-weight-bold text-primary">共計<?= $orderCount ?>樣訂單</h6>
 
-                                    <!-- 小類別選擇 -->
-                                    <div class="input-group input-group-sm">
-                                        <select class="form-select border-end-0" aria-label="小類別選擇" name="small_category" id="small_category">
-                                            <option value="">全部小類別</option>
-                                            <?php foreach ($small_categories as $category): ?>
-                                                <option value="<?= $category['id'] ?>"
-                                                    data-big-category="<?= $category['product_category_big_id'] ?>"
-                                                    <?= (isset($_GET['small_category']) && $_GET['small_category'] == $category['id']) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($category['name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-
-                                    <!-- 篩選按鈕 -->
-                                    <button type="submit" class="btn btn-primary d-flex align-items-center rounded-start-0" data-bs-toggle="tooltip" data-bs-placement="top" title="篩選">
-                                        <i class="fas fa-filter"></i>
-                                    </button>
-                                </form>
-                            </div>
                         </div>
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered table-hover" id="dataTable">
                                     <thead>
                                         <tr>
                                             <th>訂單編號</th>
+                                            <th>會員資訊</th>
                                             <th>訂單類型</th>
                                             <th>訂單日期</th>
                                             <th>總金額</th>
@@ -318,33 +318,66 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($rows as $row):
-                                            $orderTypes = [];
-                                            if ($row["product_order_id"]) $orderTypes[] = "商品";
-                                            if ($row["rent_order_id"]) $orderTypes[] = "租借";
-                                            if ($row["activity_order_id"]) $orderTypes[] = "課程";
-                                        ?>
+                                        <?php foreach ($orders as $order): ?>
                                             <tr>
-                                                <td><?= $row["id"] ?></td>
+                                                <td>#<?= $order["id"] ?></td>
                                                 <td>
-                                                    <?php foreach ($orderTypes as $type): ?>
-                                                        <span class="badge bg-primary"><?= $type ?></span>
-                                                    <?php endforeach; ?>
+                                                    <div><?= $order["user_name"] ?></div>
+                                                    <small class="text-muted"><?= $order["user_email"] ?></small>
                                                 </td>
-                                                <td><?= $row["orderDate"] ?></td>
-                                                <td>NT$ <?= number_format($row["totalAmount"]) ?></td>
                                                 <td>
-                                                    <span class="badge <?= $row["payment_status"] == "paid" ? "bg-success" : "bg-warning" ?>">
-                                                        <?= $row["payment_status"] == "paid" ? "已付款" : "未付款" ?>
+                                                    <?php if (!empty($order['order_types'])): ?>
+                                                        <?php
+                                                        $types = explode(',', $order['order_types']);
+                                                        foreach ($types as $type):
+                                                            switch ($type) {
+                                                                case 'product':
+                                                                    $labelClass = 'bg-primary'; // 商品
+                                                                    break;
+                                                                case 'rental':
+                                                                    $labelClass = 'bg-info'; // 租借
+                                                                    break;
+                                                                case 'activity':
+                                                                    $labelClass = 'bg-success'; // 活動
+                                                                    break;
+                                                                default:
+                                                                    $labelClass = 'bg-secondary'; // 未知類型
+                                                            }
+                                                        ?>
+                                                            <span class="badge <?= $labelClass ?>"><?= $type ?></span>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">無</span>
+                                                    <?php endif; ?>
+                                                </td>
+
+                                                <td><?= date('Y/m/d H:i', strtotime($order["created_at"])) ?></td>
+                                                <td>NT$ <?= number_format($order["total_amount"]) ?></td>
+                                                <td>
+                                                    <span class="badge <?= getStatusClass($order["payment_status"]) ?>">
+                                                        <?= $order["payment_status"] ?>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge <?= $row["status"] == "processing" ? "bg-info" : "bg-secondary" ?>">
-                                                        <?= $row["status"] ?>
-                                                    </span>
+                                                    <?php if ($order["product_order_id"]): ?>
+                                                        <span class="badge <?= getStatusClass($order["product_status"]) ?>">
+                                                            <?= $order["product_status"] ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                    <?php if ($order["rental_order_id"]): ?>
+                                                        <span class="badge <?= getStatusClass($order["rental_status"]) ?>">
+                                                            <?= $order["rental_status"] ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                    <?php if ($order["activity_order_id"]): ?>
+                                                        <span class="badge <?= getStatusClass($order["activity_status"]) ?>">
+                                                            <?= $order["activity_status"] ?>
+                                                        </span>
+                                                    <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <a href="order-list-detail-new.php?id=<?= $row["id"] ?>" class="btn btn-sm btn-outline-primary">查看詳情</a>
+                                                    <a href="order-detail.php?id=<?= $order["id"] ?>"
+                                                        class="btn btn-sm btn-outline-primary">查看詳情</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

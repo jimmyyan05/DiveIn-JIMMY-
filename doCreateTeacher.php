@@ -8,14 +8,11 @@ if(!isset($_POST["teacherName"])){
 var_dump($_POST);
 
 $name=$_POST["teacherName"];
-$categoryBig=$_POST["teacherCategoryBig"];
-$categorySmall=$_POST["teacherCategorySmall"];
-$price=$_POST["teacherPrice"];
-$signDate=$_POST["teacherSignDate"];
-$signEndDate=$_POST["teacherSignEndDate"];
-$startDate=$_POST["teacherStartDate"];
-$endDate=$_POST["teacherEndDate"];
-$article=$_POST["teacherArticle"];
+$sex=$_POST["sex"];
+$email=$_POST["teacherEmail"];
+$years=$_POST["teacherYears"];
+$level=$_POST["level"];
+
 // $location=$_POST["teacherLocation"];
 
 
