@@ -3,12 +3,12 @@
 require_once("../db_project_connect.php");
 
 
-$activityID=$_POST["activityID"];
+$teacherID=$_POST["teacherID"];
 $delete=$_POST["deleted"];
 
 if($delete == 0){
-    $sql="DELETE FROM activity WHERE id = $activityID;
-    DELETE FROM activity_image WHERE activity_id = $activityID";
+    $sql="DELETE FROM activity_teacher WHERE id = $teacherID;
+    DELETE FROM activity_teacher_image WHERE teacher_id = $teacherID";
     
     if($conn->multi_query($sql) === TRUE){
         echo "資料刪除成功";
@@ -18,4 +18,4 @@ if($delete == 0){
     }
 }
 
-header("location: teacher.php");
+// header("location: activity.php");

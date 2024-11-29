@@ -2,7 +2,7 @@
 <ul class="navbar-nav bg-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
         <div class="sidebar-brand-icon">
             <img src="./img/IMG_logo.png" style="width:3em; ">
         </div>
@@ -29,18 +29,17 @@
 
     <!-- Nav Item - 會員管理 -->
     <li class="nav-item">
-        <a class="nav-link collapsed " href="#" data-toggle="collapse" data-target="#collapseOne"
-            aria-expanded="true" aria-controls="collapseOne">
-            <i class="fas fa-fw fa-cog"></i>
+        <a class="nav-link collapsed " href="userlist.php">
+            <i class="fa-solid fa-user"></i>
             <span>會員管理</span>
         </a>
-        <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <!-- <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">暫定</h6>
                 <a class="collapse-item" href="buttons.html">暫定</a>
                 <a class="collapse-item" href="cards.html">暫定</a>
             </div>
-        </div>
+        </div> -->
     </li>
 
     <!-- Nav Item -訂單管理-->
@@ -70,7 +69,7 @@
                 <h6 class="collapse-header">所有分類</h6>
                 <a class="collapse-item" href="category.php">商品分類</a>
                 <a class="collapse-item" href="">租賃分類</a>
-                <a class="collapse-item" href="">課程分類</a>
+                <a class="collapse-item" href="activityCategory.php">課程分類</a>
             </div>
         </div>
     </li>
@@ -98,14 +97,14 @@
 
     <!-- Nav Item - 優惠券管理 -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="coupon.php">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>優惠券管理</span></a>
     </li>
 
     <!-- Nav Item - 文章管理 -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="articleList.php">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>文章管理</span></a>
     </li>
