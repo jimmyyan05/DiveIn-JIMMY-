@@ -1,5 +1,5 @@
 <?php
-require_once("../pj_connect.php");
+require_once("../db_project_connect.php");
 
 if (isset($_GET["user_id"])) {
     $user_id = $_GET["user_id"];

@@ -1,6 +1,5 @@
 <?php
-// 確保資料庫連線已經設置好
-require_once("../pj_connect.php"); 
+require_once("../db_project_connect.php");
 
 // 處理表單提交
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
