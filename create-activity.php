@@ -78,7 +78,7 @@ while ($cates = $avticityResultcate->fetch_assoc()) {
                             <li class="breadcrumb-item active" aria-current="page">新增服務</li>
                         </ol>
                     </nav>
-                    <a href="activity.php" class="btn btn-primary mb-3" title="返回服務列表"><i class="fa-solid fa-reply fa-fw"></i></a>
+                    <a href="activity.php" class="btn btn-info mb-3" title="返回服務列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <div class="container bg-white">
                         <form class="py-2" action="doCreateActivity.php" method="post" enctype="multipart/form-data">
@@ -154,7 +154,7 @@ while ($cates = $avticityResultcate->fetch_assoc()) {
                                 <textarea class="form-control" name="activityArticle" rows="5"></textarea>
                             </div>
                             <div class="text-center">
-                                <button class="btn btn-primary w-100" type="submit">送出</button>
+                                <button class="btn btn-info w-100" type="submit">送出</button>
 
                             </div>
                         </form>
@@ -202,7 +202,7 @@ while ($cates = $avticityResultcate->fetch_assoc()) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-info" href="login.html">Logout</a>
                 </div>
             </div>
         </div>

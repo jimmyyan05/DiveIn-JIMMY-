@@ -33,3 +33,15 @@
     vertical-align: middle;
     max-width: 16rem;
 }
+
+/* 修改頁籤顏色 */
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #2a96a5;
+    border-color: #278c9b;
+}
+
+.page-link {
+    color: #2a96a5;
+}

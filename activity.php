@@ -291,7 +291,7 @@ if (isset($_GET["search"])) {
                                 <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=2" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 2): ?> active<?php endif; ?>" id="sort-time-up">活動時間 <i class="fa-solid fa-arrow-up-1-9"></i></a>
                             </div>
                             <div class="ms-2">
-                                <a href="isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
+                                <a href="activity_isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
                             </div>
                         </div>
                     </div>
