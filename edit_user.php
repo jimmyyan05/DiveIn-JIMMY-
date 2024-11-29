@@ -1,5 +1,5 @@
 <?php
-require_once("../pj_connect.php");
+require_once("../db_project_connect.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;

@@ -1,5 +1,5 @@
 <?php
-require_once("../pj_connect.php");
+require_once("../db_project_connect.php");
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
