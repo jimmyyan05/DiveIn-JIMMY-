@@ -1,5 +1,5 @@
 <?php
-require_once("articleConnect.php");
+require_once("../db_project_connect.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'];
