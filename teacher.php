@@ -54,7 +54,7 @@ $sql = "SELECT
         FROM activity_teacher
         LEFT JOIN activity_teacher_image 
             ON activity_teacher_image.teacher_id = activity_teacher.id
-        WHERE 1 $searchCondition $whereClause 
+        WHERE 1 $searchCondition AND activity_teacher.is_deleted=0 $whereClause 
         LIMIT $start_item, $per_page";
 
 $result = $conn->query($sql);
@@ -174,7 +174,7 @@ $total_page = ceil($teachersCount / $per_page);
                                 <a href="teacher.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=2" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 2): ?> active<?php endif; ?>" id="sort-time-up">教師年資<i class="fa-solid fa-arrow-up-1-9"></i></a>
                             </div>
                             <div class="ms-2">
-                                <a href="isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
+                                <a href="teacher_isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
                             </div>
                         </div>
                     </div>
@@ -307,7 +307,7 @@ $total_page = ceil($teachersCount / $per_page);
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                    <form action="doDelete.php" method="post">
+                                                    <form action="doDeleteTeacher.php" method="post">
                                                         <input type="hidden" name="teacherID" value="<?= $teacher["id"] ?>">
                                                         <button type="submit" class="btn btn-danger" name="deleted" value="1">確認</button>
                                                     </form>
