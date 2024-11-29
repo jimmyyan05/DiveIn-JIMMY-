@@ -252,7 +252,7 @@ if (isset($_GET["search"])) {
                     <!-- 麵包屑 -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
+                            <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
                             <li class="breadcrumb-item active" aria-current="page">服務列表</li>
                         </ol>
                     </nav>
@@ -264,7 +264,7 @@ if (isset($_GET["search"])) {
                                 <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入活動關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
                                     aria-label="Recipient's username" aria-describedby="basic-addon2" name="search" <?php if (isset($_GET["search"])): ?> value="<?= $_GET["search"] ?>" <?php endif; ?>>
                                 <div class="input-group-append p-0">
-                                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    <button class="btn btn-outline-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
                             </div>
                             <?php if (isset($_GET["search"])): ?>
