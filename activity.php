@@ -273,7 +273,6 @@ if (isset($_GET["search"])) {
                                 </div>
                             <?php endif; ?>
                         </form>
-
                     </div>
 
                     <!-- 新增課程按鈕及排序按鈕 -->
