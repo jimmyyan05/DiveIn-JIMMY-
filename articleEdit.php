@@ -1,5 +1,5 @@
 <?php
-require_once("articleConnect.php");
+require_once("../db_project_connect.php");
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];

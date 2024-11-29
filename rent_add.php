@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
         // 處理圖片上傳
         if (isset($_FILES['image']) && count($_FILES['image']['name']) > 0) {
             // 設定檔案的儲存目錄
-            $upload_dir = 'uploads/';
+            $upload_dir = 'img/rent_item/';
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0777, true); // 如果沒有目錄則創建
             }

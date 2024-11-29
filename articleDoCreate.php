@@ -1,5 +1,5 @@
 <?php
-require_once("articleConnect.php");
+require_once("../articleConnect.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 接收表單數據
