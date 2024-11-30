@@ -30,7 +30,7 @@
     <!-- Nav Item - 會員管理 -->
     <li class="nav-item">
         <a class="nav-link collapsed " href="userlist.php">
-            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-user fa-fw"></i>
             <span>會員管理</span>
         </a>
         <!-- <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
