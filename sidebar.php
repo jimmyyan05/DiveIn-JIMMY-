@@ -76,7 +76,7 @@
 
     <!-- Nav Item - 租賃管理 -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="rent_items.php">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>租賃管理</span></a>
     </li>

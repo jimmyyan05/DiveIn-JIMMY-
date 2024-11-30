@@ -1,9 +1,43 @@
 <?php
 require_once("../db_project_connect.php");
-$sql = "SELECT product.* FROM product";
-$result = $conn->query($sql);
-$productCount = $result->num_rows;
+// 第一個SQL查詢 (會員統計)
+$sql_users = "SELECT 
+ COUNT(*) as total_users,
+ COUNT(CASE WHEN is_certify = 1 THEN 1 END) as certify_count,
+ COUNT(CASE WHEN level_id = 2 THEN 1 END) as vip_count 
+FROM users 
+WHERE is_deleted = 0";
+
+$result_users = $conn->query($sql_users);
+$row_users = $result_users->fetch_assoc();
+
+$usersCount = $row_users['total_users'];
+$certifyRate = round(($row_users['certify_count'] / $row_users['total_users']) * 100, 1);
+$vipRate = round(($row_users['vip_count'] / $row_users['total_users']) * 100, 1);
+
+// 第二個SQL查詢 (收入分析)
+$sql_revenue = "SELECT 
+   SUM(CASE WHEN item_type = 'product' THEN price * quantity ELSE 0 END) as product_revenue,
+   SUM(CASE WHEN item_type = 'rental' THEN price * quantity ELSE 0 END) as rental_revenue,
+   SUM(CASE WHEN item_type = 'activity' THEN price * quantity ELSE 0 END) as activity_revenue
+FROM order_items";
+
+$result_revenue = $conn->query($sql_revenue);
+$row_revenue = $result_revenue->fetch_assoc();
+
+$total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row_revenue['activity_revenue'];
 ?>
+
+<script>
+    window.revenueData = {
+        product: <?= round(($row_revenue['product_revenue'] / $total) * 100) ?>,
+        rental: <?= round(($row_revenue['rental_revenue'] / $total) * 100) ?>,
+        activity: <?= round(($row_revenue['activity_revenue'] / $total) * 100) ?>
+    };
+</script>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,50 +79,83 @@ $productCount = $result->num_rows;
 
                     <!-- Content Row -->
                     <div class="row">
-
-                        <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                會員人數</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $usersCount ?></div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card border-left-Success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                            <div class="text-xs font-weight-bold text-Success text-uppercase mb-1">持有潛水證照會員比例
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?= $certifyRate ?>%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-Success" role="progressbar"
+                                                            style="width: <?= $certifyRate ?>%" aria-valuenow="50" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-Danger shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-Danger text-uppercase mb-1">VIP比例
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?= $vipRate ?>%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-Danger" role="progressbar"
+                                                            style="width: <?= $vipRate ?>%" aria-valuenow="50" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-info shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">課程訂單
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
@@ -112,22 +179,7 @@ $productCount = $result->num_rows;
                         </div>
 
                         <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                會員人數</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $productCount ?></div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
 
                     <!-- Content Row -->
@@ -171,7 +223,7 @@ $productCount = $result->num_rows;
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">收入比例</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -194,13 +246,13 @@ $productCount = $result->num_rows;
                                     </div>
                                     <div class="mt-4 text-center small">
                                         <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
+                                            <i class="fas fa-circle text-primary"></i> 商品銷售
                                         </span>
                                         <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
+                                            <i class="fas fa-circle text-success"></i> 租賃服務
                                         </span>
                                         <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
+                                            <i class="fas fa-circle text-info"></i> 活動課程
                                         </span>
                                     </div>
                                 </div>

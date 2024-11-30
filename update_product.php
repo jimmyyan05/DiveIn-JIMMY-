@@ -170,8 +170,20 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sidisi", $name, $category_small, $price, $stock, $status, $id);
 
+
     if (!$stmt->execute()) {
         throw new Exception("更新產品資訊失敗: " . $stmt->error);
+    }
+    // 2. 更新產品規格
+    $spec_sql = "UPDATE product_specification 
+SET size_id = ?, color_id = ?, brand_id = ?
+WHERE product_id = ?";
+
+    $spec_stmt = $conn->prepare($spec_sql);
+    $spec_stmt->bind_param("iiii", $size_id, $color_id, $brand_id, $id);
+
+    if (!$spec_stmt->execute()) {
+        throw new Exception("更新產品規格失敗: " . $spec_stmt->error);
     }
 
     // 2. 如果有指定主圖，先處理主圖設定

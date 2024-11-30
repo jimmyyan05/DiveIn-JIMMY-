@@ -26,9 +26,9 @@ try {
     $conn->begin_transaction();
 
     // 新增商品資料
-    $sql = "INSERT INTO product (product_category_small_id, name, price, stock, status, isDeleted, brand_id) VALUES (?, ?, ?, ?, '上架中', 0, ?)";
+    $sql = "INSERT INTO product (product_category_small_id, name, price, stock, status, isDeleted) VALUES (?, ?, ?, ?, '上架中', 0)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isiii", $category_small, $name, $price, $stock, $brand_id);
+    $stmt->bind_param("isii", $category_small, $name, $price, $stock);
 
     if (!$stmt->execute()) {
         throw new Exception("商品新增失敗");
@@ -49,44 +49,31 @@ try {
 
     // 確保處理多張圖片
     if (isset($_FILES["photo"]) && count($_FILES["photo"]["name"]) > 0) {
-        // 處理每一張上傳的圖片
-        $upload_dir = __DIR__ . "/img/";
+        $upload_dir = __DIR__ . "/img/product/"; // 改為 product 子目錄
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
 
-        // 遍歷每一個上傳的圖片
         for ($i = 0; $i < count($_FILES["photo"]["name"]); $i++) {
             $file = $_FILES["photo"];
-            $ext = pathinfo($file["name"][$i], PATHINFO_EXTENSION);
-            $filename = time() . "_" . $i . "." . $ext;
+            $filename = 'product_' . $product_id . '_' . time() . '_' . $i . '.jpg';
 
-            // 檢查圖片是否成功上傳
             if ($file["error"][$i] === 0) {
                 if (move_uploaded_file($file["tmp_name"][$i], $upload_dir . $filename)) {
-                    // 每張圖片插入資料庫
                     $sql = "INSERT INTO product_image (product_id, name, imgUrl, isMain) VALUES (?, ?, ?, ?)";
                     $stmt = $conn->prepare($sql);
+                    $isMain = ($i === 0) ? 1 : 0;
 
-                    // 設定第一張圖片為主圖，其他圖片為副圖
-                    $isMain = ($i === 0) ? 1 : 0; // 如果是第一張圖片，設為主圖
-
-                    $stmt->bind_param("isss", $product_id, $name, $filename, $isMain);
-
+                    $stmt->bind_param("issi", $product_id, $name, $filename, $isMain);
                     if (!$stmt->execute()) {
-                        throw new Exception("圖片資料新增失敗");
+                        throw new Exception("圖片資料儲存失敗");
                     }
                 } else {
-                    throw new Exception("圖片上傳失敗");
+                    throw new Exception("圖片上傳失敗，請確認資料夾權限設定");
                 }
             }
         }
     }
-
-
-
-
-
 
     // 提交交易
     $conn->commit();
