@@ -27,7 +27,7 @@ if (isset($_POST['submit'])) {
 
     if (isset($_FILES['image']) && count($_FILES['image']['name']) > 0) {
         // 設定檔案的儲存目錄
-        $upload_dir = 'img/rent_item/';
+        $upload_dir = 'uploads/';
 
         // 檢查目錄是否存在，若無則創建
         if (!is_dir($upload_dir)) {
@@ -435,7 +435,7 @@ if (isset($_GET['id'])) {
                         <div class="d-flex flex-column">
                             <div class="d-flex bg-light p-2 mb-2">
                                 <?php if ($product): ?>
-                                    <form method="post" action="edit.php" enctype="multipart/form-data">
+                                    <form method="post" action="rent_edit.php" enctype="multipart/form-data">
                                         <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                                         <input type="hidden" name="page" value="<?php echo $page; ?>">
                                         <div class="mb-3">

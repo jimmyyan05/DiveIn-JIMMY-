@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
         // 處理圖片上傳
         if (isset($_FILES['image']) && count($_FILES['image']['name']) > 0) {
             // 設定檔案的儲存目錄
-            $upload_dir = 'img/rent_item/';
+            $upload_dir = 'uploads/';
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0777, true); // 如果沒有目錄則創建
             }
@@ -418,7 +418,7 @@ if (isset($_POST['submit'])) {
 
                         <div class="d-flex flex-column">
                             <div class="d-flex bg-light p-2 mb-2">
-                                <form method="post" action="add.php" enctype="multipart/form-data">
+                                <form method="post" action="rent_add.php" enctype="multipart/form-data">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">產品名稱</label>
                                         <input type="text" class="form-control" id="name" name="name" required>

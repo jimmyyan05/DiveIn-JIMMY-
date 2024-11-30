@@ -7,6 +7,7 @@ $limit = 5;
 
 // 當前頁碼
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = max($page, 1); // 確保頁碼最小值為 1
 $start = ($page - 1) * $limit;
 
 // 設定排序字段和順序
@@ -21,50 +22,117 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 // 根據篩選條件獲取總記錄數
 $filter_query = "";
 if ($filter === 'active') {
-    $filter_query = "AND (end_date IS NULL OR end_date > NOW())";
+    $filter_query = "AND (ri.end_date IS NULL OR ri.end_date > NOW())";
 } elseif ($filter === 'expired') {
-    $filter_query = "AND (end_date IS NOT NULL AND end_date <= NOW())";
+    $filter_query = "AND (ri.end_date IS NOT NULL AND ri.end_date <= NOW())";
 } elseif ($filter === 'permanent') {
-    $filter_query = "AND end_date IS NULL";
+    $filter_query = "AND ri.end_date IS NULL";
 }
 
+// 獲取分類篩選條件
+$category_filter = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+$category_query = $category_filter > 0 ? "AND rcb.id = :category_id" : "";
+
+// 取得搜尋條件
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$search_query = '';
+if ($search) {
+    $search_query = "AND LOWER(ri.name) LIKE LOWER(:search)";     // 讓搜尋不區分大小寫，並且支持模糊查詢
+}
+
+// 查詢所有大分類名稱 (用於篩選bar)
+$sql_categories = "SELECT id, name FROM rent_category_big";
+$stmt = $pdo->prepare($sql_categories);
+$stmt->execute();
+
+// 檢查是否成功取得分類數據
+$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 如果 $categories 是 null 或空數組，初始化為空陣列
+if ($categories === false) {
+    $categories = [];
+}
 
 
 try {
     // 計算總記錄數
-    $sql = "SELECT COUNT(*) FROM rent_item WHERE is_deleted = 0 $filter_query";
-    $stmt = $pdo->prepare($sql);
+    $sql_count = "
+       SELECT COUNT(*)
+       FROM rent_item AS ri
+       LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
+       LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
+       WHERE ri.is_deleted = 0 $filter_query $category_query $search_query
+    ";
+    $stmt = $pdo->prepare($sql_count);
+    if ($category_filter > 0) {
+        $stmt->bindParam(':category_id', $category_filter, PDO::PARAM_INT);
+    }
+    if ($search) {
+        $search_param = "%$search%";  // 模糊搜尋
+        $stmt->bindParam(':search', $search_param, PDO::PARAM_STR);
+    }
     $stmt->execute();
     $total_results = $stmt->fetchColumn();
     $total_pages = ceil($total_results / $limit);
 
-    // 根據篩選條件獲取資料
-    $sql = "SELECT * FROM rent_item WHERE is_deleted = 0 $filter_query ORDER BY $sort_column $sort_order LIMIT :start, :limit";
+    // 查詢資料
+    $sql = "
+    SELECT 
+    ri.*, 
+    rcs.name AS small_category_name, 
+    rcb.name AS big_category_name
+    FROM rent_item AS ri
+    LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
+    LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
+    WHERE ri.is_deleted = 0 $filter_query $category_query $search_query
+    ORDER BY $sort_column $sort_order
+    LIMIT :start, :limit
+    ";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':start', $start, PDO::PARAM_INT);
     $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+
+    if ($category_filter > 0) {
+        $stmt->bindParam(':category_id', $category_filter, PDO::PARAM_INT);
+    }
+
+    if ($search) {
+        $stmt->bindParam(':search', $search_param, PDO::PARAM_STR);
+    }
+
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    /// 查詢所有產品及其主圖片
-    $sql = "SELECT ri.id AS rent_item_id, ri.name, ri.price, ri.start_date, ri.end_date, 
+
+    // 定金計算
+    foreach ($products as $product) {
+        $calculated_rent = $product['price'] * 0.6;
+        $update_sql = "UPDATE rent_item SET deposit = :deposit WHERE id = :id";
+        $update_stmt = $pdo->prepare($update_sql);
+        $update_stmt->bindParam(':deposit', $calculated_rent, PDO::PARAM_STR);
+        $update_stmt->bindParam(':id', $product['id'], PDO::PARAM_INT);
+        $update_stmt->execute();
+
+        /// 查詢所有產品及其主圖片
+        $sql = "SELECT ri.id AS rent_item_id, ri.name, ri.price, ri.start_date, ri.end_date, 
     IFNULL(ri_img.img_url, '') AS main_img_url
 FROM rent_item ri
 LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 1";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
 
-    // 結果儲存到陣列
-    $products_with_images = [];
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $products_with_images[$row['rent_item_id']] = [
-            'name' => $row['name'],
-            'price' => $row['price'],
-            'start_date' => $row['start_date'],
-            'end_date' => $row['end_date'],
-            'main_img_url' => $row['main_img_url'] ? $row['main_img_url'] : null
-        ];
+        // 結果儲存到陣列
+        $products_with_images = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $products_with_images[$row['rent_item_id']] = [
+                'name' => $row['name'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'main_img_url' => $row['main_img_url'] ? $row['main_img_url'] : null
+            ];
+        }
     }
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());
@@ -119,11 +187,11 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
 
     <style>
         .column-id {
-            width: 100px;
+            width: 80px;
         }
 
         .column-image {
-            width: 200px;
+            width: 180px;
         }
 
         .column-name {
@@ -131,15 +199,27 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
         }
 
         .column-price {
-            width: 180px;
+            width: 140px;
+        }
+
+        .column-deposit {
+            width: 140px;
+        }
+
+        .column-description {
+            width: 250px;
         }
 
         .column-start {
-            width: 230px;
+            width: 150px;
         }
 
         .column-end {
-            width: 230px;
+            width: 150px;
+        }
+
+        .column-date-time {
+            text-align: center;
         }
 
         .column-action {
@@ -157,8 +237,8 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
             margin-left: 5px;
         }
 
-        .w120px {
-            width: 120px;
+        .w200px {
+            width: 200px;
             padding-top: 0;
             padding-bottom: 0;
             line-height: 1;
@@ -402,15 +482,29 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">租賃商品列表</h1>
-                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                        For more information about DataTables, please visit the <a target="_blank"
-                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- 顯示分類Bar -->
+                    <div class="container mt-4">
+                        <div class="category-nav mb-4">
+                            <button class="btn btn-outline-primary <?php echo $category_filter == 0 ? 'active' : ''; ?>"
+                                onclick="window.location.href='rent_items.php?category=0&sort_by=<?php echo $sort_column; ?>&sort_order=<?php echo $sort_order; ?>'">所有分類</button>
+                            <?php foreach ($categories as $category): ?>
+                                <button class="btn btn-outline-primary <?php echo $category_filter == $category['id'] ? 'active' : ''; ?>"
+                                    onclick="window.location.href='rent_items.php?category=<?php echo $category['id']; ?>'">
+                                    <?php echo $category['name']; ?>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
 
                     <!-- DataTales -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex justify-content-between">
                             <!-- 新增租賃商品 -->
                             <a href="rent_add.php" class="btn btn-warning mb-3"><i class="fa-solid fa-plus"></i> 新增租賃商品</a>
+                            <!-- 刪除租賃商品 -->
+                            <a href="rent_deleted_items.php" class="btn btn-secondary mb-3 ms-3"><i class="fa-solid fa-trash"></i> 回收桶</a>
                             <!-- 查詢租賃商品 -->
                             <form class="form-inline ml-auto my-2 my-md-0 navbar-search" method="get" action="rent_query.php">
                                 <div class="input-group">
@@ -423,34 +517,22 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                     </div>
                                 </div>
                             </form>
-
-
                         </div>
-                        <div class="d-flex justify-content-end">
-                            <!-- 分頁 -->
-                            <nav class="me-2" style="margin-right:20px;">
-                                <ul class="pagination justify-content-center">
-                                    <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
-                                        <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                                            <a class="page-link" href="rent_items.php?page=<?= $i; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= $filter; ?>"><?= $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
-                                </ul>
-                            </nav>
-                            <select id="filter" class="form-select w120px" onchange="location = this.value;">
-                                <option value="?filter=all&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'all' ? 'selected' : '' ?>>所有產品</option>
-                                <option value="?filter=active&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'active' ? 'selected' : '' ?>>上架中</option>
-                                <option value="?filter=expired&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'expired' ? 'selected' : '' ?>>已下架</option>
-                                <option value="?filter=permanent&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'permanent' ? 'selected' : '' ?>>永久上架</option>
+
+                        <div class="d-flex justify-content-end m-2">
+                            <!-- 上架狀態篩選 -->
+                            <select id="filter" class="form-select w200px me-3" onchange="location = this.value;">
+                                <option value="?filter=all&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'all' ? 'selected' : '' ?>>所有產品</option>
+                                <option value="?filter=active&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'active' ? 'selected' : '' ?>>上架中</option>
+                                <option value="?filter=expired&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'expired' ? 'selected' : '' ?>>已下架</option>
+                                <option value="?filter=permanent&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'permanent' ? 'selected' : '' ?>>永久上架</option>
                             </select>
-
-
                         </div>
 
 
                         <div class="d-flex flex-column ">
                             <div class="d-flex justify-content-start align-items-center mb-3 ms-3 text-black-50">
-                                <p class="m-0">共有<strong><?= $total_results; ?></strong>商品</p>
+                                <p class="m-0">共有<strong><?= $total_results; ?></strong>件商品</p>
                                 <p class="m-0">
                                     <?php
                                     switch ($filter) {
@@ -474,20 +556,24 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                         </div>
                         <div class="d-flex flex-column ">
                             <div class="d-flex bg-light p-2 mb-2">
-                                <div class="p-2 column-id sortable" onclick="window.location.href='?filter=<?= $filter; ?>&sort_by=id&sort_order=<?= $next_sort_order; ?>'">產品ID<?php if ($sort_column === 'id') : ?>
-                                    <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
-                                <?php endif; ?>
+                                <div class="p-2 column-id sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=id&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
+                                    編號
+                                    <?php if ($sort_column === 'id') : ?>
+                                        <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="p-2 column-image">圖片</div>
+                                <div class="p-2 column-image">產品圖片</div>
                                 <div class="p-2 column-name">產品名稱</div>
                                 <div class="p-2 column-price">價格</div>
-                                <div class="p-2 column-start sortable" onclick="window.location.href='?filter=<?= $filter; ?>&sort_by=start_date&sort_order=<?= $next_sort_order; ?>'">
+                                <div class="p-2 column-deposit">定金</div>
+                                <div class="p-2 column-description">產品描述</div>
+                                <div class="p-2 column-start sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=start_date&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
                                     上架時間
                                     <?php if ($sort_column === 'start_date') : ?>
                                         <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
                                     <?php endif; ?>
                                 </div>
-                                <div class="p-2 column-end sortable" onclick="window.location.href='?filter=<?= $filter; ?>&sort_by=end_date&sort_order=<?= $next_sort_order; ?>'">
+                                <div class="p-2 column-end sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=end_date&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
                                     下架時間
                                     <?php if ($sort_column === 'end_date') : ?>
                                         <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
@@ -508,8 +594,26 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                     </div>
                                     <div class="p-2 column-name d-flex align-items-center"><?= $product['name']; ?></div>
                                     <div class="p-2 column-price d-flex align-items-center"><?= number_format($product['price'], 0); ?> 元</div>
-                                    <div class="p-2 column-start d-flex align-items-center"><?= $product['start_date']; ?></div>
-                                    <div class="p-2 column-end d-flex align-items-center"><?= $product['end_date']; ?></div>
+                                    <div class="p-2 column-deposit d-flex align-items-center"><?= number_format($product['price'] * 0.6, 0); ?> 元</div>
+                                    <div class="p-2 column-description d-flex align-items-center"><?= htmlspecialchars($product['description']); ?></div>
+                                    <div class="p-2 column-start d-flex align-items-center column-date-time">
+                                        <?php
+                                        if ($product['start_date']) {
+                                            echo substr($product['start_date'], 0, 10) . "<br>" . substr($product['start_date'], 11);
+                                        } else {
+                                            echo "未指定日期";
+                                        }
+                                        ?>
+                                    </div>
+                                    <div class="p-2 column-end d-flex align-items-center column-date-time">
+                                        <?php
+                                        if ($product['end_date']) {
+                                            echo substr($product['end_date'], 0, 10) . "<br>" . substr($product['end_date'], 11);
+                                        } else {
+                                            echo "";
+                                        }
+                                        ?>
+                                    </div>
                                     <div class="p-2 column-action d-flex justify-content-center align-items-center">
                                         <a href="rent_edit.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-primary btn-sm custom-btn"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <a href="rent_delete.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-danger btn-sm custom-btn" onclick="return confirm('確定要刪除這個項目嗎？');"><i class="fa-solid fa-xmark"></i></a>
@@ -518,9 +622,18 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                             <?php endforeach; ?>
                         </div>
                     </div>
-
                 </div>
                 <!-- /.container-fluid -->
+                <!-- 分頁 -->
+                <nav class="me-2" style="margin-right:20px;">
+                    <ul class="pagination justify-content-center">
+                        <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                                <a class="page-link" href="rent_items.php?page=<?= $i; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= $filter; ?>"><?= $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+                    </ul>
+                </nav>
 
 
             </div>
