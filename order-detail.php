@@ -1,13 +1,16 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require_once("../db_project_connect.php");
 
 $id = $_GET["id"] ?? null;
 if (!$id) {
-    header("Location: orders.php");
+    header("Location: order.php");
     exit;
 }
 
-// 獲取主訂單信息
+//主訂單資訊查詢
 $sql = "SELECT 
     orders.*,
     users.name AS user_name,
@@ -36,7 +39,7 @@ if (!$order) {
     exit;
 }
 
-// 獲取商品訂單項目
+// 商品訂單項目
 $productItems = [];
 if ($order['product_order_id']) {
     $sql = "SELECT 
@@ -52,8 +55,7 @@ if ($order['product_order_id']) {
     $stmt->execute();
     $productItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
-
-// 獲取租借訂單項目
+// 租借訂單項目
 $rentalItems = [];
 if ($order['rental_order_id']) {
     $sql = "SELECT 
@@ -70,7 +72,16 @@ if ($order['rental_order_id']) {
     $rentalItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-// 獲取活動訂單項目
+// 租借訂單總計計算
+$rental_total = 0;
+if (!empty($rentalItems)) {
+    foreach ($rentalItems as $item) {
+        $days = ceil((strtotime($item["end_date"]) - strtotime($item["start_date"])) / 86400);
+        $rental_total += $item["daily_rate"] * $days;
+    }
+}
+
+// 活動訂單項目
 $activityItems = [];
 if ($order['activity_order_id']) {
     $sql = "SELECT 
@@ -87,22 +98,31 @@ if ($order['activity_order_id']) {
     $activityItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+$payment_methods = [
+    'credit_card' => '信用卡',
+    'paypal' => 'PayPal',
+    'transfer' => '銀行轉帳'
+];
+
 function getStatusClass($status)
 {
     switch ($status) {
+        case '處理中':
         case 'processing':
             return 'bg-info';
+        case '已完成':
         case 'completed':
             return 'bg-success';
+        case '已取消':
         case 'cancelled':
             return 'bg-danger';
+        case '待處理':
         case 'pending':
             return 'bg-warning';
         default:
             return 'bg-secondary';
     }
-}
-?>
+} ?>
 <!DOCTYPE html>
 <html lang="zh-TW">
 
@@ -116,20 +136,18 @@ function getStatusClass($status)
 <body id="page-top">
     <div id="wrapper">
         <?php include("./sidebar.php") ?>
-
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("./topbar.php") ?>
-
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <a href="order.php" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left"></i> 返回
                         </a>
-                        <h2 class="mb-0">訂單詳情 #<?= $order["id"] ?></h2>
+                        <h2 class="mb-0">訂單編號 #<?= $order["id"] ?></h2>
                     </div>
 
-                    <!-- 訂單基本信息 -->
+                    <!-- 訂單基本資訊 -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="row">
@@ -175,12 +193,12 @@ function getStatusClass($status)
                                     </div>
                                     <div class="mb-2">
                                         <small class="text-muted">付款方式:</small>
-                                        <div><?= $order["payment_method"] ?></div>
+                                        <div><?= $payment_methods[$order["payment_method"]] ?? $order["payment_method"] ?></div>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <h6>訂單狀態</h6>
-                                    <?php if ($order["product_order_id"]): ?>
+                                    <?php if ($order["product_status"]): ?>
                                         <div class="mb-2">
                                             <small class="text-muted">商品訂單:</small>
                                             <div>
@@ -190,7 +208,7 @@ function getStatusClass($status)
                                             </div>
                                         </div>
                                     <?php endif; ?>
-                                    <?php if ($order["rental_order_id"]): ?>
+                                    <?php if ($order["rental_status"]): ?>
                                         <div class="mb-2">
                                             <small class="text-muted">租借訂單:</small>
                                             <div>
@@ -200,7 +218,7 @@ function getStatusClass($status)
                                             </div>
                                         </div>
                                     <?php endif; ?>
-                                    <?php if ($order["activity_order_id"]): ?>
+                                    <?php if ($order["activity_status"]): ?>
                                         <div class="mb-2">
                                             <small class="text-muted">活動訂單:</small>
                                             <div>
@@ -245,9 +263,8 @@ function getStatusClass($status)
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3" class="text-end">商品總計：</td>
-                                                <td class="text-end">NT$ <?= number_format(array_sum(array_map(function ($item) {
-                                                                                return $item["unit_price"] * $item["quantity"];
-                                                                            }, $productItems))) ?></td>
+                                                <td class="text-end">NT$ <?= number_format(array_sum(array_map(fn($item) =>
+                                                                            $item["unit_price"] * $item["quantity"], $productItems))) ?></td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -292,9 +309,9 @@ function getStatusClass($status)
                                             <?php endforeach; ?>
                                         </tbody>
                                         <tfoot>
-                                            <tr>
-                                                <td colspan="4" class="text-end">租賃總計：</td>
-                                                <td class="text-end">NT$ <?= number_format($order["rental_subtotal"] ?? 0) ?></td>
+                                            <tr> <?php $deposit_total = array_sum(array_column($rentalItems, 'deposit')); ?>
+                                                <td colspan="4" class="text-end">總金額：</td>
+                                                <td class="text-end">NT$ <?= number_format($rental_total + $deposit_total) ?></td>
                                             </tr>
                                             <tr>
                                                 <td colspan="4" class="text-end">押金總計：</td>
@@ -337,9 +354,8 @@ function getStatusClass($status)
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3" class="text-end">活動總計：</td>
-                                                <td class="text-end">NT$ <?= number_format(array_sum(array_map(function ($item) {
-                                                                                return $item["activity_price"] * $item["quantity"];
-                                                                            }, $activityItems))) ?></td>
+                                                <td class="text-end">NT$ <?= number_format(array_sum(array_map(fn($item) =>
+                                                                            $item["activity_price"] * $item["quantity"], $activityItems))) ?></td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -347,3 +363,12 @@ function getStatusClass($status)
                             </div>
                         </div>
                     <?php endif; ?>
+                </div>
+            </div>
+            <?php include("./footer.php") ?>
+        </div>
+    </div>
+    <?php include("./js.php") ?>
+</body>
+
+</html>
