@@ -1,5 +1,5 @@
 <?php
-require_once("../articleConnect.php");
+require_once("../db_project_connect.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 接收表單數據
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isDeleted = 0;      // 默認值為 0
 
     // 處理文章圖片上傳
-    $uploadDir = 'articleImgUpload/';
+    $uploadDir = 'img/article/'; // 修改圖片儲存的目錄
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true); // 如果目錄不存在則創建
     }
