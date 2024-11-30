@@ -16,6 +16,8 @@ $per_page = 5;
 $p = isset($_GET["p"]) ? (int)$_GET["p"] : 1;
 $start_item = ($p - 1) * $per_page;
 
+
+
 // 處理排序參數
 if (isset($_GET["order"])) {
     $order = (int)$_GET["order"];
@@ -38,6 +40,17 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
     // 如果搜尋欄是空的，重新導向到首頁
     header("location:teacher.php");
     exit();
+}
+$searchWord="";
+
+//如果沒有p，跳轉至第一頁
+if(!isset($_GET["p"])){
+    if(isset($_GET["search"])){
+    header("location:teacher.php?p=1&search=".$_GET["search"]);
+    }else{
+        header("location:teacher.php?p=1");
+
+    }
 }
 
 // 獲取總數（包括搜尋條件）

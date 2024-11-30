@@ -16,8 +16,8 @@ $level=$_POST["level"];
 // $location=$_POST["teacherLocation"];
 
 
-$sql1="INSERT INTO teacher (name, teacherCategorySmall_id, signUpDate, signUpEndDate, startDate, endDate, price, description)
-VALUES('$name', '$categorySmall', '$signDate', '$signEndDate', '$startDate', '$endDate', '$price', '$article')
+$sql1="INSERT INTO 	activity_teacher (name, email, sex, level,years)
+VALUES('$name', '$email', '$sex', '$level','$years')
 ";
 if($conn->query($sql1) === TRUE){
     $last_teacher_id=$conn->insert_id;
@@ -29,13 +29,13 @@ if($conn->query($sql1) === TRUE){
 
 
 
-$teacherImagName=$_POST["teacherName"]."教練";
+$teacherImagName=$name."教練照片";
 
 
 if($_FILES["myFile"]["error"]==0){
     $imageName=time();
     $extension=pathinfo($_FILES["myFile"]["name"],PATHINFO_EXTENSION);
-    $imageName=$imageName.".$extension";
+    $teacherImageName=$imageName.".$extension";
     if(move_uploaded_file($_FILES["myFile"]["tmp_name"],"img/teacher/$imageName"))
     {
         echo "Upload success!<br>";
@@ -48,7 +48,7 @@ if($_FILES["myFile"]["error"]==0){
 }
 
 $now=date('Y-m-d H:i:s');
-$sql2="INSERT INTO teacher_image (teacher_id, name, imgUrl, isMain)VALUES('$last_teacher_id', '$teacherImagName','$imageName',1) ";
+$sql2="INSERT INTO activity_teacher_image (teacher_id, name,imageUrl)VALUES('$last_teacher_id', '$teacherImagName','$imageName') ";
 if($conn->query($sql2) === TRUE){
     $last_id=$conn->insert_id;
     echo "新資料輸入成功，id為$last_id";

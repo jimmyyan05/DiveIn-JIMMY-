@@ -1,6 +1,28 @@
 <?php
 require_once("../db_project_connect.php");
 
+// $sql = "SELECT * FROM activity_category_big";
+$sql = "SELECT 
+activity_category_big.id AS big_id,
+activity_category_big.name AS big_name,
+activity_category_small.id AS small_id,
+activity_category_small.name AS small_name 
+FROM activity_category_big
+LEFT JOIN activity_category_small ON activity_category_big.id = activity_category_small.activityCategoryBig_id	
+";
+
+$result = $conn->query($sql);
+$bigCates = $result->fetch_all(MYSQLI_ASSOC);
+
+$categories = [];
+foreach ($bigCates as $cate) {
+    $categories[$cate['big_id']]['big_name'] = $cate['big_name'];
+    $categories[$cate['big_id']]['small_categories'][] = [
+        'small_id' => $cate['small_id'],
+        'small_name' => $cate['small_name'],
+    ];
+}
+
 
 ?>
 
@@ -18,26 +40,6 @@ require_once("../db_project_connect.php");
     <meta name="author" content="">
 
     <title>類別－服務項目</title>
-
-    <!-- Custom fonts for this template -->
-    <!-- <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet"> -->
-
-    <!-- Custom styles for this template -->
-    <!-- <link href="css/sb-admin-2.min.css" rel="stylesheet"> -->
-
-    <!-- Custom styles for this page -->
-    <!-- <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
-
-    <!-- fontawesome -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
-
-    <!-- bootstrap5 -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>
@@ -63,7 +65,7 @@ require_once("../db_project_connect.php");
 
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
-                    
+
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -81,21 +83,41 @@ require_once("../db_project_connect.php");
 
                     <!-- 服務類別 -->
                     <div class="row justify-content-start gx-2">
-                        <div class="col-4 mt-2 ">
-                            <button class="btn btn-info w-100">大類別</button>
-                        </div>
-                        <div class="col-4 mt-2 ">
-                            <button class="btn btn-info w-100">大類別</button>
-                        </div>
-                        <div class="col-4 mt-2 ">
-                            <button class="btn btn-info w-100">大類別</button>
-                        </div>
-                        <div class="col-4 mt-2 ">
-                            <button class="btn btn-info w-100">大類別</button>
-                        </div>
-                        <div class="col-4 mt-2 ">
-                            <button class="btn btn-info w-100">大類別</button>
-                        </div>
+                        <?php foreach ($categories as $big_id => $category): ?>
+                            <div class="col-4 mt-2">
+                                <!-- 大分類按鈕 -->
+                                <button class="btn btn-info w-100 d-flex justify-content-center align-items-center"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseExample<?= $big_id ?>"
+                                    aria-expanded="false"
+                                    aria-controls="collapseExample<?= $big_id ?>">
+                                    <h3 class="align-middle m-0"><?= $category["big_name"] ?></h3>
+                                </button>
+
+                                <!-- 小分類列表 -->
+                                <div class="collapse" id="collapseExample<?= $big_id ?>">
+                                    <div class="bg-white hovers border border-info">
+                                        <?php foreach ($category['small_categories'] as $small_category): ?>
+                                            <div class="d-flex justify-content-between p-1 border-bottom boder-info">
+                                                <h4 class="text-black m-0 p-1"><?= $small_category["small_name"] ?></h4>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-info"><i class="fa-solid fa-pen-to-square fa-fw"></i></button>
+                                                    <button class="btn btn-danger"><i class="fa-solid fa-trash fa-fw"></i></button>
+                                                </div>
+                                            </div>
+
+                                        <?php endforeach; ?>
+                                        <div class="bg-white">
+                                            <button class="plus-btn btn btn-info w-100"><i class="fa-solid fa-plus fa-fw"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+                        <?php endforeach; ?>
+                        <!-- 新建大分類 -->
+                        
                     </div>
 
 
