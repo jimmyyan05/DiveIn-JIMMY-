@@ -185,34 +185,34 @@ require_once("../db_project_connect.php");
 
     <!-- 活動的下拉式選單的JS -->
     <script>
-        const activityCategoryBig = document.querySelector("#activityCategoryBig");
-        const activityCategorySmall = document.querySelector("#activityCategorySmall");
-        const categories = <?= json_encode($avticityCategoryArr) ?>;
+        // const activityCategoryBig = document.querySelector("#activityCategoryBig");
+        // const activityCategorySmall = document.querySelector("#activityCategorySmall");
+        // const categories = <?= json_encode($avticityCategoryArr) ?>;
 
-        activityCategoryBig.addEventListener("change", function() {
-            const bigCategoryId = this.value; // 取得大分類的選擇值
-            activityCategorySmall.innerHTML = ""; // 清空小分類選單
+        // activityCategoryBig.addEventListener("change", function() {
+        //     const bigCategoryId = this.value; // 取得大分類的選擇值
+        //     activityCategorySmall.innerHTML = ""; // 清空小分類選單
 
-            if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
-                const smallCategories = categories[bigCategoryId]['children']; // 取得該大分類的子分類
-                activityCategorySmall.disabled = false; // 啟用小分類選單
+        //     if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
+        //         const smallCategories = categories[bigCategoryId]['children']; // 取得該大分類的子分類
+        //         activityCategorySmall.disabled = false; // 啟用小分類選單
 
-                // 為小分類選單新增選項
-                smallCategories.forEach(smallCategory => {
-                    const option = document.createElement('option');
-                    option.value = smallCategory['id'];
-                    option.textContent = smallCategory['name'];
-                    activityCategorySmall.appendChild(option);
-                });
-            } else {
-                // 如果沒有選擇大分類，禁用小分類選單並重設選項
-                activityCategorySmall.disabled = true;
-                const defaultOption = document.createElement('option');
-                defaultOption.value = '';
-                defaultOption.textContent = '請先選擇活動類型';
-                activityCategorySmall.appendChild(defaultOption);
-            }
-        });
+        //         // 為小分類選單新增選項
+        //         smallCategories.forEach(smallCategory => {
+        //             const option = document.createElement('option');
+        //             option.value = smallCategory['id'];
+        //             option.textContent = smallCategory['name'];
+        //             activityCategorySmall.appendChild(option);
+        //         });
+        //     } else {
+        //         // 如果沒有選擇大分類，禁用小分類選單並重設選項
+        //         activityCategorySmall.disabled = true;
+        //         const defaultOption = document.createElement('option');
+        //         defaultOption.value = '';
+        //         defaultOption.textContent = '請先選擇活動類型';
+        //         activityCategorySmall.appendChild(defaultOption);
+        //     }
+        // });
         // 上傳圖片預覽
         const fileInput = document.querySelector("#fileInput");
         fileInput.addEventListener("change", function() {

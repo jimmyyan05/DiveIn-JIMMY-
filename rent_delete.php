@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
         $images = $stmt_image->fetchAll(PDO::FETCH_ASSOC);
 
         // 設定上傳資料夾和備份資料夾的路徑
-        $upload_folder = 'img/rent_item/';
+        $upload_folder = 'uploads/';
         $backup_folder = 'deleted_uploads/';
 
         // 檢查 'uploads' 資料夾是否存在，若不存在則顯示錯誤
