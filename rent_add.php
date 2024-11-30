@@ -418,7 +418,7 @@ if (isset($_POST['submit'])) {
 
                         <div class="d-flex flex-column">
                             <div class="d-flex bg-light p-2 mb-2">
-                                <form method="post" action="add.php" enctype="multipart/form-data">
+                                <form method="post" action="rent_add.php" enctype="multipart/form-data">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">產品名稱</label>
                                         <input type="text" class="form-control" id="name" name="name" required>

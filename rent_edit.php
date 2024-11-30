@@ -435,7 +435,7 @@ if (isset($_GET['id'])) {
                         <div class="d-flex flex-column">
                             <div class="d-flex bg-light p-2 mb-2">
                                 <?php if ($product): ?>
-                                    <form method="post" action="edit.php" enctype="multipart/form-data">
+                                    <form method="post" action="rent_edit.php" enctype="multipart/form-data">
                                         <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                                         <input type="hidden" name="page" value="<?php echo $page; ?>">
                                         <div class="mb-3">

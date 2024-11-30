@@ -4,7 +4,7 @@ include 'PDO_connect.php';
 
 // 獲取查詢參數
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
+$filter = isset($_GET['filter']) ? $_GET['filter'] : ''; // 搜尋過濾條件
 $limit = 10; // 每頁顯示的項目數量
 $offset = ($page - 1) * $limit;
 
@@ -14,30 +14,24 @@ $params = [];
 
 // 如果有過濾條件，加入查詢條件
 if (!empty($filter)) {
-    $sql .= " AND name LIKE :filter";
+    $sql .= " AND name LIKE :filter"; // 模糊搜尋
     $params[':filter'] = '%' . $filter . '%';
 }
-// 準備查詢
-$stmt = $pdo->prepare($sql);
-if (!empty($filter)) {
-    $stmt->bindValue(':filter', '%' . $filter . '%', PDO::PARAM_STR);  // 綁定查詢條件
-}
-$stmt->execute();
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 添加排序和分頁
 $sql .= " ORDER BY start_date DESC LIMIT :limit OFFSET :offset";
 $params[':limit'] = $limit;
 $params[':offset'] = $offset;
 
+// 準備查詢
 $stmt = $pdo->prepare($sql);
 
 // 綁定參數
 foreach ($params as $key => $value) {
     if ($key === ':limit' || $key === ':offset') {
-        $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        $stmt->bindValue($key, $value, PDO::PARAM_INT); // LIMIT 和 OFFSET 使用整數
     } else {
-        $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        $stmt->bindValue($key, $value, PDO::PARAM_STR); // 其他條件使用字串
     }
 }
 
@@ -47,7 +41,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // 計算總項目數量以支援分頁
 $countSql = "SELECT COUNT(*) FROM rent_item WHERE is_deleted = 0";
 if (!empty($filter)) {
-    $countSql .= " AND name LIKE :filter";
+    $countSql .= " AND name LIKE :filter"; // 同樣的過濾條件用於計算總數
 }
 $countStmt = $pdo->prepare($countSql);
 
@@ -59,6 +53,7 @@ $countStmt->execute();
 $totalItems = $countStmt->fetchColumn();
 $totalPages = ceil($totalItems / $limit);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
