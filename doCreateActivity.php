@@ -1,5 +1,5 @@
 <?php
-require_once("../create/db_project_connect.php");
+require_once("../db_project_connect.php");
 
 if(!isset($_POST["activityName"])){
     exit("請循正常管道進入此頁");

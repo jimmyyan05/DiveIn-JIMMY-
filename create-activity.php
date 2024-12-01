@@ -1,5 +1,5 @@
 <?php
-require_once("../create/db_project_connect.php");
+require_once("../db_project_connect.php");
 
 $avticityCateSql = "SELECT 
 activity_category_big.id AS big_id,

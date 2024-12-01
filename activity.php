@@ -54,6 +54,8 @@ if (isset($_GET["search"])) {
                 $whereClause = "ORDER BY startDate DESC";
                 break;
         }
+    }else{
+        $whereClause = "ORDER BY id ASC";
     }
     if (!isset($_GET["p"])) {
         header("location:activity.php?p=1&search=" . $_GET["search"]);
@@ -99,6 +101,8 @@ if (isset($_GET["search"])) {
                 $whereClause = "ORDER BY startDate DESC";
                 break;
         }
+    }else{
+        $whereClause = "ORDER BY id ASC";
     }
     $sqlAll = "SELECT * FROM activity WHERE isDeleted=0";
     $resultAll = $conn->query($sqlAll);
@@ -572,7 +576,7 @@ if (isset($_GET["search"])) {
         <?php foreach ($activitys as $activity): ?>
             const activityCategoryBig<?= $activity["id"] ?> = document.querySelector("#activityCategoryBig<?= $activity["id"] ?>");
             const activityCategorySmall<?= $activity["id"] ?> = document.querySelector("#activityCategorySmall<?= $activity["id"] ?>");
-            activityCategoryBig<?= $activity["id"] ?>.addEventListener("change", function() {
+            activityCategoryBig<?= $activity["id"] ?>.addEventListener("click", function() {
                 const bigCategoryId = this.value;
                 activityCategorySmall<?= $activity["id"] ?>.innerHTML = "";
                 if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
