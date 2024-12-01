@@ -18,4 +18,4 @@ if($delete == 0){
     }
 }
 
-header("location: teacher.php");
+header("location: activity.php");

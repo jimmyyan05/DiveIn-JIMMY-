@@ -16,4 +16,5 @@ if($delete == 0){
     }
 }
 
+
 header("location: teacher.php");

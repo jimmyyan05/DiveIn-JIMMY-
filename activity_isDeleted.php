@@ -137,7 +137,7 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                <form action="doReallyDelete.php" method="post">
+                                                <form action="doReallyDeleteActivity.php" method="post">
                                                     <input type="hidden" name="activityID" value="<?= $activity["id"] ?>">
                                                     <button type="submit" class="btn btn-danger" name="deleted" value="0">確認刪除</button>
                                                 </form>

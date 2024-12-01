@@ -20,6 +20,13 @@ while ($cates = $avticityResultcate->fetch_assoc()) {
         'name' => $cates['small_name']
     ];
 }
+$sqlTeachers = "SELECT id, name FROM activity_teacher";
+$resultTeachers = $conn->query($sqlTeachers);
+
+$teachers = [];
+if ($resultTeachers->num_rows > 0) {
+    $teachers = $resultTeachers->fetch_all(MYSQLI_ASSOC);
+}
 
 ?>
 
@@ -123,10 +130,24 @@ while ($cates = $avticityResultcate->fetch_assoc()) {
                                         <option value="1">選項 1</option>
                                     </select>
                                 </div> -->
-                            <div class="mb-2">
-                                <label for="" class="form-label">費用</label>
-                                <input type="number" class="form-control" name="activityPrice" placeholder="請輸入金額" min="1" step="1">
+                            <div class="row mb-2">
+                                <div class="col mb-2">
+                                    <label for="" class="form-label">費用</label>
+                                    <input type="number" class="form-control" name="activityPrice" placeholder="請輸入金額" min="1" step="1">
+                                </div>
+                                <div class="col">
+                                    <label for="" class="form-label">師資</label>
+                                    <select name="teacher" class="form-select">
+                                        <option value="">請選擇師資</option> <!-- 預設空選項 -->
+                                        <?php foreach ($teachers as $teacher): ?>
+                                            <option value="<?= htmlspecialchars($teacher['id']) ?>">
+                                                <?= htmlspecialchars($teacher['name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
+
                             <!-- </div> -->
 
                             <div class="row">
