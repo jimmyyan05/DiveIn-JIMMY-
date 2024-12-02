@@ -162,13 +162,13 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                     <thead>
                                         <tr>
                                             <th style="width: 6%;">編號</th>
-                                            <th style="width: 16%;">標題</th>
+                                            <th style="width: 15%;">標題</th>
                                             <th style="width: 15%;">文章圖片</th>
-                                            <th style="width: 37%;">內容</th>
-                                            <th style="width: 6%;">創建時間</th>
-                                            <th style="width: 6%;">更新時間</th>
-                                            <th style="width: 7%;">狀態</th>
-                                            <th style="width: 7%;">操作</th>
+                                            <th style="width: 30%;">內容</th>
+                                            <th style="width: 9%;">創建時間</th>
+                                            <th style="width: 9%;">更新時間</th>
+                                            <th style="width: 8%;">狀態</th>
+                                            <th style="width: 8%;">操作</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -213,7 +213,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                                             <a href="articleUpdatePage.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                                                 編輯
                                                             </a>
-                                                            <!-- 將刪除按鈕改為復原按鈕 -->
+                                                            <!-- 復原按鈕 -->
                                                             <a href="articleDoRestore.php?id=<?php echo $row['id']; ?>"
                                                                 class="btn btn-success btn-sm"
                                                                 onclick="return confirm('確定復原此文章？')">
