@@ -28,7 +28,7 @@ require_once("../db_project_connect.php");
 
             <div id="content">
                 <div class="container-fluid">
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 my-3">
                         <h2 class="mb-4">新增文章</h2>
                         <a href="articleList.php" class="btn bg-info text-white" style="height: 70%; line-height: 1.5;">
                             <i class="fa-solid fa-rotate-left"></i> 返回
@@ -71,14 +71,17 @@ require_once("../db_project_connect.php");
                         <div id="imageFields">
                             <div class="imageField mb-3">
                                 <label for="articleImage1" class="form-label">文章照片</label>
-                                <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg" required>
-                                <label for="isMain1" class="form-label">是否為主圖</label>
+                                <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg" required onchange="previewImage(event, this)">
+                                <div class="imagePreview" id="imagePreview1" style="display: none;">
+                                    <img src="" id="imagePreviewImg1" alt="圖片預覽" class="img-fluid" style="max-width: 150px; height: auto;">
+                                </div>
+                                <label for="isMain1" class="form-label my-2">是否為主圖</label>
                                 <select name="isMain[]" class="form-select">
                                     <option value="0">非主圖</option>
                                     <option value="1">主圖</option>
                                 </select>
                                 <!-- 取消新增圖片按鈕 -->
-                                <button type="button" class="btn btn-danger" onclick="removeImageField(this)">取消新增圖片</button>
+                                <button type="button" class="btn btn-danger my-2" onclick="removeImageField(this)">取消新增圖片</button>
                             </div>
                         </div>
 
@@ -99,6 +102,7 @@ require_once("../db_project_connect.php");
     <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
     <script>
         let imageIndex = 1; // 初始圖片欄位索引
 
@@ -109,7 +113,10 @@ require_once("../db_project_connect.php");
             imageField.classList.add('imageField', 'mb-3');
             imageField.innerHTML = `
             <label for="articleImage${imageIndex}" class="form-label">文章照片</label>
-            <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg" required>
+            <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg" required onchange="previewImage(event, this)">
+            <div class="imagePreview" id="imagePreview${imageIndex}" style="display: none;">
+                <img src="" id="imagePreviewImg${imageIndex}" alt="圖片預覽" class="img-fluid" style="max-width: 150px; height: auto;">
+            </div>
             <label for="isMain${imageIndex}" class="form-label">是否為主圖</label>
             <select name="isMain[]" class="form-select">
                 <option value="0">非主圖</option>
@@ -126,7 +133,29 @@ require_once("../db_project_connect.php");
             const imageField = button.closest('.imageField');
             imageField.remove();
         }
+
+        // 預覽圖片
+        function previewImage(event, input) {
+            const file = input.files[0];
+            const imagePreview = input.closest('.imageField').querySelector('.imagePreview');
+            const imagePreviewImg = imagePreview.querySelector('img');
+
+            // 檢查是否選擇了圖片
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    imagePreviewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        }
     </script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
