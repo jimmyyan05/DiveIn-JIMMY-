@@ -13,19 +13,42 @@ LEFT JOIN product p ON product_specification.product_id = p.id
 LEFT JOIN product_category_small pcs ON p.product_category_small_id = pcs.id
 LEFT JOIN product_category_big pcb ON pcs.product_category_big_id = pcb.id
 GROUP BY brand.id";
-
+// 獲取字母分類
+$letters = range('A', 'Z');
 // 如果有選擇字母過濾
 $selectedLetter = isset($_GET['letter']) ? $_GET['letter'] : '';
-
-if ($selectedLetter) {
+$selectedOther = isset($_GET['letter']) && $_GET['letter'] === 'Other'; // Check if "Other" is selected
+// 在處理字母篩選的部分進行修改
+if ($selectedOther) {
+    // 如果選擇了 Other，查詢不是 A-Z 開頭的品牌
     $sql = "SELECT 
         brand.*,
-        COUNT(DISTINCT product_specification.product_id) as product_count
+        COUNT(DISTINCT product_specification.product_id) as product_count,
+        COUNT(DISTINCT CASE WHEN p.status = '上架中' THEN product_specification.product_id END) as active_products,
+        GROUP_CONCAT(DISTINCT pcb.name) as categories
     FROM brand
     LEFT JOIN product_specification ON brand.id = product_specification.brand_id AND product_specification.isDeleted = 0
+    LEFT JOIN product p ON product_specification.product_id = p.id
+    LEFT JOIN product_category_small pcs ON p.product_category_small_id = pcs.id
+    LEFT JOIN product_category_big pcb ON pcs.product_category_big_id = pcb.id
+    WHERE brand.name NOT REGEXP '^[A-Za-z]'
+    GROUP BY brand.id";
+
+    $result = $conn->query($sql);
+} elseif ($selectedLetter) {
+    // 如果選擇了特定字母
+    $sql = "SELECT 
+        brand.*,
+        COUNT(DISTINCT product_specification.product_id) as product_count,
+        COUNT(DISTINCT CASE WHEN p.status = '上架中' THEN product_specification.product_id END) as active_products,
+        GROUP_CONCAT(DISTINCT pcb.name) as categories
+    FROM brand
+    LEFT JOIN product_specification ON brand.id = product_specification.brand_id AND product_specification.isDeleted = 0
+    LEFT JOIN product p ON product_specification.product_id = p.id
+    LEFT JOIN product_category_small pcs ON p.product_category_small_id = pcs.id
+    LEFT JOIN product_category_big pcb ON pcs.product_category_big_id = pcb.id
     WHERE brand.name LIKE ?
-    GROUP BY brand.id
-    ORDER BY brand.name ASC";
+    GROUP BY brand.id";
 
     $stmt = $conn->prepare($sql);
     $searchPattern = $selectedLetter . '%';
@@ -33,13 +56,12 @@ if ($selectedLetter) {
     $stmt->execute();
     $result = $stmt->get_result();
 } else {
+    // 默認顯示所有品牌
     $result = $conn->query($sql);
 }
 
 $brands = $result->fetch_all(MYSQLI_ASSOC);
 
-// 獲取字母分類
-$letters = range('A', 'Z');
 
 ?>
 
@@ -72,7 +94,13 @@ $letters = range('A', 'Z');
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("./topbar.php") ?>
-
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">品牌</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>品牌管理</h2>
@@ -91,6 +119,7 @@ $letters = range('A', 'Z');
                                     <?= $letter ?>
                                 </a>
                             <?php endforeach; ?>
+                            <a href="?letter=Other" class="btn btn-outline-primary <?= $selectedOther ? 'active' : '' ?>">Other</a>
                         </div>
                     </div>
 
@@ -113,13 +142,16 @@ $letters = range('A', 'Z');
                                                 <td>
                                                     <span data-bs-toggle="popover"
                                                         data-bs-content="
-          <div class='popover-info'>
-            <p>在售商品：<?= $brand['active_products'] ?> / <?= $brand['product_count'] ?></p>
-            <?php if ($brand['categories']): ?>
-            <p>商品類別：<?= $brand['categories'] ?></p>
-            <?php endif; ?>
-          </div>
-          ">
+                                                            <div class='popover-info'>
+                                                                <p>在售商品：<?= $brand['active_products'] ?> / <?= $brand['product_count'] ?></p>
+                                                                <?php if ($brand['categories']): ?>
+                                                                <p>商品類別：<?= $brand['categories'] ?></p>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <div>
+                                                                <img class='img-fluid' src='img/brand/<?= $brand['imgUrl'] ?>' alt='品牌圖片'>
+                                                            </div>
+                                                            ">
                                                         <?= $brand["name"] ?>
                                                     </span>
                                                 </td>

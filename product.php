@@ -86,6 +86,14 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                 <!-- Topbar -->
                 <?php include("./topbar.php") ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+                    </ol>
+                </nav>
+
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -254,15 +262,6 @@ $rows = $result->fetch_all(MYSQLI_ASSOC);
                 </div>
                 <!-- End of Main Content -->
 
-                <!-- Footer -->
-                <footer class="sticky-footer bg-white">
-                    <div class="container my-auto">
-                        <div class="copyright text-center my-auto">
-                            <span>Copyright &copy; Your Website 2020</span>
-                        </div>
-                    </div>
-                </footer>
-                <!-- End of Footer -->
 
             </div>
             <!-- End of Content Wrapper -->

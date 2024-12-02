@@ -52,20 +52,22 @@ require_once("../db_project_connect.php");
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
+                        <li class="breadcrumb-item"><a href="teacher.php">師資列表</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">新增師資</li>
+                    </ol>
+                </nav>
+
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">新增師資</h1>
-                    <!-- 麵包屑 -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
-                            <li class="breadcrumb-item"><a href="activity.php">師資列表</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">新增師資</li>
-                        </ol>
-                    </nav>
+                    
                     <a href="teacher.php" class="btn btn-info mb-3" title="返回師資列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <div class="container bg-white">
@@ -127,13 +129,13 @@ require_once("../db_project_connect.php");
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <!-- <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- End of Footer -->
 
         </div>

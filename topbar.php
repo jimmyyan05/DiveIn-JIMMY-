@@ -1,5 +1,12 @@
+<style>
+    /* 調整高度 */
+    .navbar {
+        height: 3.5rem !important;
+        background-color: #eaecf4 !important;
+    }
+</style>
 <!-- Topbar -->
-<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+<nav class="navbar navbar-expand navbar-light bg-white topbar static-top float-right ">
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">

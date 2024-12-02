@@ -54,6 +54,7 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
         <!-- Sidebar -->
         <?php include("./sidebar.php") ?>
         <!-- End of Sidebar -->
+
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
@@ -62,6 +63,13 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
                 <!-- Topbar -->
                 <?php include("./topbar.php") ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+                    </ol>
+                </nav>
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 

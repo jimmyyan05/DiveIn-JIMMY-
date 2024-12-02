@@ -1,6 +1,6 @@
 <?php
 require_once("../db_project_connect.php");
-
+session_start();
 $avticityCateSql = "SELECT 
 activity_category_big.id AS big_id,
 activity_category_big.name AS big_name,
@@ -71,20 +71,21 @@ if ($resultTeachers->num_rows > 0) {
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
+                 <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item"><a href="activity.php">服務列表</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">新增服務</li>
+                    </ol>
+                </nav>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">新增服務</h1>
-                    <!-- 麵包屑 -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
-                            <li class="breadcrumb-item"><a href="activity.php">服務列表</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">新增服務</li>
-                        </ol>
-                    </nav>
+                   
                     <a href="activity.php" class="btn btn-info mb-3" title="返回服務列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <div class="container bg-white">
@@ -153,53 +154,67 @@ if ($resultTeachers->num_rows > 0) {
                             <div class="row">
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">報名開始日</label>
-                                    <input type="date" class="form-control" name="activitySignDate">
+                                    <input type="date" class="form-control" name="activitySignDate" id="sign-start-date">
                                 </div>
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">報名截止日</label>
-                                    <input type="date" class="form-control" name="activitySignEndDate">
+                                    <input type="date" class="form-control" name="activitySignEndDate" id="sign-end-date">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="mb-2 col">
-                                    <label for="" class="form-label">活動開始時間</label>
-                                    <input type="datetime-local" class="form-control" name="activityStartDate">
+                                    <label for="" class="form-label">活動開始日</label>
+                                    <input type="date" class="form-control" name="activityStartDate" id="start-date">
                                 </div>
                                 <div class="mb-2 col">
-                                    <label for="" class="form-label">活動結束時間</label>
-                                    <input type="datetime-local" class="form-control" name="activityEndDate">
+                                    <label for="" class="form-label">活動結束日</label>
+                                    <input type="date" class="form-control" name="activityEndDate" id="end-date">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-2 col">
+                                    <label for="" class="form-label">開始時間</label>
+                                    <input type="time" class="form-control" name="activityStartTime" id="start-time">
+                                </div>
+                                <div class="mb-2 col">
+                                    <label for="" class="form-label">結束時間</label>
+                                    <input type="time" class="form-control" name="activityEndTime" id="end-time">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="" class="form-label">活動介紹</label>
                                 <textarea class="form-control" name="activityArticle" rows="5"></textarea>
                             </div>
+                            <?php if (isset($_SESSION["error"]["createActivity"])): ?>
+                                <h2 class="text-center text-danger"><?= $_SESSION["error"]["createActivity"] ?></h2>
+                            <?php endif; ?>
                             <div class="text-center">
                                 <button class="btn btn-info w-100" type="submit">送出</button>
-
                             </div>
+
                         </form>
                     </div>
-
-
                 </div>
-                <!-- /.container-fluid -->
+
 
             </div>
-            <!-- End of Main Content -->
+            <!-- /.container-fluid -->
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <!-- <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
-            </footer>
-            <!-- End of Footer -->
+            </footer> -->
+        <!-- End of Footer -->
 
-        </div>
-        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -247,6 +262,78 @@ if ($resultTeachers->num_rows > 0) {
 
     <!-- 活動的下拉式選單的JS -->
     <script>
+        //限制日期的選擇
+        const signStartDate = document.getElementById('sign-start-date');
+        const signEndDate = document.getElementById('sign-end-date');
+        const startDate = document.getElementById('start-date');
+        const endDate = document.getElementById('end-date');
+        const startTime = document.getElementById('start-time');
+        const endTime = document.getElementById('end-time');
+
+        // 當報名開始日變更時，動態設定報名截止日的最小值
+        signStartDate.addEventListener('change', function() {
+            const SignStartDate = this.value; // 獲取選擇的開始日期
+            if (SignStartDate) {
+                signEndDate.min = SignStartDate; // 設定截止日的最小值
+            } else {
+                signEndDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+            }
+        });
+
+        // 當報名結束日變更時，動態設定活動開始日的最小值
+        signEndDate.addEventListener('change', function() {
+            const SignEndDate = this.value; // 獲取選擇的開始日期
+            if (SignEndDate) {
+                startDate.min = SignEndDate; // 設定截止日的最小值
+            } else {
+                startDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+            }
+        });
+
+
+        // 當報名截止日變更時，動態設定活動開始日最小值
+        startDate.addEventListener('change', function() {
+            const StartDate = this.value; // 獲取選擇的開始日期
+            if (StartDate) {
+                endDate.min = StartDate; // 設定截止日的最小值
+            } else {
+                endDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+            }
+        });
+
+        // startTime.addEventListener('change', () => {
+        //     const StartTime = startTime.value;
+        //     endTimeInput.min = StartTime;
+        // });
+
+        // 當開始時間變更時，動態設定結束時間的最小值
+        // startTime.addEventListener('input', function() {
+        //     const StartTime = this.value; // 獲取選擇的開始時間
+        //     if (StartTime) {
+        //         endTime.min = StartTime; // 設定結束時間的最小值為開始時間
+        //     } else {
+        //         endTime.removeAttribute('min'); // 如果未選擇開始時間，移除限制
+        //     }
+
+        // 如果結束時間早於開始時間，則清空結束時間
+        // if (endTime.value && endTime.value < StartTime) {
+        //     endTime.value = ''; // 清空結束時間，迫使用戶重新選擇
+        // }
+        // });
+
+        // // 當結束時間變更時，檢查是否早於開始時間
+        // endTime.addEventListener('input', function() {
+        //     const StartTime = startTime.value;
+        //     const EndTime = this.value;
+
+        //     // 如果結束時間早於開始時間，則清空結束時間
+        //     if (StartTime && EndTime < StartTime) {
+        //         this.value = ''; // 清空結束時間，強制使用者重新選擇
+        //     }
+        // });
+
+
+
         const activityCategoryBig = document.querySelector("#activityCategoryBig");
         const activityCategorySmall = document.querySelector("#activityCategorySmall");
         const categories = <?= json_encode($avticityCategoryArr) ?>;
