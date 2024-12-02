@@ -121,7 +121,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                 <div class="container-fluid">
                     <!-- Page Heading 與搜尋框的行 -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1 class="h3 text-gray-800">文章列表</h1>
+                        <h1 class="h3 text-gray-800 my-3">文章列表</h1>
                         <!-- 搜尋框 -->
                         <form class="form-inline" method="get" action="articleList.php">
                             <div class="input-group">
@@ -171,11 +171,11 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th style="width: 6%;">編號</th>
                                             <th style="width: 16%;">標題</th>
                                             <th style="width: 15%;">文章圖片</th>
-                                            <th style="width: 30%;">內容</th>
+                                            <th style="width: 37%;">內容</th>
                                             <th style="width: 6%;">創建時間</th>
                                             <th style="width: 6%;">更新時間</th>
                                             <th style="width: 7%;">狀態</th>
-                                            <th style="width: 8%;">操作</th>
+                                            <th style="width: 7%;">操作</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -203,7 +203,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                                     <td>
                                                         <?php if ($row['imgUrl']) : ?>
                                                             <img src="./<?php echo htmlspecialchars($row['imgUrl']); ?>" alt="文章圖片"
-                                                                class="img-fluid" style="max-width: 100px; height: auto;">
+                                                                class="img-fluid" style="max-width: 170px; height: auto;">
                                                         <?php else : ?>
                                                             <span>無圖片</span>
                                                         <?php endif; ?>
@@ -216,15 +216,16 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                                         <?php echo $row['status'] == 1 ? '已發布' : '待發布'; ?>
                                                     </td>
                                                     <td>
-                                                        <a href="articleUpdatePage.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
-                                                            編輯
-                                                        </a>
-                                                        <a href="articleDoDelete.php?id=<?php echo $row['id']; ?>&type=article"
-                                                            class="btn btn-danger btn-sm"
-                                                            onclick="return confirm('確定刪除？')">
-                                                            刪除
-                                                        </a>
-
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <a href="articleUpdatePage.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+                                                                編輯
+                                                            </a>
+                                                            <a href="articleDoDelete.php?id=<?php echo $row['id']; ?>&type=article"
+                                                                class="btn btn-danger btn-sm"
+                                                                onclick="return confirm('確定刪除？')">
+                                                                刪除
+                                                            </a>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             <?php endwhile; ?>
@@ -285,7 +286,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-   
+
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 

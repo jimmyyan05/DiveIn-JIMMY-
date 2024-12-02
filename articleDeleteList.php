@@ -4,7 +4,7 @@ require_once("../db_project_connect.php");
 // 初始化變數
 $searchTerm = $_GET['search'] ?? ''; // 搜尋字串
 $statusFilter = $_GET['status'] ?? ''; // 狀態過濾條件
-$isDeletedFilter = '1'; // 固定為1，顯示已刪除的資料
+$isDeletedFilter = $_GET['isDeleted'] ?? ''; // 是否刪除過濾條件
 
 // 預設每頁顯示的資料數量
 $itemsPerPage = 5;
@@ -15,7 +15,7 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ?
 // 計算偏移量
 $offset = ($page - 1) * $itemsPerPage;
 
-// 基本 SQL 查詢語句：篩選已刪除的資料
+// 基本 SQL 查詢語句
 $sql = "
     SELECT 
         a.id, 
@@ -33,8 +33,8 @@ $sql = "
         a.id = ai.article_id 
         AND ai.isMain = 1 
         AND ai.isDeleted = 0
-    WHERE 
-        a.isDeleted = 1"; // 只顯示已刪除的資料
+   WHERE 
+        a.isDeleted = 1";  // 修改這行，讓它只選取已刪除的文章
 
 // 加入搜尋條件
 if ($searchTerm !== '') {
@@ -46,6 +46,10 @@ if ($statusFilter !== '') {
     $sql .= " AND a.status = " . (int)$statusFilter;
 }
 
+// 加入刪除狀態過濾條件
+if ($isDeletedFilter === '1') {
+    $sql .= " AND a.isDeleted = 1";  // 確保只顯示已刪除的文章
+}
 // 按照 `upgradeDate` 排序，如果 `upgradeDate` 為 NULL 則選擇 `createdAt`
 $sql .= " ORDER BY 
             CASE WHEN a.upgradeDate IS NOT NULL THEN a.upgradeDate ELSE a.createdAt END DESC";
@@ -60,7 +64,7 @@ $result = $conn->query($sql);
 $totalSql = "
     SELECT COUNT(*) AS total
     FROM article a
-    WHERE a.isDeleted = 1"; // 只計算已刪除的資料
+    WHERE a.isDeleted = 0";
 
 // 同樣加入搜尋與過濾條件
 if ($searchTerm !== '') {
@@ -68,6 +72,9 @@ if ($searchTerm !== '') {
 }
 if ($statusFilter !== '') {
     $totalSql .= " AND a.status = " . (int)$statusFilter;
+}
+if ($isDeletedFilter === '1') {
+    $totalSql .= " AND a.isDeleted = 1";
 }
 
 // 執行總數查詢並計算總頁數
@@ -89,7 +96,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>已刪除文章列表</title>
+    <title>服務項目</title>
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>
@@ -113,9 +120,9 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                 <div class="container-fluid">
                     <!-- Page Heading 與搜尋框的行 -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1 class="h3 text-gray-800">已刪除文章列表</h1>
+                        <h1 class="h3 text-gray-800 my-3">已刪除列表</h1>
                         <!-- 搜尋框 -->
-                        <form class="form-inline" method="get" action="articleDeleteList.php">
+                        <form class="form-inline" method="get" action="articleList.php">
                             <div class="input-group">
                                 <input type="text" name="search" class="form-control bg-light border-0 small"
                                     placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2"
@@ -134,9 +141,17 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <!-- 左侧按钮组 -->
                             <div class="d-flex gap-2">
-                                <a href="articleList.php" class="btn bg-info text-white">
-                                    <i class="fa-solid fa-list-ul"></i> 文章列表
+                                <a href="articleList.php" class="btn bg-info text-white" style="height: 70%; line-height: 1.5;">
+                                    <i class="fa-solid fa-rotate-left"></i> 返回
                                 </a>
+                            </div>
+                            <!-- 右侧下拉式選單组 -->
+                            <div class="d-flex gap-2">
+                                <select class="form-control" onchange="window.location.href=this.value">
+                                    <option value="articleList.php" <?php if (!$statusFilter) echo 'selected'; ?>>文章狀態</option>
+                                    <option value="articleList.php?status=0" <?php if ($statusFilter == '0') echo 'selected'; ?>>待發布</option>
+                                    <option value="articleList.php?status=1" <?php if ($statusFilter == '1') echo 'selected'; ?>>已發布</option>
+                                </select>
                             </div>
                         </div>
 
@@ -149,11 +164,11 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th style="width: 6%;">編號</th>
                                             <th style="width: 16%;">標題</th>
                                             <th style="width: 15%;">文章圖片</th>
-                                            <th style="width: 30%;">內容</th>
+                                            <th style="width: 37%;">內容</th>
                                             <th style="width: 6%;">創建時間</th>
                                             <th style="width: 6%;">更新時間</th>
                                             <th style="width: 7%;">狀態</th>
-                                            <th style="width: 8%;">操作</th>
+                                            <th style="width: 7%;">操作</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -181,7 +196,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                                     <td>
                                                         <?php if ($row['imgUrl']) : ?>
                                                             <img src="./<?php echo htmlspecialchars($row['imgUrl']); ?>" alt="文章圖片"
-                                                                class="img-fluid" style="max-width: 100px; height: auto;">
+                                                                class="img-fluid" style="max-width: 170px; height: auto;">
                                                         <?php else : ?>
                                                             <span>無圖片</span>
                                                         <?php endif; ?>
@@ -194,18 +209,24 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                                         <?php echo $row['status'] == 1 ? '已發布' : '待發布'; ?>
                                                     </td>
                                                     <td>
-                                                        <!-- "復原" 按鈕 -->
-                                                        <a href="articleDoRestore.php?id=<?php echo $row['id']; ?>"
-                                                            class="btn btn-success btn-sm"
-                                                            onclick="return confirm('確定復原？')">
-                                                            復原
-                                                        </a>
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <a href="articleUpdatePage.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+                                                                編輯
+                                                            </a>
+                                                            <!-- 將刪除按鈕改為復原按鈕 -->
+                                                            <a href="articleDoRestore.php?id=<?php echo $row['id']; ?>"
+                                                                class="btn btn-success btn-sm"
+                                                                onclick="return confirm('確定復原此文章？')">
+                                                                復原
+                                                            </a>
+                                                        </div>
                                                     </td>
+
                                                 </tr>
                                             <?php endwhile; ?>
                                         <?php else : ?>
                                             <tr>
-                                                <td colspan="8">目前沒有任何已刪除的文章。</td>
+                                                <td colspan="8">目前沒有任何文章。</td>
                                             </tr>
                                         <?php endif; ?>
                                     </tbody>
@@ -220,19 +241,19 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                         <div>
                             <!-- 跳至第一頁 -->
                             <?php if ($page > 1) : ?>
-                                <a href="?page=1&search=<?php echo urlencode($searchTerm); ?>"
+                                <a href="?page=1&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
                                     class="btn btn-secondary">第一頁</a>
                             <?php endif; ?>
 
                             <!-- 上一頁 -->
                             <?php if ($page > 1) : ?>
-                                <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($searchTerm); ?>"
+                                <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
                                     class="btn btn-primary">上一頁</a>
                             <?php endif; ?>
 
                             <!-- 頁碼顯示 -->
                             <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
-                                <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($searchTerm); ?>"
+                                <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
                                     class="btn <?php echo $i == $page ? 'btn-info' : 'btn-light'; ?>">
                                     <?php echo $i; ?>
                                 </a>
@@ -240,18 +261,17 @@ $totalPages = ceil($totalItems / $itemsPerPage);
 
                             <!-- 下一頁 -->
                             <?php if ($page < $totalPages) : ?>
-                                <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($searchTerm); ?>"
+                                <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
                                     class="btn btn-primary">下一頁</a>
                             <?php endif; ?>
 
                             <!-- 跳至最後一頁 -->
                             <?php if ($page < $totalPages) : ?>
-                                <a href="?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($searchTerm); ?>"
+                                <a href="?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
                                     class="btn btn-secondary">最後一頁</a>
                             <?php endif; ?>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -261,21 +281,15 @@ $totalPages = ceil($totalItems / $itemsPerPage);
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
 
-    <!-- bootstrap5的JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+
 </body>
 
 </html>
