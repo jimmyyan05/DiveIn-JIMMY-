@@ -61,21 +61,21 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>                    
                 <!-- End of Topbar -->
-
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item"><a href="activity.php">服務列表</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">已刪除的服務</li>
+                    </ol>
+                </nav>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">已刪除的服務</h1>
-                    <!-- 麵包屑 -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
-                            <li class="breadcrumb-item"><a href="activity.php">服務列表</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">已刪除的服務</li>
-                        </ol>
-                    </nav>
+                    
                     <a href="activity.php" class="btn btn-info mb-3" title="返回服務列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <!-- 服務列表 -->
@@ -157,13 +157,13 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <!-- <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- End of Footer -->
 
         </div>
