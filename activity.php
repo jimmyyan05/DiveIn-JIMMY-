@@ -1,5 +1,6 @@
 <?php
 require_once("../db_project_connect.php");
+session_start();
 
 $cateSql = "SELECT * FROM `activity_category_small`";
 $resultCate = $conn->query($cateSql);
@@ -101,6 +102,13 @@ if (isset($_GET["search"])) {
     $activityCount = $result->num_rows;
     $activitys = $result->fetch_all(MYSQLI_ASSOC);
 
+    //每頁編號
+    // $index=$start_item+1;
+    // while($row=$result->fetch_assoc()){
+    //     echo "<p>編號:$index</p>".$index."-"    .$row["name"]."</p>";
+    //     $index++;
+    // }
+
     $total_page = ceil($allActivitysCount / $per_page);
 } elseif (isset($_GET["p"])) {
     if (isset($_GET["order"])) {
@@ -144,6 +152,13 @@ if (isset($_GET["search"])) {
 
     $activityCount = $result->num_rows;
     $activitys = $result->fetch_all(MYSQLI_ASSOC);
+
+    //每頁編號
+    //    $index=$start_item+1;
+    //    while($row=$result->fetch_assoc()){
+    //        echo "<p>編號:$index</p>".$index."-"    .$row["name"]."</p>";
+    //        $index++;
+    //    }
 
     $total_page = ceil($allActivitysCount / $per_page);
 } else {
@@ -262,19 +277,21 @@ if (isset($_GET["search"])) {
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">服務列表</li>
+                    </ol>
+                </nav>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">服務列表</h1>
-                    <!-- 麵包屑 -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">服務列表</li>
-                        </ol>
-                    </nav>
+
 
                     <!-- 搜尋列 -->
                     <div class="row justify-content-start">
@@ -299,16 +316,40 @@ if (isset($_GET["search"])) {
                         <a href="create-activity.php" class="btn btn-info"><i class="fa-solid fa-plus fa-fw"></i>新增服務</a>
                         <div class="d-flex justify-content-center">
                             <?php if (isset($_GET["order"])): ?>
-                                <div class="me-2">
+                                <div class="me-1">
                                     <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>" class="btn btn-secondary"><i class="fa-solid fa-xmark"></i></a>
                                 </div>
                             <?php endif; ?>
-
                             <div class="btn-group ">
                                 <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=1" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 1): ?> active<?php endif; ?>" id="sort-time-down">活動時間 <i class="fa-solid fa-arrow-down-1-9"></i></a>
                                 <a href="activity.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=2" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 2): ?> active<?php endif; ?>" id="sort-time-up">活動時間 <i class="fa-solid fa-arrow-up-1-9"></i></a>
                             </div>
-                            <div class="ms-2">
+                            <!-- 分類 -->
+                            <!-- <div class="filter-options d-flex justify-content-center ms-1">
+                                <form method="GET" action="activity.php">
+                                    <div class="d-flex">
+                                        <select class="form-select" id="category-filter" name="category">
+                                            <option value="">所有分類</option>
+                                            <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
+                                                <option value="<?= $big_id ?>" <?php if (isset($_GET['category']) && $_GET['category'] == $big_id) echo 'selected'; ?>>
+                                                    <?= $big_data["name"] ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <select class="form-select" id="status-filter" name="status">
+                                            <option value="">所有狀態</option>
+                                            <option value="尚未開始報名" <?php if (isset($_GET['status']) && $_GET['status'] == '尚未開始報名') echo 'selected'; ?>>尚未開始報名</option>
+                                            <option value="活動報名中" <?php if (isset($_GET['status']) && $_GET['status'] == '活動報名中') echo 'selected'; ?>>活動報名中</option>
+                                            <option value="報名結束，等待活動開始" <?php if (isset($_GET['status']) && $_GET['status'] == '報名結束，等待活動開始') echo 'selected'; ?>>報名結束，等待活動開始</option>
+                                            <option value="活動進行中！" <?php if (isset($_GET['status']) && $_GET['status'] == '活動進行中！') echo 'selected'; ?>>活動進行中！</option>
+                                            <option value="活動結束" <?php if (isset($_GET['status']) && $_GET['status'] == '活動結束') echo 'selected'; ?>>活動結束</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-info ms-2"><i class="fa-solid fa-magnifying-glass fa"></i></button>
+                                    </div>
+                                </form>
+                            </div> -->
+
+                            <div class="ms-1">
                                 <a href="activity_isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
                             </div>
                         </div>
@@ -324,17 +365,20 @@ if (isset($_GET["search"])) {
                                 <th>類型</th>
                                 <th>子分類</th>
                                 <th>報名日期</th>
+                                <th>活動日期</th>
                                 <th>活動時間</th>
                                 <th>師資</th>
                                 <th>費用</th>
                                 <th>狀態</th>
                                 <th>編輯</th>
                             </tr>
-                            <?php foreach ($activitys as $activity): ?>
+                            <?php
+                            $index = $start_item + 1;
+                            foreach ($activitys as $activity): ?>
                                 <tr>
-                                    <td><?= $activity["id"] ?></td>
+                                    <td><?= $index ?></td>
                                     <td><?= $activity["name"] ?></td>
-                                    <td>
+                                    <td class="img-td-container">
                                         <div class="activity-img"><img class="mx-auto" src="img/activity/<?= $activity["main_image"] ?>" alt=""></div>
                                     </td>
                                     <td><?= $activity["bigCategory_name"] ?></td>
@@ -347,6 +391,11 @@ if (isset($_GET["search"])) {
                                             <?= $activity["startDate"] ?><br>|<br><?= $activity["endDate"] ?>
                                         <?php endif; ?>
                                     </td>
+                                    <td><?php if ($activity["startTime"] == $activity["endTime"]): ?>
+                                            <?= $activity["startTime"] ?>
+                                        <?php else: ?>
+                                            <?= $activity["startTime"] ?><br>|<br><?= $activity["endTime"] ?>
+                                        <?php endif; ?></td>
 
                                     <td><?= $activity["teacher_name"] ?></td>
                                     <td>$<?= number_format($activity["price"]) ?></td>
@@ -437,28 +486,42 @@ if (isset($_GET["search"])) {
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名開始日</label>
-                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>">
+                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date">
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名截止日</label>
-                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>">
+                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
-                                                                <label for="" class="form-label">活動開始時間</label>
-                                                                <input type="datetime-local" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>">
+                                                                <label for="" class="form-label">活動開始日</label>
+                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date">
                                                             </div>
                                                             <div class="mb-2 col">
-                                                                <label for="" class="form-label">活動結束時間</label>
-                                                                <input type="datetime-local" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>">
+                                                                <label for="" class="form-label">活動結束日</label>
+                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">開始時間</label>
+                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time">
+                                                            </div>
+                                                            <div class="mb-2 col">
+                                                                <label for="" class="form-label">結束時間</label>
+                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time">
                                                             </div>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="" class="form-label">活動介紹</label>
                                                             <textarea class="form-control" name="activityArticle" rows="5"><?= $activity["description"] ?></textarea>
                                                         </div>
+                                                        <?php if (isset($_SESSION["error"]["updateActivity"])): ?>
+                                                            <h3 class="text-center text-danger"><?= $_SESSION["error"]["updateActivity"] ?></h3>
+                                                        <?php endif; ?>
                                                     </div>
+
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                                                         <button type="submit" class="btn btn-info">儲存修改</button>
@@ -491,7 +554,8 @@ if (isset($_GET["search"])) {
                                         </div>
                                     </div>
                                 </tr>
-                            <?php endforeach; ?>
+                            <?php $index++;
+                            endforeach; ?>
                         </table>
                         <!-- 服務列表 結束 -->
                     <?php else: ?>
@@ -538,13 +602,13 @@ if (isset($_GET["search"])) {
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <!-- <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- End of Footer -->
 
         </div>
@@ -600,8 +664,10 @@ if (isset($_GET["search"])) {
 
 
 
+
     <!-- 修改活動的下拉式選單的JS -->
     <script>
+        //點擊時獲取大分類和小分類的資料
         const categories = <?= json_encode($avticityCategoryArr) ?>;
         <?php foreach ($activitys as $activity): ?>
             const activityCategoryBig<?= $activity["id"] ?> = document.querySelector("#activityCategoryBig<?= $activity["id"] ?>");
@@ -629,7 +695,49 @@ if (isset($_GET["search"])) {
                     activityCategorySmall<?= $activity["id"] ?>.appendChild(defaultOption);
                 }
             });
+
         <?php endforeach; ?>
+
+        //限制日期的選擇
+        const signStartDate = document.getElementById('sign-start-date');
+        const signEndDate = document.getElementById('sign-end-date');
+        const startDate = document.getElementById('start-date');
+        const endDate = document.getElementById('end-date');
+        const startTime = document.getElementById('start-time');
+        const endTime = document.getElementById('end-time');
+
+        // 當報名開始日變更時，動態設定報名截止日的最小值
+        signStartDate.addEventListener('change', function() {
+            const SignStartDate = this.value; // 獲取選擇的開始日期
+            if (SignStartDate) {
+                signEndDate.min = SignStartDate; // 設定截止日的最小值
+            } else {
+                signEndDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+            }
+        });
+
+        // 當報名結束日變更時，動態設定活動開始日的最小值
+        signEndDate.addEventListener('change', function() {
+            const SignEndDate = this.value; // 獲取選擇的開始日期
+            if (SignEndDate) {
+                startDate.min = SignEndDate; // 設定截止日的最小值
+            } else {
+                startDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+            }
+        });
+
+
+        // 當報名截止日變更時，動態設定活動開始日最小值
+        startDate.addEventListener('change', function() {
+            const StartDate = this.value; // 獲取選擇的開始日期
+            if (StartDate) {
+                endDate.min = StartDate; // 設定截止日的最小值
+            } else {
+                endDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+            }
+        });
+
+
 
 
         //排序按鈕的點擊效果

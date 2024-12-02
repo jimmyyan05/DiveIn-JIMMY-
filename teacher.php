@@ -29,6 +29,8 @@ if (isset($_GET["order"])) {
             $whereClause .= " ORDER BY activity_teacher.years DESC";
             break;
     }
+}else{
+    $whereClause = "ORDER BY id ASC";
 }
 
 // 處理搜尋參數
@@ -56,7 +58,7 @@ if(!isset($_GET["p"])){
 // 獲取總數（包括搜尋條件）
 $sqlAll = "SELECT COUNT(*) AS total 
           FROM activity_teacher 
-          WHERE 1 $searchCondition"; 
+          WHERE 1 AND is_deleted=0 $searchCondition"; 
 $resultAll = $conn->query($sqlAll);
 $teachersCount = $resultAll->fetch_assoc()['total'];
 
@@ -140,19 +142,20 @@ $total_page = ceil($teachersCount / $per_page);
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">師資列表</li>
+                    </ol>
+                </nav>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">師資列表</h1>
-                    <!-- 麵包屑 -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">師資列表</li>
-                        </ol>
-                    </nav>
+                    
 
                     <!-- 搜尋列 -->
                     <div class="row justify-content-start">
@@ -174,7 +177,7 @@ $total_page = ceil($teachersCount / $per_page);
 
                     <!-- 新增課程按鈕及排序按鈕 -->
                     <div class="d-flex justify-content-between my-2">
-                        <a href="create-teacher.php" class="btn btn-info"><i class="fa-solid fa-plus fa-fw"></i>新增師資</a>
+                        <a href="create-teacher.php" class="btn btn-info"><i class="fa-solid fa-plus fa-fw"></i>新增教練</a>
                         <div class="d-flex justify-content-center">
                             <?php if (isset($_GET["order"])): ?>
                                 <div class="me-2">
@@ -183,8 +186,8 @@ $total_page = ceil($teachersCount / $per_page);
                             <?php endif; ?>
 
                             <div class="btn-group ">
-                                <a href="teacher.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=1" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 1): ?> active<?php endif; ?>" id="sort-time-down">教師年資 <i class="fa-solid fa-arrow-down-1-9"></i></a>
-                                <a href="teacher.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=2" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 2): ?> active<?php endif; ?>" id="sort-time-up">教師年資<i class="fa-solid fa-arrow-up-1-9"></i></a>
+                                <a href="teacher.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=1" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 1): ?> active<?php endif; ?>" id="sort-time-down">教練年資 <i class="fa-solid fa-arrow-down-1-9"></i></a>
+                                <a href="teacher.php?p=1<?php if (isset($search)): ?>&search=<?= $search ?><?php endif; ?>&order=2" class="btn btn-info <?php if (isset($_GET["order"]) && $_GET["order"] == 2): ?> active<?php endif; ?>" id="sort-time-up">教練年資<i class="fa-solid fa-arrow-up-1-9"></i></a>
                             </div>
                             <div class="ms-2">
                                 <a href="teacher_isDeleted.php" class="btn btn-danger" title="已刪除的項目"><i class="fa-solid fa-trash-can-arrow-up fa-fw"></i></a>
@@ -198,18 +201,19 @@ $total_page = ceil($teachersCount / $per_page);
                             <tr>
                                 <th>編號</th>
                                 <th>姓名</th>
-                                <th>教師照片</th>
+                                <th>教練照片</th>
                                 <th>聯絡方式</th>
                                 <th>性別</th>
                                 <th>教練等級</th>
                                 <th>年資</th>
                                 <th>編輯</th>
                             </tr>
-                            <?php foreach ($teachers as $teacher): ?>
+                            <?php $index=$start_item+1;
+                            foreach ($teachers as $teacher): ?>
                                 <tr>
-                                    <td><?= $teacher["id"] ?></td>
+                                    <td><?= $index ?></td>
                                     <td><?= $teacher["name"] ?></td>
-                                    <td>
+                                    <td class="img-td-container">
                                         <div class="activity-img"><img class="mx-auto" src="img/teacher/<?= $teacher["image"] ?>" alt=""></div>  
                                     </td>
                                     <td><?= $teacher["email"] ?></td>
@@ -329,7 +333,8 @@ $total_page = ceil($teachersCount / $per_page);
                                         </div>
                                     </div>
                                 </tr>
-                            <?php endforeach; ?>
+                            <?php $index++;
+                        endforeach; ?>
                         </table>
                         <!-- 服務列表 結束 -->
                     <?php else: ?>
@@ -376,13 +381,13 @@ $total_page = ceil($teachersCount / $per_page);
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <!-- <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- End of Footer -->
 
         </div>
