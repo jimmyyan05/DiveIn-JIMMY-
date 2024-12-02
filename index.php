@@ -67,7 +67,15 @@ $total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row
             <!-- Main Content -->
             <div id="content">
                 <?php include("./topbar.php") ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+                    </ol>
+                </nav>
                 <!-- Begin Page Content -->
+
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
