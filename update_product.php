@@ -105,7 +105,7 @@ $image_paths = []; // 改用陣列來儲存所有圖片路徑
 if (isset($_FILES['photos'])) {
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $max_size = 5 * 1024 * 1024; // 5MB
-    $upload_dir = 'img/';
+    $upload_dir = 'img/product/';
 
     // 確保上傳目錄存在
     if (!is_dir($upload_dir)) {
@@ -223,7 +223,7 @@ WHERE product_id = ?";
     // 刪除已上傳的圖片
     if (!empty($image_paths)) {
         foreach ($image_paths as $image) {
-            $file_path = 'img/' . $image['filename'];
+            $file_path = 'img/product/' . $image['filename'];
             if (file_exists($file_path)) {
                 @unlink($file_path);
             }
