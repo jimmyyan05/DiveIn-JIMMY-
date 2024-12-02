@@ -98,7 +98,7 @@ try {
                                             if ($row["imgUrl"]) {
                                                 $images = explode(",", $row["imgUrl"]);
                                                 foreach ($images as $image): ?>
-                                                    <img src="./img/<?= $image ?>" style="width: 50px; height: 50px; object-fit: cover;" class="me-1">
+                                                    <img src="img/product/<?= $image ?>" style="width: 50px; height: 50px; object-fit: cover;" class="me-1">
                                             <?php endforeach;
                                             } else {
                                                 echo "無圖片";
