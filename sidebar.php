@@ -1,14 +1,4 @@
-<style>
-    .sidebar {
-        position: sticky;
-        top: 0;
-        /* 保證當滾動時，側邊欄固定 */
-        height: 100vh;
-        /* 設定高度為視窗高度 */
-        /* overflow-y: auto; */
-        /* 使側邊欄內容可滾動 */
-    }
-</style>
+
 <!-- Sidebar -->
 <ul class="navbar-nav bg-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
