@@ -111,7 +111,7 @@
 
     <!-- Nav Item - 優惠券管理 -->
     <li class="nav-item">
-        <a class="nav-link" href="coupon.php">
+        <a class="nav-link" href="coupon_list.php">
             <i class="fa-solid fa-ticket"></i>
             <span>優惠券管理</span></a>
     </li>
