@@ -1,4 +1,4 @@
-// Set new default font family and font color to mimic Bootstrap's default styling
+// 主頁圓餅圖
 
 (Chart.defaults.global.defaultFontFamily = "Nunito"),
   '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
