@@ -41,6 +41,7 @@ if ($resultTeachers->num_rows > 0) {
 }
 
 $whereClause = "";
+$whereCate = "";
 
 $per_page = 5;
 
@@ -71,12 +72,36 @@ if (isset($_GET["search"])) {
     } else {
         $p = $_GET["p"];
     }
+
+
     $search = $_GET["search"];
     $start_item = ($p - 1) * $per_page;
     $sqlAll = "SELECT * FROM activity WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0";
     $resultAll = $conn->query($sqlAll);
     $allActivitysCount = $resultAll->num_rows;
     // $sql = "SELECT * FROM users WHERE name LIKE '%$search%' AND is_deleted=0";
+    // $sql = "SELECT 
+    // activity.*, 
+    // activity_category_small.name AS smallCategory_name,
+    // activity_category_big.name AS bigCategory_name,
+    // activity_category_big.id AS big_id,
+    // activity_teacher.id AS teacher_id, 
+    // activity_teacher.name AS teacher_name, 
+    //     (SELECT activity_image.imgUrl FROM activity_image 
+    //     WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
+    //     LIMIT 1) AS main_image
+    //     FROM activity
+    // JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+    // JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+    // LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id  -- 連接老師表格
+    // WHERE (activity.name LIKE '%$search%'
+    // OR bigCategory_name LIKE '%$search%'
+    // OR smallCategory_name LIKE '%$search%'
+    // OR activity_teacher.name LIKE '%$search%')
+    // AND activity.isDeleted=0 
+    // $whereClause
+    // LIMIT $start_item,$per_page
+    // ";
     $sql = "SELECT 
     activity.*, 
     activity_category_small.name AS smallCategory_name,
@@ -84,17 +109,21 @@ if (isset($_GET["search"])) {
     activity_category_big.id AS big_id,
     activity_teacher.id AS teacher_id, 
     activity_teacher.name AS teacher_name, 
-        (SELECT activity_image.imgUrl FROM activity_image 
+    (SELECT activity_image.imgUrl FROM activity_image 
         WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
         LIMIT 1) AS main_image
-        FROM activity
-    JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
-    JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
-    LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id  -- 連接老師表格
-    WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0 
-    $whereClause
-    LIMIT $start_item,$per_page
-    ";
+FROM activity
+JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id -- 連接老師表格
+WHERE (activity.name LIKE '%$search%'
+       OR activity_category_big.name LIKE '%$search%'
+       OR activity_category_small.name LIKE '%$search%'
+       OR activity_teacher.name LIKE '%$search%')
+  AND activity.isDeleted=0 
+$whereClause
+LIMIT $start_item, $per_page";
+
 
     $result = $conn->query($sql);
 
@@ -296,7 +325,7 @@ if (isset($_GET["search"])) {
                     <div class="row justify-content-start">
                         <form class="col-2 d-flex justify-content-start" action="" method="get">
                             <div class="input-group mb-3 search-bar justify-content-end gx-0">
-                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入活動關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
+                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
                                     aria-label="Recipient's username" aria-describedby="basic-addon2" name="search" <?php if (isset($_GET["search"])): ?> value="<?= $_GET["search"] ?>" <?php endif; ?>>
                                 <div class="input-group-append p-0">
                                     <button class="btn btn-outline-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -334,16 +363,16 @@ if (isset($_GET["search"])) {
                                                     <?= $big_data["name"] ?>
                                                 </option>
                                             <?php endforeach; ?>
-                                        </select>
-                                        <select class="form-select" id="status-filter" name="status">
+                                        </select> -->
+                            <!-- <select class="form-select" id="status-filter" name="status">
                                             <option value="">所有狀態</option>
                                             <option value="尚未開始報名" <?php if (isset($_GET['status']) && $_GET['status'] == '尚未開始報名') echo 'selected'; ?>>尚未開始報名</option>
                                             <option value="活動報名中" <?php if (isset($_GET['status']) && $_GET['status'] == '活動報名中') echo 'selected'; ?>>活動報名中</option>
                                             <option value="報名結束，等待活動開始" <?php if (isset($_GET['status']) && $_GET['status'] == '報名結束，等待活動開始') echo 'selected'; ?>>報名結束，等待活動開始</option>
                                             <option value="活動進行中！" <?php if (isset($_GET['status']) && $_GET['status'] == '活動進行中！') echo 'selected'; ?>>活動進行中！</option>
                                             <option value="活動結束" <?php if (isset($_GET['status']) && $_GET['status'] == '活動結束') echo 'selected'; ?>>活動結束</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-info ms-2"><i class="fa-solid fa-magnifying-glass fa"></i></button>
+                                        </select> -->
+                            <!-- <button type="submit" class="btn btn-info ms-2"><i class="fa-solid fa-magnifying-glass fa"></i></button>
                                     </div>
                                 </form>
                             </div> -->
