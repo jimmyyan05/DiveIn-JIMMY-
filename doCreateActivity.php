@@ -24,77 +24,7 @@ $endTime = $_POST["activityEndTime"];
 // $location=$_POST["activityLocation"];
 
 
-if (empty($name)) {
-    $_SESSION["error"]["createActivity"] = "請輸入活動名稱";
-    header("location:create-activity.php");
-    exit;
-}
-if (empty($categoryBig)) {
-    $_SESSION["error"]["createActivity"] = "請選擇活動類型";
-    header("location:create-activity.php");
-    exit;
-}
 
-if (empty($categorySmall)) {
-    $_SESSION["error"]["createActivity"] = "請選擇活動類別";
-    header("location:create-activity.php");
-    exit;
-}
-if (empty($signDate)) {
-    $_SESSION["error"]["createActivity"] = "請輸入報名開始日期";
-    header("location:create-activity.php");
-    exit;
-}
-
-if (empty($signEndDate)) {
-    $_SESSION["error"]["createActivity"] = "請輸入報名結束日期";
-    header("location:create-activity.php");
-    exit;
-}
-
-if (empty($startDate)) {
-    $_SESSION["error"]["createActivity"] = "請輸入活動開始日期";
-    header("location:create-activity.php");
-    exit;
-}
-
-if (empty($endDate)) {
-    $_SESSION["error"]["createActivity"] = "請輸入活動結束日期";
-    header("location:create-activity.php");
-    exit;
-}
-
-// if (empty($article)) {
-//     $_SESSION["error"]["createActivity"] = "請輸入活動內容";
-//     header("location:create-activity.php");
-//     exit;
-// }
-
-if (empty($price)) {
-    $_SESSION["error"]["createActivity"] = "請輸入活動費用";
-    header("location:create-activity.php");
-    exit;
-}
-
-if (empty($teacher)) {
-    $_SESSION["error"]["createActivity"] = "請選擇師資";
-    header("location:create-activity.php");
-    exit;
-}   
-
-if (empty($startTime)) {
-    $_SESSION["error"]["createActivity"] = "請輸入活動開始時間";
-    header("location:create-activity.php");
-    exit;
-}
-
-if (empty($endTime)) {
-    $_SESSION["error"]["createActivity"] = "請輸入活動結束時間";
-    header("location:create-activity.php");
-    exit;
-}
-
-$_SESSION["error"]["createActivity"] = "";
 
 
 $sql1 = "INSERT INTO activity (name, activityCategorySmall_id, signUpDate, signUpEndDate, startDate, endDate,startTime, endTime, price, description, activity_teacher_id)

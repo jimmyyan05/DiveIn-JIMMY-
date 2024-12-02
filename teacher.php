@@ -265,16 +265,16 @@ $total_page = ceil($teachersCount / $per_page);
                                                                 <img id="previewImage" src="img/teacher/<?= $teacher["image"] ?>" alt="">
                                                             </div>
                                                             <label for="" class="form-label">修改圖片</label>
-                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*">
                                                         </div>
                                                         <div class="mb-2 row">
                                                             <div class="col">
                                                                 <label for="" class="form-label">教練姓名</label>
-                                                                <input type="text" class="form-control" name="teacherName" value="<?= $teacher["name"] ?>" placeholder="請輸入新的名稱">
+                                                                <input type="text" class="form-control" name="teacherName" value="<?= $teacher["name"] ?>" placeholder="請輸入新的名稱" required>
                                                             </div>
                                                             <div class="col">
                                                                 <label for="" class="form-label">教練性別</label>
-                                                                <select class="form-control" name="sex" id="">
+                                                                <select class="form-control" name="sex" id="" required>
                                                                     <option value="1" <?php if ($teacher["sex"] == 1): ?>selected<?php endif; ?>>男性</option>
                                                                     <option value="2" <?php if ($teacher["sex"] == 2): ?>selected<?php endif; ?>>女性</option>
                                                                 </select>
@@ -282,16 +282,16 @@ $total_page = ceil($teachersCount / $per_page);
                                                         </div>
                                                         <div class="mb-2">
                                                             <label for="" class="form-label">教練聯絡方式</label>
-                                                            <input type="text" class="form-control" name="teacherEmail" value="<?= $teacher["email"] ?>" placeholder="請輸入電子信箱">
+                                                            <input type="text" class="form-control" name="teacherEmail" value="<?= $teacher["email"] ?>" placeholder="請輸入電子信箱" required>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">教練年資</label>
-                                                                <input type="text" class="form-control" name="teacherYears" value="<?= $teacher["years"] ?>" placeholder="請輸入教練年資">
+                                                                <input type="text" class="form-control" name="teacherYears" value="<?= $teacher["years"] ?>" placeholder="請輸入教練年資" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">教練等級</label>
-                                                                <select class="form-control" name="level" id="">
+                                                                <select class="form-control" name="level" id="" required>
                                                                     <option value="1" <?= $teacher["level"] == 1 ? "selected" : "" ?>>OWSI 開放水域潛水教練</option>
                                                                     <option value="2" <?= $teacher["level"] == 2 ? "selected" : "" ?>>MSDT 潛水大師教練</option>
                                                                     <option value="3" <?= $teacher["level"] == 3 ? "selected" : "" ?>>教練開發課程助教</option>
