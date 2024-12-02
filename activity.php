@@ -1,6 +1,5 @@
 <?php
 require_once("../db_project_connect.php");
-session_start();
 
 $cateSql = "SELECT * FROM `activity_category_small`";
 $resultCate = $conn->query($cateSql);
@@ -440,16 +439,16 @@ if (isset($_GET["search"])) {
                                                                 <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
                                                             </div>
                                                             <label for="" class="form-label">修改圖片</label>
-                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*">
                                                         </div>
                                                         <div class="mb-2">
                                                             <label for="" class="form-label">服務名稱</label>
-                                                            <input type="text" class="form-control" name="activityName" value="<?= $activity["name"] ?>" placeholder="請輸入新的名稱">
+                                                            <input type="text" class="form-control" name="activityName" value="<?= $activity["name"] ?>" placeholder="請輸入新的名稱" required>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">服務類型</label>
-                                                                <select class="form-select " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>">
+                                                                <select class="form-select " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>" required>
                                                                     <!--<select class="form-control " name="activityCategoryBig">-->
                                                                     <option selected>請選擇服務類型</option>
                                                                     <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
@@ -459,7 +458,7 @@ if (isset($_GET["search"])) {
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">服務類別</label>
-                                                                <select class="form-select" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>">
+                                                                <select class="form-select" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>" required>
                                                                     <option value="<?= $activity['smallCategory_name'] ?>" selected><?= $activity['smallCategory_name'] ?></option>
                                                                 </select>
                                                             </div>
@@ -467,12 +466,12 @@ if (isset($_GET["search"])) {
                                                         <div class="mb-2 row">
                                                             <div class="col">
                                                                 <label for="" class="form-label">費用</label>
-                                                                <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1">
+                                                                <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1" required>
                                                             </div>
                                                             <div class="col">
                                                                 <label for="" class="form-label">師資</label>
                                                                 <?php $selectedTeacherId = $activity['activity_teacher_id'] ?? null; ?>
-                                                                <select name="activity_teacher_id" class="form-select">
+                                                                <select name="activity_teacher_id" class="form-select" required>
                                                                     <option value="">請選擇師資</option> <!-- 預設空選項 -->
                                                                     <?php foreach ($teachers as $teacher): ?>
                                                                         <option value="<?= htmlspecialchars($teacher['id']) ?>"
@@ -486,40 +485,37 @@ if (isset($_GET["search"])) {
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名開始日</label>
-                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date">
+                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名截止日</label>
-                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date">
+                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">活動開始日</label>
-                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date">
+                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">活動結束日</label>
-                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date">
+                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">開始時間</label>
-                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time">
+                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">結束時間</label>
-                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time">
+                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time" required>
                                                             </div>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="" class="form-label">活動介紹</label>
                                                             <textarea class="form-control" name="activityArticle" rows="5"><?= $activity["description"] ?></textarea>
                                                         </div>
-                                                        <?php if (isset($_SESSION["error"]["updateActivity"])): ?>
-                                                            <h3 class="text-center text-danger"><?= $_SESSION["error"]["updateActivity"] ?></h3>
-                                                        <?php endif; ?>
                                                     </div>
 
                                                     <div class="modal-footer">

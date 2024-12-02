@@ -71,7 +71,7 @@ if ($resultTeachers->num_rows > 0) {
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
-                 <!-- 麵包屑 -->
+                <!-- 麵包屑 -->
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
@@ -85,7 +85,7 @@ if ($resultTeachers->num_rows > 0) {
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">新增服務</h1>
-                   
+
                     <a href="activity.php" class="btn btn-info mb-3" title="返回服務列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <div class="container bg-white">
@@ -96,12 +96,12 @@ if ($resultTeachers->num_rows > 0) {
                                     <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
                                 </div>
                                 <label for="" class="form-label">新增圖片</label>
-                                <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" required>
                             </div>
 
                             <div class="mb-2">
                                 <label for="" class="form-label">服務名稱</label>
-                                <input type="text" class="form-control" name="activityName" placeholder="請輸入服務名稱">
+                                <input type="text" class="form-control" name="activityName" placeholder="請輸入服務名稱" required>
                             </div>
 
                             <!-- 下拉式選單 -->
@@ -111,7 +111,7 @@ if ($resultTeachers->num_rows > 0) {
                                     <select class="form-control" name="activityCategoryBig" id="activityCategoryBig">
                                         <option selected>請選擇服務類型</option>
                                         <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
-                                            <option value="<?= $big_id ?>"><?= $big_data["name"] ?></option>
+                                            <option value="<?= $big_id ?>" required><?= $big_data["name"] ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -119,7 +119,7 @@ if ($resultTeachers->num_rows > 0) {
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">服務類別</label>
                                     <select class="form-control" name="activityCategorySmall" id="activityCategorySmall" disabled>
-                                        <option selected>請先選擇服務類型</option>
+                                        <option selected required>請先選擇服務類型</option>
                                     </select>
                                 </div>
                             </div>
@@ -134,11 +134,11 @@ if ($resultTeachers->num_rows > 0) {
                             <div class="row mb-2">
                                 <div class="col mb-2">
                                     <label for="" class="form-label">費用</label>
-                                    <input type="number" class="form-control" name="activityPrice" placeholder="請輸入金額" min="1" step="1">
+                                    <input type="number" class="form-control" name="activityPrice" placeholder="請輸入金額" min="1" step="1" required>
                                 </div>
                                 <div class="col">
                                     <label for="" class="form-label">師資</label>
-                                    <select name="teacher" class="form-select">
+                                    <select name="teacher" class="form-select"  required>
                                         <option value="">請選擇師資</option> <!-- 預設空選項 -->
                                         <?php foreach ($teachers as $teacher): ?>
                                             <option value="<?= htmlspecialchars($teacher['id']) ?>">
@@ -154,40 +154,37 @@ if ($resultTeachers->num_rows > 0) {
                             <div class="row">
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">報名開始日</label>
-                                    <input type="date" class="form-control" name="activitySignDate" id="sign-start-date">
+                                    <input type="date" class="form-control" name="activitySignDate" id="sign-start-date" required>
                                 </div>
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">報名截止日</label>
-                                    <input type="date" class="form-control" name="activitySignEndDate" id="sign-end-date">
+                                    <input type="date" class="form-control" name="activitySignEndDate" id="sign-end-date" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">活動開始日</label>
-                                    <input type="date" class="form-control" name="activityStartDate" id="start-date">
+                                    <input type="date" class="form-control" name="activityStartDate" id="start-date" required>
                                 </div>
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">活動結束日</label>
-                                    <input type="date" class="form-control" name="activityEndDate" id="end-date">
+                                    <input type="date" class="form-control" name="activityEndDate" id="end-date" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">開始時間</label>
-                                    <input type="time" class="form-control" name="activityStartTime" id="start-time">
+                                    <input type="time" class="form-control" name="activityStartTime" id="start-time" required>
                                 </div>
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">結束時間</label>
-                                    <input type="time" class="form-control" name="activityEndTime" id="end-time">
+                                    <input type="time" class="form-control" name="activityEndTime" id="end-time" required>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="" class="form-label">活動介紹</label>
                                 <textarea class="form-control" name="activityArticle" rows="5"></textarea>
                             </div>
-                            <?php if (isset($_SESSION["error"]["createActivity"])): ?>
-                                <h2 class="text-center text-danger"><?= $_SESSION["error"]["createActivity"] ?></h2>
-                            <?php endif; ?>
                             <div class="text-center">
                                 <button class="btn btn-info w-100" type="submit">送出</button>
                             </div>
@@ -243,6 +240,9 @@ if ($resultTeachers->num_rows > 0) {
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script> <!-- This includes Popper.js, which is required for dropdowns and tooltips in Bootstrap 5 -->
