@@ -3,7 +3,7 @@
 include 'PDO_connect.php';
 
 // 每頁顯示的記錄數
-$limit = 5;
+$limit = 10;
 
 // 當前頁碼
 $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
@@ -75,19 +75,20 @@ try {
     $total_pages = ceil($total_results / $limit);
 
     $sql = "
-        SELECT 
+    SELECT DISTINCT 
         ri.*, 
         rcs.name AS small_category_name, 
         rcb.name AS big_category_name,
         IFNULL(ri_img.img_url, '') AS main_img_url,
         ri.price * 0.6 AS deposit
-        FROM rent_item AS ri
-        LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
-        LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
-        LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 1
-        WHERE ri.is_deleted = 0 $filter_query $category_query $search_query
-        ORDER BY $sort_column $sort_order
-        LIMIT :start, :limit
+    FROM rent_item AS ri
+    LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
+    LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
+    LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 1
+    WHERE ri.is_deleted = 0 $filter_query $category_query $search_query
+    GROUP BY ri.id
+    ORDER BY $sort_column $sort_order
+    LIMIT :start, :limit
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':start', $start, PDO::PARAM_INT);
@@ -214,7 +215,7 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
         }
 
         .column-action {
-            width: 100px;
+            width: 120px;
         }
 
         .sortable {
@@ -255,6 +256,36 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
 
         .column-action.d-flex .custom-btn:last-child {
             margin-right: 0;
+        }
+
+        .product-details-container {
+            display: flex;
+            align-items: center;
+            /* 使圖片和文字垂直居中對齊 */
+            gap: 20px;
+            /* 圖片與文字之間的間距 */
+        }
+
+        .product-details-container img {
+            max-width: 350px;
+            /* 限制圖片最大寬度 */
+            height: auto;
+            /* 高度自動調整 */
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            /* 使文字垂直排列 */
+            align-items: flex-start;
+            /* 文字靠左對齊 */
+            max-width: 500px;
+            /* 限制文字部分的最大寬度 */
+        }
+
+        .product-info p {
+            margin: 5px 0;
+            /* 讓每一行的文字有些微的間隔 */
         }
     </style>
 
@@ -606,7 +637,9 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                     </div>
                                     <div class="p-2 column-action d-flex justify-content-center align-items-center">
                                         <!-- 檢視 -->
-                                        <!-- <a href="rent_edit.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-primary btn-sm custom-btn"><i class="fa-solid fa-eye"></i></a> -->
+                                        <button class="btn btn-success btn-sm custom-btn" onclick="viewProductDetails(<?= $product['id']; ?>)">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
                                         <!-- 編輯 -->
                                         <a href="rent_edit.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-primary btn-sm custom-btn"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <!-- 刪除 -->
@@ -681,6 +714,54 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
+    <!-- Modal檢視資料 -->
+    <div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewProductModalLabel">租賃產品詳情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 產品資料會動態填入 -->
+                    <div id="productDetails" class="product-details-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 引入 Bootstrap 和其他腳本 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewProductDetails(productId) {
+            fetch(`rent_view.php?id=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const productDetails = `
+                <div class="product-details-container">
+                    <img src="${data.main_img_url}" alt="產品圖片">
+                    <div class="product-info">
+                        <p><strong>產品id：</strong> ${data.product_id}</p>
+                        <p><strong>產品名稱：</strong> ${data.name}</p>
+                        <p><strong>價格：</strong> ${data.price} 元</p>
+                        <p><strong>定金：</strong> ${data.deposit} 元</p>
+                        <p><strong>大分類：</strong> ${data.big_category_name}</p>
+                        <p><strong>小分類：</strong> ${data.small_category_name}</p>
+                        <p><strong>上架時間：</strong> ${data.start_date}</p>
+                        <p><strong>下架時間：</strong> ${data.end_date}</p>
+                        <p><strong>庫存：</strong> ${data.stock}</p>
+                        <p><strong>產品描述：</strong> ${data.description}</p>
+                    </div>
+                </div>
+            `;
+                    document.getElementById('productDetails').innerHTML = productDetails;
+                    const modal = new bootstrap.Modal(document.getElementById('viewProductModal'));
+                    modal.show();
+                })
+                .catch(error => console.error('Error fetching product details:', error));
+        }
+    </script>
 
 </body>
 
