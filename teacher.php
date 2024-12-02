@@ -271,8 +271,8 @@ $total_page = ceil($teachersCount / $per_page);
                                                             <div class="col">
                                                                 <label for="" class="form-label">教練性別</label>
                                                                 <select class="form-control" name="sex" id="">
-                                                                    <option value="1">男性</option>
-                                                                    <option value="2">女性</option>
+                                                                    <option value="1" <?php if ($teacher["sex"] == 1): ?>selected<?php endif; ?>>男性</option>
+                                                                    <option value="2" <?php if ($teacher["sex"] == 2): ?>selected<?php endif; ?>>女性</option>
                                                                 </select>
                                                             </div>
                                                         </div>

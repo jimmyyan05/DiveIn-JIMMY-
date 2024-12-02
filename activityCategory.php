@@ -13,16 +13,22 @@ LEFT JOIN activity_category_small ON activity_category_big.id = activity_categor
 
 $result = $conn->query($sql);
 $bigCates = $result->fetch_all(MYSQLI_ASSOC);
+// echo "<pre>";
+// print_r($bigCates);
+// echo "</pre>";
 
 $categories = [];
 foreach ($bigCates as $cate) {
     $categories[$cate['big_id']]['big_name'] = $cate['big_name'];
-    $categories[$cate['big_id']]['small_categories'][] = [
-        'small_id' => $cate['small_id'],
-        'small_name' => $cate['small_name'],
-    ];
+    if ($cate['small_id'] != "") {
+        $categories[$cate['big_id']]['small_categories'][] = [
+            'small_id' => $cate['small_id'],
+            'small_name' => $cate['small_name'],
+        ];
+    }
 }
 
+// print_r($categories);
 
 ?>
 
@@ -76,7 +82,8 @@ foreach ($bigCates as $cate) {
                     <!-- 麵包屑 -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
+                            <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                            <li class="breadcrumb-item"><a href="#">類別管理</a></li>
                             <li class="breadcrumb-item active" aria-current="page">服務類別管理</li>
                         </ol>
                     </nav>
@@ -86,38 +93,264 @@ foreach ($bigCates as $cate) {
                         <?php foreach ($categories as $big_id => $category): ?>
                             <div class="col-4 mt-2">
                                 <!-- 大分類按鈕 -->
-                                <button class="btn btn-info w-100 d-flex justify-content-center align-items-center"
+                                <!-- <button class="btn btn-info w-100 d-flex justify-content-between align-items-center"
                                     data-bs-toggle="collapse"
                                     data-bs-target="#collapseExample<?= $big_id ?>"
                                     aria-expanded="false"
                                     aria-controls="collapseExample<?= $big_id ?>">
-                                    <h3 class="align-middle m-0"><?= $category["big_name"] ?></h3>
-                                </button>
-
-                                <!-- 小分類列表 -->
-                                <div class="collapse" id="collapseExample<?= $big_id ?>">
-                                    <div class="bg-white hovers border border-info">
-                                        <?php foreach ($category['small_categories'] as $small_category): ?>
-                                            <div class="d-flex justify-content-between p-1 border-bottom boder-info">
-                                                <h4 class="text-black m-0 p-1"><?= $small_category["small_name"] ?></h4>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-info"><i class="fa-solid fa-pen-to-square fa-fw"></i></button>
-                                                    <button class="btn btn-danger"><i class="fa-solid fa-trash fa-fw"></i></button>
-                                                </div>
-                                            </div>
-
-                                        <?php endforeach; ?>
-                                        <div class="bg-white">
-                                            <button class="plus-btn btn btn-info w-100"><i class="fa-solid fa-plus fa-fw"></i></button>
+                                    <div class="d-flex justify-content-between w-100 align-items-center">
+                                        <h3 class="m-0">
+                                            <?= $category["big_name"] ?>
+                                        </h3>
+                                        <div class="btn-group"> -->
+                                <!-- 修改按鈕 -->
+                                <!-- <button
+                                                class="btn btn-warning edit-big-category-btn"
+                                                data-big-id="<?= $big_id ?>"
+                                                data-big-name="<?= $category['big_name'] ?>"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editBigCategoryModal">
+                                                <i class="fa-solid fa-pen-to-square fa-fw"></i>
+                                            </button> -->
+                                <!-- 刪除按鈕 -->
+                                <!-- <button
+                                                class="btn btn-danger delete-big-category-btn"
+                                                data-big-id="<?= $big_id ?>"
+                                                data-big-name="<?= $category['big_name'] ?>"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteBigCategoryModal">
+                                                <i class="fa-solid fa-trash fa-fw"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </button> -->
+                                <!-- 大分類按鈕 -->
+                                <div class="btn btn-info w-100 d-flex justify-content-center align-items-center"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseExample<?= $big_id ?>"
+                                    aria-expanded="false"
+                                    aria-controls="collapseExample<?= $big_id ?>">
+                                    <div class="d-flex justify-content-between w-100">
+                                        <h3 class="align-middle m-0">
+                                            <?= $category["big_name"] ?>
+                                        </h3>
+                                        <div class="btn-group">
+                                            <!-- 修改按鈕 -->
+                                            <button
+                                                class="btn btn-light edit-big-category-btn"
+                                                data-big-id="<?= $big_id ?>"
+                                                data-big-name="<?= $category['big_name'] ?>"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editBigCategoryModal">
+                                                <i class="fa-solid fa-pen-to-square fa-fw"></i>
+                                            </button>
+                                            <!-- 刪除按鈕 -->
+                                            <button
+                                                class="btn btn-danger delete-big-category-btn"
+                                                data-big-id="<?= $big_id ?>"
+                                                data-big-name="<?= $category['big_name'] ?>"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteBigCategoryModal">
+                                                <i class="fa-solid fa-trash fa-fw"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
-                                
+                                <!-- 小分類列表 -->
+                                <div class="collapse" id="collapseExample<?= $big_id ?>">
+                                    <div class="bg-white hovers border border-info rounded">
+
+
+                                        <!-- 如果有小分類的話就顯示小分類，沒有的話就只顯示增加的按鈕 -->
+                                        <?php if (isset($category['small_categories'])): ?>
+                                            <!-- 小分類列表 -->
+                                            <?php foreach ($category['small_categories'] as $small_category): ?>
+                                                <div class="d-flex justify-content-between p-1 border-bottom boder-info">
+                                                    <h4 class="text-black m-0 p-1"><?= $small_category["small_name"] ?></h4>
+                                                    <div class="btn-group">
+                                                        <!-- 修改按鈕 -->
+                                                        <button
+                                                            class="btn btn-info edit-small-category-btn"
+                                                            data-small-id="<?= $small_category['small_id'] ?>"
+                                                            data-small-name="<?= $small_category['small_name'] ?>"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editSmallCategoryModal">
+                                                            <i class="fa-solid fa-pen-to-square fa-fw"></i>
+                                                        </button>
+                                                        <!-- 刪除按鈕 -->
+                                                        <!-- <button class="btn btn-danger" data-small-id="<?= $small_category['small_id'] ?>"
+                                                            data-small-name="<?= $small_category['small_name'] ?>"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteSmallCategoryModal"><i class="fa-solid fa-trash fa-fw"></i></button> -->
+                                                        <button
+                                                            class="btn btn-danger delete-small-category-btn"
+                                                            data-small-id="<?= $small_category['small_id'] ?>"
+                                                            data-small-name="<?= $small_category['small_name'] ?>"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteSmallCategoryModal">
+                                                            <i class="fa-solid fa-trash fa-fw"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                        <!-- 新增小分類的按鈕 -->
+                                        <div class="bg-white w-100 rounded text-center">
+                                            <button class="plus-btn btn btn-white text-info w-100" data-bs-toggle="modal" data-bs-target="#smallCateModal<?= $big_id ?>"><i class="fa-solid fa-plus fa-fw"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--新建小分類的Modal -->
+                                <div class="modal fade" id="smallCateModal<?= $big_id ?>" tabindex="-1" aria-labelledby="smallCateModal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <form action="activity_doUpdateCategory.php" method="post">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">新增服務類別</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="big_id" value="<?= $big_id ?>">
+                                                    <label for="" class="form-label">請輸入要新增的服務類別</label>
+                                                    <input class="form-control" type="text" name="newSmaillCategoryName">
+                                                    <!-- <label for="" class="form-label">請輸入對此類型的描述</label>
+                                            <textarea class="form-control" name="newBigCategoryDescription" rows="3"></textarea> -->
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                    <button type="submit" class="btn btn-info">新增</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                         <!-- 新建大分類 -->
-                        
+                        <div class="col-4 mt-2">
+                            <button class="btn btn-white border border-info w-100 d-flex justify-content-center align-items-center text-info" data-bs-toggle="modal" data-bs-target="#bigCateModal">
+                                <h3 class="align-middle m-0"><i class="fa-solid fa-plus fa-fw"></i></h3>
+                            </button>
+                        </div>
+
+                        <!--新建大分類的Modal -->
+                        <div class="modal fade" id="bigCateModal" tabindex="-1" aria-labelledby="bigCateModal" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="activity_doUpdateCategory.php" method="post">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">新增服務類型</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label for="" class="form-label">請輸入要新增的服務類型</label>
+                                            <input class="form-control" type="text" name="newBigCategoryName">
+                                            <!-- <label for="" class="form-label">請輸入對此類型的描述</label>
+                                            <textarea class="form-control" name="newBigCategoryDescription" rows="3"></textarea> -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-info">新增</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 修改大分類的 Modal -->
+                        <div class="modal fade" id="editBigCategoryModal" tabindex="-1" aria-labelledby="editBigCategoryModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="activity_doUpdateCategory.php" method="post" id="editBigCategoryForm">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editBigCategoryModalLabel">修改大分類</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="big_id" id="editBigCategoryId">
+                                            <label for="editBigCategoryName" class="form-label">大分類名稱</label>
+                                            <input type="text" class="form-control" id="editBigCategoryName" name="big_name" required>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-info">保存更改</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 修改小分類的Modal -->
+                        <div class="modal fade" id="editSmallCategoryModal" tabindex="-1" aria-labelledby="editSmallCategoryModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="activity_doUpdateCategory.php" method="post">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editSmallCategoryModalLabel">修改服務類別</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="small_id" id="editSmallCategoryId"> <!-- 小分類ID -->
+                                            <label for="editSmallCategoryName" class="form-label">服務類別名稱</label>
+                                            <input class="form-control" type="text" name="small_name" id="editSmallCategoryName">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-info">保存修改</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 刪除大分類的 Modal -->
+                        <div class="modal fade" id="deleteBigCategoryModal" tabindex="-1" aria-labelledby="deleteBigCategoryModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="activity_doDeleteCategory.php" method="post" id="deleteBigCategoryForm">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteBigCategoryModalLabel">刪除大分類</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="big_id" id="deleteBigCategoryId">
+                                            <p>您確定要刪除大分類 "<span id="deleteBigCategoryName"></span>" 嗎？</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-danger">刪除</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 刪除小分類的recheck modal -->
+                        <div class="modal fade" id="deleteSmallCategoryModal" tabindex="-1" aria-labelledby="deleteSmallCategoryModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="activity_doDeleteCategory.php" method="post">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteSmallCategoryModalLabel">確認刪除</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="small_id" id="deleteSmallCategoryId"> <!-- 小分類ID -->
+                                            <div>確定要刪除小分類 "<span id="deleteSmallCategoryName"></span>" 嗎？<br>此操作將無法復原！</div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-danger">刪除</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
                     </div>
 
 
@@ -128,13 +361,13 @@ foreach ($bigCates as $cate) {
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <!-- <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- End of Footer -->
 
         </div>
@@ -189,126 +422,68 @@ foreach ($bigCates as $cate) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 
-
-    <!-- 修改活動的下拉式選單的JS -->
     <script>
-        const categories = <?= json_encode($avticityCategoryArr) ?>;
-        <?php foreach ($activitys as $activity): ?>
-            const activityCategoryBig<?= $activity["id"] ?> = document.querySelector("#activityCategoryBig<?= $activity["id"] ?>");
-            const activityCategorySmall<?= $activity["id"] ?> = document.querySelector("#activityCategorySmall<?= $activity["id"] ?>");
-            activityCategoryBig<?= $activity["id"] ?>.addEventListener("change", function() {
-                const bigCategoryId = this.value;
-                activityCategorySmall<?= $activity["id"] ?>.innerHTML = "";
-                if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
-                    const smallCategories = categories[bigCategoryId]['children']; // 取得該大分類的子分類
-                    activityCategorySmall<?= $activity["id"] ?>.disabled = false; // 啟用小分類選單
+        // 修改大分類
+        document.querySelectorAll('.edit-big-category-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const bigId = this.getAttribute('data-big-id');
+                const bigName = this.getAttribute('data-big-name');
 
-                    // 為小分類選單新增選項
-                    smallCategories.forEach(smallCategory => {
-                        const option = document.createElement('option');
-                        option.value = smallCategory['id'];
-                        option.textContent = smallCategory['name'];
-                        activityCategorySmall<?= $activity["id"] ?>.appendChild(option);
-                    });
-                } else {
-                    // 如果沒有選擇大分類，禁用小分類選單並重設選項
-                    activityCategorySmall<?= $activity["id"] ?>.disabled = true;
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.textContent = '請先選擇活動類型';
-                    activityCategorySmall<?= $activity["id"] ?>.appendChild(defaultOption);
-                }
+                // 設置 modal 中的隱藏字段和大分類名稱
+                document.getElementById('editBigCategoryId').value = bigId;
+                document.getElementById('editBigCategoryName').value = bigName;
             });
-        <?php endforeach; ?>
+        });
 
+        // 刪除大分類
+        document.querySelectorAll('.delete-big-category-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const bigId = this.getAttribute('data-big-id');
+                const bigName = this.getAttribute('data-big-name');
 
+                // 設置 modal 中的隱藏字段和顯示大分類名稱
+                document.getElementById('deleteBigCategoryId').value = bigId;
+                document.getElementById('deleteBigCategoryName').textContent = bigName;
+            });
+        });
 
-        // const activityCategoryBig = document.querySelector("#activityCategoryBig<?= $activity["id"] ?>");
-        // const activityCategoryBigElements = document.querySelector("select[name='activityCategoryBig']");
-        // const activityCategorySmall = document.querySelector("#activityCategorySmall");
+        // 修改小分類按鈕
+        document.addEventListener('DOMContentLoaded', () => {
+            // 獲取所有修改按鈕
+            const editButtons = document.querySelectorAll('.edit-small-category-btn');
 
-        // console.log(activityCategoryBigElements);
+            // 為每個按鈕添加點擊事件
+            editButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    // 獲取按鈕上的數據屬性
+                    const smallId = button.getAttribute('data-small-id');
+                    const smallName = button.getAttribute('data-small-name');
 
-        // activityCategoryBigElements.forEach(activityCategoryBig => {
-        //     activityCategoryBig.addEventListener("change", function(a, b, c) {
-        //         console.log("跑了" + a + "=" + b + "=" + c);
-        //         const bigCategoryId = this.value; // 取得大分類的選擇值
-        //         // const activityId = this.dataset.id; // 如果有 data-id，取得對應 ID
-        //         // const activityCategorySmall = document.querySelector(`#activityCategorySmall-${activityId}`); // 找對應的小分類
+                    // 將數據填充到 modal 中的表單
+                    document.getElementById('editSmallCategoryId').value = smallId;
+                    document.getElementById('editSmallCategoryName').value = smallName;
+                });
+            });
+        });
 
-        //         activityCategorySmall.innerHTML = ""; // 清空小分類選單
+        // 刪除小分類
+        document.addEventListener('DOMContentLoaded', () => {
+            // 獲取所有刪除按鈕
+            const deleteButtons = document.querySelectorAll('.delete-small-category-btn');
 
-        //         if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
-        //             const smallCategories = categories[bigCategoryId]['children']; // 取得該大分類的子分類
-        //             activityCategorySmall.disabled = false; // 啟用小分類選單
+            // 為每個按鈕添加點擊事件
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    // 獲取按鈕上的數據屬性
+                    const smallId = button.getAttribute('data-small-id');
+                    const smallName = button.getAttribute('data-small-name');
 
-        //             // 為小分類選單新增選項
-        //             smallCategories.forEach(smallCategory => {
-        //                 const option = document.createElement('option');
-        //                 option.value = smallCategory['id'];
-        //                 option.textContent = smallCategory['name'];
-        //                 activityCategorySmall.appendChild(option);
-        //             });
-        //         } else {
-        //             // 如果沒有選擇大分類，禁用小分類選單並重設選項
-        //             activityCategorySmall.disabled = true;
-        //             const defaultOption = document.createElement('option');
-        //             defaultOption.value = '';
-        //             defaultOption.textContent = '請先選擇活動類型';
-        //             activityCategorySmall.appendChild(defaultOption);
-        //         }
-        //     });
-        // });
-
-
-        // activityCategoryBig.addEventListener("change", function() {
-        //     const bigCategoryId = this.value; // 取得大分類的選擇值
-        //     activityCategorySmall.innerHTML = ""; // 清空小分類選單
-
-        //     if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
-        //         const smallCategories = categories[bigCategoryId]['children']; // 取得該大分類的子分類
-        //         activityCategorySmall.disabled = false; // 啟用小分類選單
-
-        //         // 為小分類選單新增選項
-        //         smallCategories.forEach(smallCategory => {
-        //             const option = document.createElement('option');
-        //             option.value = smallCategory['id'];
-        //             option.textContent = smallCategory['name'];
-        //             activityCategorySmall.appendChild(option);
-        //         });
-        //     } else {
-        //         // 如果沒有選擇大分類，禁用小分類選單並重設選項
-        //         activityCategorySmall.disabled = true;
-        //         const defaultOption = document.createElement('option');
-        //         defaultOption.value = '';
-        //         defaultOption.textContent = '請先選擇活動類型';
-        //         activityCategorySmall.appendChild(defaultOption);
-        //     }
-        // });
-
-
-
-
-        // 上傳圖片預覽
-        const fileInput = document.querySelector("#fileInput");
-        fileInput.addEventListener("change", function() {
-            const file = event.target.files[0];
-            previewImage.src = "";
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewImage = document.getElementById("previewImage");
-                    previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
-                };
-                reader.readAsDataURL(file); // 讀取檔案
-            }
-        })
-
-        // 圖片修改第二次時應該怎麼處理呢？
-        const changebtn = document.querySelector("#change-btn")
-        changebtn.addEventListener("click", function() {
-            previewImage.src = "img/activity/<?= $activity["main_image"] ?>";
-        })
+                    // 將數據填充到 modal 中
+                    document.getElementById('deleteSmallCategoryId').value = smallId;
+                    document.getElementById('deleteSmallCategoryName').textContent = smallName;
+                });
+            });
+        });
     </script>
 </body>
 

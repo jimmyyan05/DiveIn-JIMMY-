@@ -5,7 +5,7 @@ include 'PDO_connect.php';
 // 獲取查詢參數
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $filter = isset($_GET['filter']) ? $_GET['filter'] : ''; // 搜尋過濾條件
-$limit = 10; // 每頁顯示的項目數量
+$limit = 10; 
 $offset = ($page - 1) * $limit;
 
 // 設定基礎查詢語法
@@ -68,7 +68,7 @@ $totalPages = ceil($totalItems / $limit);
 
     <title>DiveIn-rent-items</title>
     <!-- 統一的css -->
-    <?php include "css.php"; ?>
+    <?php include("./css.php") ?>
 
     <!-- font awesome cdn -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -86,8 +86,7 @@ $totalPages = ceil($totalItems / $limit);
         href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
         rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.css" rel="stylesheet">
+
 
     <style>
         .column-seq {
@@ -147,7 +146,8 @@ $totalPages = ceil($totalItems / $limit);
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php include "sidebar.php"; ?>
+        <?php include("./sidebar.php") ?>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -375,7 +375,7 @@ $totalPages = ceil($totalItems / $limit);
                             <!-- 新增租賃商品 -->
                             <a href="add.php" class="btn btn-warning mb-3"><i class="fa-solid fa-plus"></i> 新增租賃商品</a>
                             <!-- 查詢租賃商品 -->
-                            <form class="form-inline ml-auto my-2 my-md-0 navbar-search" method="get" action="query.php">
+                            <form class="form-inline ml-auto my-2 my-md-0 navbar-search" method="get" action="rent_query.php">
                                 <div class="input-group">
                                     <input type="text" class="form-control bg-light border-0 small" name="filter" placeholder="Search for..."
                                         value="<?php echo isset($_GET['filter']) ? htmlspecialchars($_GET['filter']) : ''; ?>">
@@ -435,15 +435,7 @@ $totalPages = ceil($totalItems / $limit);
                     </div>
                     <!-- End of Main Content -->
 
-                    <!-- Footer -->
-                    <footer class="sticky-footer bg-white">
-                        <div class="container my-auto">
-                            <div class="copyright text-center my-auto">
-                                <span>Copyright &copy; Your Website 2020</span>
-                            </div>
-                        </div>
-                    </footer>
-                    <!-- End of Footer -->
+      
 
                 </div>
                 <!-- End of Content Wrapper -->
