@@ -14,8 +14,9 @@ $signEndDate = $_POST["activitySignEndDate"];
 $startDate = $_POST["activityStartDate"];
 $endDate = $_POST["activityEndDate"];
 $article = $_POST["activityArticle"];
+$teacher=$_POST["activity_teacher_id"];
 
-$sql1 = "UPDATE activity SET name='$name', activityCategorySmall_id='$categorySmall', signUpDate='$signDate', signUpEndDate='$signEndDate', startDate='$startDate', endDate='$signEndDate', price='$price', description='$article' WHERE id = $activityId";
+$sql1 = "UPDATE activity SET name='$name', activityCategorySmall_id='$categorySmall', signUpDate='$signDate', signUpEndDate='$signEndDate', startDate='$startDate', endDate='$signEndDate', price='$price', description='$article',	activity_teacher_id='$teacher' WHERE id = $activityId";
 
 if($conn->query($sql1) === TRUE){
     // echo "新資料輸入成功";

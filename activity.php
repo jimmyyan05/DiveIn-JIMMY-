@@ -8,12 +8,13 @@ $avticityCateSql = "SELECT
 activity_category_big.id AS big_id,
 activity_category_big.name AS big_name,
 activity_category_small.id AS small_id,
-activity_category_small.name AS small_name 
+activity_category_small.name AS small_name
 FROM activity_category_big
 LEFT JOIN activity_category_small 
 ON activity_category_big.id = activity_category_small.activityCategoryBig_id";
 
 $avticityResultcate = $conn->query($avticityCateSql);
+
 
 $avticityCategoryArr = [];
 while ($cates = $avticityResultcate->fetch_assoc()) {
@@ -29,6 +30,14 @@ $categories = $resultCate->fetch_all(MYSQLI_ASSOC);
 $categoryArr = [];
 foreach ($categories as $category) {
     $categoryArr[$category["id"]] = $category["name"];
+}
+
+$sqlTeachers = "SELECT id, name FROM activity_teacher";
+$resultTeachers = $conn->query($sqlTeachers);
+
+$teachers = [];
+if ($resultTeachers->num_rows > 0) {
+    $teachers = $resultTeachers->fetch_all(MYSQLI_ASSOC);
 }
 
 $whereClause = "";
@@ -54,6 +63,8 @@ if (isset($_GET["search"])) {
                 $whereClause = "ORDER BY startDate DESC";
                 break;
         }
+    } else {
+        $whereClause = "ORDER BY id ASC";
     }
     if (!isset($_GET["p"])) {
         header("location:activity.php?p=1&search=" . $_GET["search"]);
@@ -71,12 +82,15 @@ if (isset($_GET["search"])) {
     activity_category_small.name AS smallCategory_name,
     activity_category_big.name AS bigCategory_name,
     activity_category_big.id AS big_id,
+    activity_teacher.id AS teacher_id, 
+    activity_teacher.name AS teacher_name, 
         (SELECT activity_image.imgUrl FROM activity_image 
         WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
         LIMIT 1) AS main_image
         FROM activity
     JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
     JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+    LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id  -- 連接老師表格
     WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0 
     $whereClause
     LIMIT $start_item,$per_page
@@ -99,6 +113,8 @@ if (isset($_GET["search"])) {
                 $whereClause = "ORDER BY startDate DESC";
                 break;
         }
+    } else {
+        $whereClause = "ORDER BY id ASC";
     }
     $sqlAll = "SELECT * FROM activity WHERE isDeleted=0";
     $resultAll = $conn->query($sqlAll);
@@ -110,12 +126,15 @@ if (isset($_GET["search"])) {
     activity_category_small.name AS smallCategory_name,
     activity_category_big.name AS bigCategory_name,
     activity_category_big.id AS big_id,
+    activity_teacher.id AS teacher_id, 
+    activity_teacher.name AS teacher_name, 
         (SELECT activity_image.imgUrl FROM activity_image 
         WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
         LIMIT 1) AS main_image
         FROM activity
     JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
     JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+    LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id  -- 連接老師表格
     WHERE activity.isDeleted=0
     $whereClause
     LIMIT $start_item,$per_page
@@ -219,7 +238,7 @@ if (isset($_GET["search"])) {
     <title>服務項目</title>
 
     <!-- 統一的css -->
-     <?php include "css.php"; ?>
+    <?php include "css.php"; ?>
 
     <!-- 自訂css樣式 -->
     <link rel="stylesheet" href="activity_style.css">
@@ -241,7 +260,7 @@ if (isset($_GET["search"])) {
             <div id="content">
 
                 <!-- Topbar -->
-                <?php include "topbar.php"; ?>                    
+                <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -306,6 +325,7 @@ if (isset($_GET["search"])) {
                                 <th>子分類</th>
                                 <th>報名日期</th>
                                 <th>活動時間</th>
+                                <th>師資</th>
                                 <th>費用</th>
                                 <th>狀態</th>
                                 <th>編輯</th>
@@ -328,9 +348,8 @@ if (isset($_GET["search"])) {
                                         <?php endif; ?>
                                     </td>
 
-                                    <td>$<?= number_format($activity["price"]) ?>
-
-                                    </td>
+                                    <td><?= $activity["teacher_name"] ?></td>
+                                    <td>$<?= number_format($activity["price"]) ?></td>
                                     <td>
                                         <?php
                                         $now = strtotime('now');
@@ -381,7 +400,7 @@ if (isset($_GET["search"])) {
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">服務類型</label>
-                                                                <select class="form-control " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>">
+                                                                <select class="form-select " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>">
                                                                     <!--<select class="form-control " name="activityCategoryBig">-->
                                                                     <option selected>請選擇服務類型</option>
                                                                     <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
@@ -391,14 +410,29 @@ if (isset($_GET["search"])) {
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">服務類別</label>
-                                                                <select class="form-control" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>">
+                                                                <select class="form-select" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>">
                                                                     <option value="<?= $activity['smallCategory_name'] ?>" selected><?= $activity['smallCategory_name'] ?></option>
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="mb-2">
-                                                            <label for="" class="form-label">費用</label>
-                                                            <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1">
+                                                        <div class="mb-2 row">
+                                                            <div class="col">
+                                                                <label for="" class="form-label">費用</label>
+                                                                <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1">
+                                                            </div>
+                                                            <div class="col">
+                                                                <label for="" class="form-label">師資</label>
+                                                                <?php $selectedTeacherId = $activity['activity_teacher_id'] ?? null; ?>
+                                                                <select name="activity_teacher_id" class="form-select">
+                                                                    <option value="">請選擇師資</option> <!-- 預設空選項 -->
+                                                                    <?php foreach ($teachers as $teacher): ?>
+                                                                        <option value="<?= htmlspecialchars($teacher['id']) ?>"
+                                                                            <?= $teacher['id'] == $selectedTeacherId ? 'selected' : '' ?>>
+                                                                            <?= htmlspecialchars($teacher['name']) ?>
+                                                                        </option>
+                                                                    <?php endforeach; ?>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
@@ -448,7 +482,7 @@ if (isset($_GET["search"])) {
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                                    <form action="doDelete.php" method="post">
+                                                    <form action="doDeleteActivity.php" method="post">
                                                         <input type="hidden" name="activityID" value="<?= $activity["id"] ?>">
                                                         <button type="submit" class="btn btn-danger" name="deleted" value="1">確認</button>
                                                     </form>
@@ -470,25 +504,25 @@ if (isset($_GET["search"])) {
                         <div class="d-flex justify-content-center">
                             <nav aria-label="Page navigation">
                                 <ul class="pagination">
-                                    <?php if($p-1>0):?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] - 1 ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <?php endif;?>
+                                    <?php if ($p - 1 > 0): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="activity.php?p=<?= $_GET["p"] - 1 ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
                                     <?php for ($i = 1; $i <= $total_page; $i++): ?>
                                         <li class="page-item <?php if ($i == $_GET["p"]) echo "active"; ?>"><a class="page-link" href="activity.php?p=<?= $i ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>">
                                                 <?= $i ?>
                                             </a>
                                         </li>
                                     <?php endfor; ?>
-                                    <?php if($p+1<=$total_page):?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="activity.php?p=<?= $_GET["p"] + 1 ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
+                                    <?php if ($p + 1 <= $total_page): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="activity.php?p=<?= $_GET["p"] + 1 ?><?php if (isset($_GET["search"])): ?><?= "&search=" . $_GET["search"] ?><?php endif; ?><?php if (isset($_GET["order"])): ?><?= "&order=" . $_GET["order"] ?><?php endif; ?>" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
                                     <?php endif; ?>
                                 </ul>
                         </div>
@@ -572,7 +606,7 @@ if (isset($_GET["search"])) {
         <?php foreach ($activitys as $activity): ?>
             const activityCategoryBig<?= $activity["id"] ?> = document.querySelector("#activityCategoryBig<?= $activity["id"] ?>");
             const activityCategorySmall<?= $activity["id"] ?> = document.querySelector("#activityCategorySmall<?= $activity["id"] ?>");
-            activityCategoryBig<?= $activity["id"] ?>.addEventListener("change", function() {
+            activityCategoryBig<?= $activity["id"] ?>.addEventListener("click", function() {
                 const bigCategoryId = this.value;
                 activityCategorySmall<?= $activity["id"] ?>.innerHTML = "";
                 if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料

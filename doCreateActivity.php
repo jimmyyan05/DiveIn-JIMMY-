@@ -1,5 +1,5 @@
 <?php
-require_once("../create/db_project_connect.php");
+require_once("../db_project_connect.php");
 
 if(!isset($_POST["activityName"])){
     exit("請循正常管道進入此頁");
@@ -16,11 +16,12 @@ $signEndDate=$_POST["activitySignEndDate"];
 $startDate=$_POST["activityStartDate"];
 $endDate=$_POST["activityEndDate"];
 $article=$_POST["activityArticle"];
+$teacher=$_POST["teacher"];
 // $location=$_POST["activityLocation"];
 
 
-$sql1="INSERT INTO activity (name, activityCategorySmall_id, signUpDate, signUpEndDate, startDate, endDate, price, description)
-VALUES('$name', '$categorySmall', '$signDate', '$signEndDate', '$startDate', '$endDate', '$price', '$article')
+$sql1="INSERT INTO activity (name, activityCategorySmall_id, signUpDate, signUpEndDate, startDate, endDate, price, description, activity_teacher_id)
+VALUES('$name', '$categorySmall', '$signDate', '$signEndDate', '$startDate', '$endDate', '$price', '$article', '$teacher')
 ";
 if($conn->query($sql1) === TRUE){
     $last_activity_id=$conn->insert_id;
