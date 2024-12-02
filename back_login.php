@@ -33,8 +33,9 @@ if(isset($_SESSION["user"])){
                             <div class="col-lg-4 d-none bg-login-image"></div>
                             <div class="col">
                                 <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="text-gray-900 mb-4">Dive In 後台</h1>
+                                    <div class="d-flex align-items-center justify-content-center" style=" margin-left:-30px; " >
+                                        <img style="width: 10em " src="img/icon-3.png" alt="">
+                                        <h1 class="text-gray-900 mt-4" style="margin-left:-30px;">DIVE<sup>IN</sup></h1>
                                     </div>
                                     <?php if(isset($_SESSION["error"]["times"]) && $_SESSION["error"]["times"]>6): ?>
                                     <h3 class="text-danger">輸入錯誤次數太多, 請稍後再來</h3>
