@@ -71,8 +71,7 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
                         <div class="card-header py-3">
                             <form class="d-flex mt-2 col-4" method="GET" action="">
                                 <input class="form-control" type="search" name="query" placeholder="輸入關鍵字搜尋..."
-                                    aria-label="Search"
-                                    value="<?= isset($_GET['query']) ? htmlspecialchars($_GET['query']) : '' ?>">
+                                    aria-label="Search" value="<?= isset($_GET['query']) ? htmlspecialchars($_GET['query']) : '' ?>">
                                 <button class="btn btn-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                             </form>
                         </div>
@@ -239,29 +238,9 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
         <a class="scroll-to-top rounded" href="#page-top">
             <i class="fas fa-angle-up"></i>
         </a>
-        <!-- Logout Modal-->
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-primary" href="login.html">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
-    <?php include("./js.php") ?>
+        <?php include("./js.php") ?>
 </body>
 
 </html>
