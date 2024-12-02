@@ -3,13 +3,13 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-between" href="index.php" style="position: relative;">
-    <div class="sidebar-brand-icon" style="position: absolute; right:30%">
-        <img src="./img/icon-3.png" style="width: 10em">
-    </div>
-    <div class="sidebar-brand-text mx-3" style="position: absolute; top: 50%; left: 45%; color: white; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.7);">
-        Dive<sup>in</sup>
-    </div>
-</a>
+        <div class="sidebar-brand-icon" style="position: absolute; right:30%">
+            <img src="./img/icon-3.png" style="width: 10em">
+        </div>
+        <div class="sidebar-brand-text mx-3" style="position: absolute; top: 50%; left: 45%; color: white; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.7);">
+            Dive<sup>in</sup>
+        </div>
+    </a>
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
@@ -72,6 +72,7 @@
                 <a class="collapse-item" href="category.php">商品分類</a>
                 <a class="collapse-item" href="">租賃分類</a>
                 <a class="collapse-item" href="activityCategory.php">課程分類</a>
+                <a class="collapse-item" href="brand.php">品牌</a>
             </div>
         </div>
     </li>
