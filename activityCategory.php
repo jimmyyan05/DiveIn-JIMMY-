@@ -71,6 +71,13 @@ foreach ($bigCates as $cate) {
 
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">服務分類</li>
+                    </ol>
+                </nav>
 
                 <!-- End of Topbar -->
 
@@ -79,14 +86,7 @@ foreach ($bigCates as $cate) {
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">服務類別</h1>
-                    <!-- 麵包屑 -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
-                            <li class="breadcrumb-item"><a href="#">類別管理</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">服務類別管理</li>
-                        </ol>
-                    </nav>
+                    
 
                     <!-- 服務類別 -->
                     <div class="row justify-content-start gx-2">

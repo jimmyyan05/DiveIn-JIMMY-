@@ -32,6 +32,7 @@
     text-align: center;
     vertical-align: middle;
     max-width: 16rem;
+    border-top:0 !important;
 }
 
 /* 修改頁籤顏色 */
@@ -48,4 +49,8 @@
 
 .plus-btn{
     border-radius: 0;
+}
+table .img-td-container{
+    display: flex;
+    justify-content: center;
 }
