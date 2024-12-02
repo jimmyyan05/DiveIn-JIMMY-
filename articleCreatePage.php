@@ -53,25 +53,37 @@ require_once("../db_project_connect.php");
                             <label for="status" class="form-label">發布狀態</label>
                             <select class="form-select" id="status" name="status" required>
                                 <option value="0">待發布</option>
-                                <option value="1">已發布</option>
+                                <option value="1">發布</option>
                             </select>
                         </div>
 
                         <!-- 文章類型 -->
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="type" class="form-label">文章類型</label>
                             <select class="form-select" id="type" name="type" required>
                                 <option value="0">官方文章</option>
                                 <option value="1">商品描述</option>
                                 <option value="2">活動描述</option>
                             </select>
+                        </div> -->
+
+                        <!-- 動態新增圖片欄位 -->
+                        <div id="imageFields">
+                            <div class="imageField mb-3">
+                                <label for="articleImage1" class="form-label">文章照片</label>
+                                <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg" required>
+                                <label for="isMain1" class="form-label">是否為主圖</label>
+                                <select name="isMain[]" class="form-select">
+                                    <option value="0">非主圖</option>
+                                    <option value="1">主圖</option>
+                                </select>
+                                <!-- 取消新增圖片按鈕 -->
+                                <button type="button" class="btn btn-danger" onclick="removeImageField(this)">取消新增圖片</button>
+                            </div>
                         </div>
 
-                        <!-- 文章圖片 -->
-                        <div class="mb-3">
-                            <label for="articleImage" class="form-label">文章照片</label>
-                            <input type="file" class="form-control" id="articleImage" name="articleImage" accept=".png, .jpg, .jpeg" required>
-                        </div>
+                        <!-- 增加圖片欄位按鈕 -->
+                        <button type="button" class="btn btn-secondary" onclick="addImageField()">新增圖片欄位</button>
 
                         <!-- 提交按鈕 -->
                         <button type="submit" class="btn btn-primary">送出</button>
@@ -82,13 +94,99 @@ require_once("../db_project_connect.php");
         </div>
     </div>
 
-    <!-- 統一的腳本 -->
-    <?php include "scripts.php"; ?>
+
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let imageIndex = 1; // 初始圖片欄位索引
 
+        // 動態增加圖片欄位
+        function addImageField() {
+            imageIndex++;
+            const imageField = document.createElement('div');
+            imageField.classList.add('imageField', 'mb-3');
+            imageField.innerHTML = `
+            <label for="articleImage${imageIndex}" class="form-label">文章照片</label>
+            <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg" required>
+            <label for="isMain${imageIndex}" class="form-label">是否為主圖</label>
+            <select name="isMain[]" class="form-select">
+                <option value="0">非主圖</option>
+                <option value="1">主圖</option>
+            </select>
+            <!-- 取消新增圖片按鈕 -->
+            <button type="button" class="btn btn-danger" onclick="removeImageField(this)">取消新增圖片</button>
+        `;
+            document.getElementById('imageFields').appendChild(imageField);
+        }
+
+        // 刪除圖片欄位
+        function removeImageField(button) {
+            const imageField = button.closest('.imageField');
+            imageField.remove();
+        }
+    </script>
 </body>
 
 </html>
+<?php
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 接收表單數據
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $status = $_POST['status']; // 0 或 1
+    // $type = $_POST['type'];     // 0, 1 或 2
+
+    // 設置文章創建時間
+    $createdAt = date('Y-m-d H:i:s');
+    $upgradeDate = null; // 暫為空值
+    $isDeleted = 0;      // 默認值為 0
+
+    // 處理文章圖片上傳
+    $uploadDir = 'img/article/'; // 修改圖片儲存的目錄
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true); // 如果目錄不存在則創建
+    }
+
+    $imageName = date('YmdHis') . '_' . $_FILES['articleImage']['name'];
+    $uploadFile = $uploadDir . $imageName;
+
+    if (isset($_FILES['articleImage']) && $_FILES['articleImage']['error'] === UPLOAD_ERR_OK) {
+        if (!move_uploaded_file($_FILES['articleImage']['tmp_name'], $uploadFile)) {
+            die("圖片上傳失敗！");
+        }
+    } else {
+        die("無效的圖片文件！");
+    }
+
+    // 插入文章數據到 article 表
+    $sql_article = "INSERT INTO article (title, content, status, createdAt, upgradeDate, isDeleted) 
+                    VALUES ('$title', '$content', '$status', '$createdAt', NULL, '$isDeleted')";
+
+    if ($conn->query($sql_article) === TRUE) {
+        // 獲取新插入的文章 ID
+        $articleId = $conn->insert_id;
+
+        // 插入圖片數據到 article_image 表
+        $sql_image = "INSERT INTO article_image (article_id, name, imgUrl) 
+                      VALUES ('$articleId', '$imageName', '$uploadFile')";
+
+        if ($conn->query($sql_image) === TRUE) {
+            // 顯示彈出消息並跳轉
+            echo "<script>
+                    alert('文章與圖片創建成功！');
+                    window.location.href = 'articleList.php';
+                  </script>";
+        } else {
+            die("圖片數據插入失敗！" . $conn->error);
+        }
+    } else {
+        die("文章數據插入失敗！" . $conn->error);
+    }
+}
+
+$conn->close();
+?>
