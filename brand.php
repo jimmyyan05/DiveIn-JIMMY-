@@ -72,7 +72,13 @@ $letters = range('A', 'Z');
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("./topbar.php") ?>
-
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">品牌</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>品牌管理</h2>

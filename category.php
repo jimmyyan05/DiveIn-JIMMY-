@@ -188,6 +188,13 @@ if ($result) {
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("topbar.php") ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">商品分類</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <h1 class="h3 mb-2 text-gray-800">分類管理系統</h1>
                     <div class="container">
