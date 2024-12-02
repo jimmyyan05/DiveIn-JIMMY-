@@ -55,9 +55,17 @@ function getStatusClass($status)
 <body id="page-top">
     <div id="wrapper">
         <?php include("sidebar.php") ?>
+
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("./topbar.php") ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2>訂單列表</h2>
