@@ -240,49 +240,57 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                         </div>
                     </div>
 
-                <!-- 分頁 -->
-<div class="d-flex justify-content-center">
-    <div>
-        <!-- 跳至第一頁 -->
-        <?php if ($page > 1) : ?>
-            <a href="?page=1&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
-                class="btn btn-secondary">第一頁</a>
-        <?php endif; ?>
+                    <!-- 分頁 -->
+                    <div class="d-flex justify-content-center">
+                        <div>
+                            <!-- 跳至第一頁 -->
+                            <?php if ($page > 1) : ?>
+                                <a href="?page=1&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
+                                    class="btn btn-secondary">第一頁</a>
+                            <?php endif; ?>
 
-        <!-- 上一頁 -->
-        <?php if ($page > 1) : ?>
-            <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
-                class="btn btn-primary">上一頁</a>
-        <?php endif; ?>
+                            <!-- 上一頁 -->
+                            <?php if ($page > 1) : ?>
+                                <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
+                                    class="btn btn-primary">上一頁</a>
+                            <?php endif; ?>
 
-        <!-- 頁碼顯示 -->
-        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
-            <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
-                class="btn <?php echo $i == $page ? 'btn-info' : 'btn-light'; ?>">
-                <?php echo $i; ?>
-            </a>
-        <?php endfor; ?>
+                            <!-- 頁碼顯示 -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                                <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
+                                    class="btn <?php echo $i == $page ? 'btn-info' : 'btn-light'; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
 
-        <!-- 下一頁 -->
-        <?php if ($page < $totalPages) : ?>
-            <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
-                class="btn btn-primary">下一頁</a>
-        <?php endif; ?>
+                            <!-- 下一頁 -->
+                            <?php if ($page < $totalPages) : ?>
+                                <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
+                                    class="btn btn-primary">下一頁</a>
+                            <?php endif; ?>
 
-        <!-- 跳至最後一頁 -->
-        <?php if ($page < $totalPages) : ?>
-            <a href="?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
-                class="btn btn-secondary">最後一頁</a>
-        <?php endif; ?>
-    </div>
-</div>
-
-
-
+                            <!-- 跳至最後一頁 -->
+                            <?php if ($page < $totalPages) : ?>
+                                <a href="?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($searchTerm); ?>&status=<?php echo $statusFilter; ?>"
+                                    class="btn btn-secondary">最後一頁</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+   
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+
+
 
 
 

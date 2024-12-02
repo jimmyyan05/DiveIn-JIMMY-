@@ -196,8 +196,8 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                                     <td>
                                                         <!-- "復原" 按鈕 -->
                                                         <a href="articleDoRestore.php?id=<?php echo $row['id']; ?>"
-                                                           class="btn btn-success btn-sm"
-                                                           onclick="return confirm('確定復原？')">
+                                                            class="btn btn-success btn-sm"
+                                                            onclick="return confirm('確定復原？')">
                                                             復原
                                                         </a>
                                                     </td>
@@ -221,19 +221,19 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                             <!-- 跳至第一頁 -->
                             <?php if ($page > 1) : ?>
                                 <a href="?page=1&search=<?php echo urlencode($searchTerm); ?>"
-                                   class="btn btn-secondary">第一頁</a>
+                                    class="btn btn-secondary">第一頁</a>
                             <?php endif; ?>
 
                             <!-- 上一頁 -->
                             <?php if ($page > 1) : ?>
                                 <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($searchTerm); ?>"
-                                   class="btn btn-primary">上一頁</a>
+                                    class="btn btn-primary">上一頁</a>
                             <?php endif; ?>
 
                             <!-- 頁碼顯示 -->
                             <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
                                 <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($searchTerm); ?>"
-                                   class="btn <?php echo $i == $page ? 'btn-info' : 'btn-light'; ?>">
+                                    class="btn <?php echo $i == $page ? 'btn-info' : 'btn-light'; ?>">
                                     <?php echo $i; ?>
                                 </a>
                             <?php endfor; ?>
@@ -241,13 +241,13 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                             <!-- 下一頁 -->
                             <?php if ($page < $totalPages) : ?>
                                 <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($searchTerm); ?>"
-                                   class="btn btn-primary">下一頁</a>
+                                    class="btn btn-primary">下一頁</a>
                             <?php endif; ?>
 
                             <!-- 跳至最後一頁 -->
                             <?php if ($page < $totalPages) : ?>
                                 <a href="?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($searchTerm); ?>"
-                                   class="btn btn-secondary">最後一頁</a>
+                                    class="btn btn-secondary">最後一頁</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -257,6 +257,25 @@ $totalPages = ceil($totalItems / $itemsPerPage);
         </div>
     </div>
 
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
+
+    <!-- bootstrap5的JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>
