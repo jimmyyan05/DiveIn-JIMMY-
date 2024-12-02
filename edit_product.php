@@ -278,7 +278,7 @@ try {
                                                         <?php foreach ($images as $img): ?>
                                                             <div class="col-md-3 mb-2">
                                                                 <div class="card h-100" data-image-id="<?= $img['id'] ?>">
-                                                                    <img src="img/<?= htmlspecialchars($img['imgUrl']) ?>"
+                                                                    <img src="img/product/<?= htmlspecialchars($img['imgUrl']) ?>"
                                                                         class="card-img-top"
                                                                         style="height: 150px; object-fit: cover;"
                                                                         alt="<?= htmlspecialchars($img['name']) ?>">

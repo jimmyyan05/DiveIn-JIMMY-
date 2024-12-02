@@ -54,10 +54,18 @@ function getStatusClass($status)
 
 <body id="page-top">
     <div id="wrapper">
-        <?php include("./sidebar.php") ?>
+        <?php include("sidebar.php") ?>
+
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("./topbar.php") ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">訂單列表</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2>訂單列表</h2>
@@ -145,7 +153,14 @@ function getStatusClass($status)
             <?php include("./footer.php") ?>
         </div>
     </div>
-    <?php include("./js.php") ?>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="js/demo/datatables-demo.js"></script>
 </body>
 
 </html>
