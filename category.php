@@ -198,7 +198,7 @@ if ($result) {
                 <div class="container-fluid">
                     <h1 class="h3 mb-2 text-gray-800">分類管理系統</h1>
                     <div class="container">
-                        <div class="header">
+                        <div class="header d-flex justify-content-end">
                             <div id="deleteZone" class="delete-zone" ondragover="allowDrop(event)" ondrop="dropToDelete(event)">
                                 <i class="fas fa-trash"></i> 拖曳至此刪除
                             </div>
