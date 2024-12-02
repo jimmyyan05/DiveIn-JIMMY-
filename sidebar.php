@@ -2,14 +2,14 @@
 <ul class="navbar-nav bg-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-between" href="index.php" style="position: relative;">
-        <div class="sidebar-brand-icon" style="position: absolute; right:30%">
-            <img src="./img/icon-3.png" style="width: 10em">
+
+    <li class="nav-item active">
+        <div class="sidebar-brand-icon">
+            <img src="./img/icon-3.png" class="img-fit">
         </div>
-        <div class="sidebar-brand-text mx-3" style="position: absolute; top: 50%; left: 45%; color: white; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.7);">
-            Dive<sup>in</sup>
-        </div>
-    </a>
+    </li>
+
+
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
@@ -162,3 +162,21 @@
 
 
 <!-- End of Sidebar -->
+
+<head>
+    <style>
+        .sidebar-brand-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar-brand-icon .img-fit {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
