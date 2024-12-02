@@ -2,11 +2,13 @@
 <ul class="navbar-nav bg-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <div class="sidebar-brand-icon">
-            <img src="./img/IMG_logo.png" style="width:3em; ">
+    <a class="sidebar-brand d-flex align-items-center justify-content-between" href="index.php" style="position: relative;">
+        <div class="sidebar-brand-icon" style="position: absolute; right:30%">
+            <img src="./img/icon-3.png" style="width: 10em">
         </div>
-        <div class="sidebar-brand-text mx-3">Dive<sup>in</sup></div>
+        <div class="sidebar-brand-text mx-3" style="position: absolute; top: 50%; left: 45%; color: white; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.7);">
+            Dive<sup>in</sup>
+        </div>
     </a>
 
     <!-- Divider -->
@@ -24,13 +26,13 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-        Interface
+        DiveIn後台管理
     </div>
 
     <!-- Nav Item - 會員管理 -->
     <li class="nav-item">
         <a class="nav-link collapsed " href="userlist.php">
-            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-user fa-fw"></i>
             <span>會員管理</span>
         </a>
         <!-- <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -45,14 +47,14 @@
     <!-- Nav Item -訂單管理-->
     <li class="nav-item">
         <a class="nav-link" href="order.php">
-            <i class="fas fa-fw fa-chart-area"></i>
+            <i class="fa-solid fa-cart-shopping"></i>
             <span>訂單管理</span></a>
     </li>
 
     <!-- Nav Item - 商品管理 -->
     <li class="nav-item">
         <a class="nav-link" href="product.php">
-            <i class="fas fa-fw fa-chart-area"></i>
+            <i class="fa-solid fa-anchor"></i>
             <span>商品管理</span></a>
     </li>
 
@@ -60,7 +62,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefour"
             aria-expanded="true" aria-controls="collapsefour">
-            <i class="fas fa-fw fa-wrench"></i>
+            <i class="fa-solid fa-layer-group"></i>
             <span>分類管理</span>
         </a>
         <div id="collapsefour" class="collapse" aria-labelledby="headingUtilities"
@@ -70,42 +72,43 @@
                 <a class="collapse-item" href="category.php">商品分類</a>
                 <a class="collapse-item" href="">租賃分類</a>
                 <a class="collapse-item" href="activityCategory.php">課程分類</a>
+                <a class="collapse-item" href="brand.php">品牌</a>
             </div>
         </div>
     </li>
 
     <!-- Nav Item - 租賃管理 -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-chart-area"></i>
+        <a class="nav-link" href="rent_items.php">
+            <i class="fa-solid fa-people-carry-box"></i>
             <span>租賃管理</span></a>
     </li>
 
     <!-- Nav Item - 課程管理 -->
     <li class="nav-item">
         <a class="nav-link" href="activity.php">
-            <i class="fas fa-fw fa-chart-area"></i>
+            <i class="fa-brands fa-readme"></i>
             <span>課程管理</span></a>
     </li>
 
     <!-- Nav Item - 教練管理 -->
     <li class="nav-item">
         <a class="nav-link" href="teacher.php">
-            <i class="fas fa-fw fa-chart-area"></i>
+            <i class="fa-solid fa-person-chalkboard"></i>
             <span>教練管理</span></a>
     </li>
 
     <!-- Nav Item - 優惠券管理 -->
     <li class="nav-item">
         <a class="nav-link" href="coupon.php">
-            <i class="fas fa-fw fa-chart-area"></i>
+            <i class="fa-solid fa-ticket"></i>
             <span>優惠券管理</span></a>
     </li>
 
     <!-- Nav Item - 文章管理 -->
     <li class="nav-item">
         <a class="nav-link" href="articleList.php">
-            <i class="fas fa-fw fa-chart-area"></i>
+            <i class="fa-solid fa-newspaper"></i>
             <span>文章管理</span></a>
     </li>
 
@@ -115,12 +118,12 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    <!-- <div class="sidebar-heading">
         others
-    </div>
+    </div> -->
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
             aria-expanded="true" aria-controls="collapsePages">
             <i class="fas fa-fw fa-folder"></i>
@@ -138,7 +141,7 @@
                 <a class="collapse-item" href="blank.html">Blank Page</a>
             </div>
         </div>
-    </li>
+    </li> -->
 
 
 
@@ -151,7 +154,11 @@
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
 
-
-
+    <!-- Copyright -->
+    <div class="sidebar-footer text-center mt-auto">
+        <small class="text-white">&copy; DiveIn 2024 </small>
+    </div>
 </ul>
+
+
 <!-- End of Sidebar -->

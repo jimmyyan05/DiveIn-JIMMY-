@@ -45,3 +45,7 @@
 .page-link {
     color: #2a96a5;
 }
+
+.plus-btn{
+    border-radius: 0;
+}

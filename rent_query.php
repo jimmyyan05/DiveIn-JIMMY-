@@ -4,8 +4,8 @@ include 'PDO_connect.php';
 
 // 獲取查詢參數
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
-$limit = 10; // 每頁顯示的項目數量
+$filter = isset($_GET['filter']) ? $_GET['filter'] : ''; // 搜尋過濾條件
+$limit = 10; 
 $offset = ($page - 1) * $limit;
 
 // 設定基礎查詢語法
@@ -14,30 +14,24 @@ $params = [];
 
 // 如果有過濾條件，加入查詢條件
 if (!empty($filter)) {
-    $sql .= " AND name LIKE :filter";
+    $sql .= " AND name LIKE :filter"; // 模糊搜尋
     $params[':filter'] = '%' . $filter . '%';
 }
-// 準備查詢
-$stmt = $pdo->prepare($sql);
-if (!empty($filter)) {
-    $stmt->bindValue(':filter', '%' . $filter . '%', PDO::PARAM_STR);  // 綁定查詢條件
-}
-$stmt->execute();
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 添加排序和分頁
 $sql .= " ORDER BY start_date DESC LIMIT :limit OFFSET :offset";
 $params[':limit'] = $limit;
 $params[':offset'] = $offset;
 
+// 準備查詢
 $stmt = $pdo->prepare($sql);
 
 // 綁定參數
 foreach ($params as $key => $value) {
     if ($key === ':limit' || $key === ':offset') {
-        $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        $stmt->bindValue($key, $value, PDO::PARAM_INT); // LIMIT 和 OFFSET 使用整數
     } else {
-        $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        $stmt->bindValue($key, $value, PDO::PARAM_STR); // 其他條件使用字串
     }
 }
 
@@ -47,7 +41,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // 計算總項目數量以支援分頁
 $countSql = "SELECT COUNT(*) FROM rent_item WHERE is_deleted = 0";
 if (!empty($filter)) {
-    $countSql .= " AND name LIKE :filter";
+    $countSql .= " AND name LIKE :filter"; // 同樣的過濾條件用於計算總數
 }
 $countStmt = $pdo->prepare($countSql);
 
@@ -59,6 +53,7 @@ $countStmt->execute();
 $totalItems = $countStmt->fetchColumn();
 $totalPages = ceil($totalItems / $limit);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -73,7 +68,7 @@ $totalPages = ceil($totalItems / $limit);
 
     <title>DiveIn-rent-items</title>
     <!-- 統一的css -->
-    <?php include "css.php"; ?>
+    <?php include("./css.php") ?>
 
     <!-- font awesome cdn -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -91,8 +86,7 @@ $totalPages = ceil($totalItems / $limit);
         href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
         rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.css" rel="stylesheet">
+
 
     <style>
         .column-seq {
@@ -152,7 +146,8 @@ $totalPages = ceil($totalItems / $limit);
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php include "sidebar.php"; ?>
+        <?php include("./sidebar.php") ?>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -380,7 +375,7 @@ $totalPages = ceil($totalItems / $limit);
                             <!-- 新增租賃商品 -->
                             <a href="add.php" class="btn btn-warning mb-3"><i class="fa-solid fa-plus"></i> 新增租賃商品</a>
                             <!-- 查詢租賃商品 -->
-                            <form class="form-inline ml-auto my-2 my-md-0 navbar-search" method="get" action="query.php">
+                            <form class="form-inline ml-auto my-2 my-md-0 navbar-search" method="get" action="rent_query.php">
                                 <div class="input-group">
                                     <input type="text" class="form-control bg-light border-0 small" name="filter" placeholder="Search for..."
                                         value="<?php echo isset($_GET['filter']) ? htmlspecialchars($_GET['filter']) : ''; ?>">
@@ -440,15 +435,7 @@ $totalPages = ceil($totalItems / $limit);
                     </div>
                     <!-- End of Main Content -->
 
-                    <!-- Footer -->
-                    <footer class="sticky-footer bg-white">
-                        <div class="container my-auto">
-                            <div class="copyright text-center my-auto">
-                                <span>Copyright &copy; Your Website 2020</span>
-                            </div>
-                        </div>
-                    </footer>
-                    <!-- End of Footer -->
+      
 
                 </div>
                 <!-- End of Content Wrapper -->

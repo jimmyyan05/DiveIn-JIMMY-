@@ -113,13 +113,12 @@ if (isset($_GET['id'])) {
 
     <title>DiveIn-rent-items</title>
     <!-- 統一的css -->
-    <?php include "css.php"; ?>
+    <?php include("./css.php") ?>
 
     <!-- font awesome cdn -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
@@ -133,12 +132,7 @@ if (isset($_GET['id'])) {
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous" />
+
 
     <style>
         .column-seq {
@@ -199,7 +193,8 @@ if (isset($_GET['id'])) {
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php include "sidebar.php"; ?>
+        <?php include("./sidebar.php") ?>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -435,7 +430,7 @@ if (isset($_GET['id'])) {
                         <div class="d-flex flex-column">
                             <div class="d-flex bg-light p-2 mb-2">
                                 <?php if ($product): ?>
-                                    <form method="post" action="edit.php" enctype="multipart/form-data">
+                                    <form method="post" action="rent_edit.php" enctype="multipart/form-data">
                                         <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                                         <input type="hidden" name="page" value="<?php echo $page; ?>">
                                         <div class="mb-3">
@@ -496,15 +491,7 @@ if (isset($_GET['id'])) {
                 </div>
                 <!-- End of Main Content -->
 
-                <!-- Footer -->
-                <footer class="sticky-footer bg-white">
-                    <div class="container my-auto">
-                        <div class="copyright text-center my-auto">
-                            <span>Copyright &copy; Your Website 2020</span>
-                        </div>
-                    </div>
-                </footer>
-                <!-- End of Footer -->
+
 
             </div>
             <!-- End of Content Wrapper -->

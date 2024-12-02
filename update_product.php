@@ -105,7 +105,7 @@ $image_paths = []; // 改用陣列來儲存所有圖片路徑
 if (isset($_FILES['photos'])) {
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $max_size = 5 * 1024 * 1024; // 5MB
-    $upload_dir = 'img/';
+    $upload_dir = 'img/product/';
 
     // 確保上傳目錄存在
     if (!is_dir($upload_dir)) {
@@ -170,8 +170,20 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sidisi", $name, $category_small, $price, $stock, $status, $id);
 
+
     if (!$stmt->execute()) {
         throw new Exception("更新產品資訊失敗: " . $stmt->error);
+    }
+    // 2. 更新產品規格
+    $spec_sql = "UPDATE product_specification 
+SET size_id = ?, color_id = ?, brand_id = ?
+WHERE product_id = ?";
+
+    $spec_stmt = $conn->prepare($spec_sql);
+    $spec_stmt->bind_param("iiii", $size_id, $color_id, $brand_id, $id);
+
+    if (!$spec_stmt->execute()) {
+        throw new Exception("更新產品規格失敗: " . $spec_stmt->error);
     }
 
     // 2. 如果有指定主圖，先處理主圖設定
@@ -211,7 +223,7 @@ try {
     // 刪除已上傳的圖片
     if (!empty($image_paths)) {
         foreach ($image_paths as $image) {
-            $file_path = 'img/' . $image['filename'];
+            $file_path = 'img/product/' . $image['filename'];
             if (file_exists($file_path)) {
                 @unlink($file_path);
             }
