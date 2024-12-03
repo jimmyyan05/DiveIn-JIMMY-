@@ -170,7 +170,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th style="width: 8%;">操作</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
+                                    <!-- <tfoot>
                                         <tr>
                                             <th>編號</th>
                                             <th>標題</th>
@@ -181,7 +181,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th>狀態</th>
                                             <th>操作</th>
                                         </tr>
-                                    </tfoot>
+                                    </tfoot> -->
                                     <tbody>
                                         <?php
                                         // 計算從哪一個序號開始
