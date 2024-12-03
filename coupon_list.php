@@ -446,40 +446,63 @@ function createClearSortLink()
                     <!-- 優惠券列表 結束 -->
 
                     <!-- 分頁導航 -->
-                    <div class="d-flex justify-content-center mt-4">
+                    <div class="d-flex justify-content-center my-3">
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
-                                <!-- 跳至第 1 頁 -->
+                                <!-- 左1: 跳至第 1 頁 -->
                                 <li class="page-item <?php echo ($p == 1) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=1<?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="First">
                                         <i class="fa-solid fa-angles-left" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 上一頁 -->
+                                <!-- 左2: 上一頁 -->
                                 <li class="page-item <?php echo ($p == 1) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=<?php echo $p - 1; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="Previous">
                                         <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 分頁數字按鈕 -->
-                                <?php for ($i = 1; $i <= $total_page; $i++): ?>
-                                    <li class="page-item <?php echo ($i == $p) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?p=<?php echo $i; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>">
-                                            <?php echo $i; ?>
-                                        </a>
-                                    </li>
-                                <?php endfor; ?>
+                                <!-- 固定顯示 5 頁碼 -->
+                                <?php
+                                // 計算顯示的頁碼範圍
+                                $start_page = max(1, $p - 2);  // 顯示的起始頁
+                                $end_page = min($total_page, $start_page + 4);  // 顯示的結束頁 (固定顯示 5 頁)
 
-                                <!-- 下一頁 -->
+                                // 顯示第一頁和左側 '...'
+                                if ($start_page > 1) {
+                                    echo '<li class="page-item"><a class="page-link" href="?p=1">1</a></li>';
+                                    if ($start_page > 2) {
+                                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                    }
+                                }
+
+                                // 顯示頁碼
+                                for ($i = $start_page; $i <= $end_page; $i++) {
+                                    if ($i == $p) {
+                                        // 當前頁標記為 active
+                                        echo '<li class="page-item active"><a class="page-link" href="?p=' . $i . (isset($search) && $search !== '' ? '&search=' . urlencode($search) : '') . (isset($status) && $status !== 'all' ? '&status=' . $status : '') . '">' . $i . '</a></li>';
+                                    } else {
+                                        // 顯示其他頁碼
+                                        echo '<li class="page-item"><a class="page-link" href="?p=' . $i . (isset($search) && $search !== '' ? '&search=' . urlencode($search) : '') . (isset($status) && $status !== 'all' ? '&status=' . $status : '') . '">' . $i . '</a></li>';
+                                    }
+                                }
+
+                                // 顯示右側 '...' 和最後一頁
+                                if ($end_page < $total_page) {
+                                    echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                    echo '<li class="page-item"><a class="page-link" href="?p=' . $total_page . '">' . $total_page . '</a></li>';
+                                }
+                                ?>
+
+                                <!-- 右2: 下一頁 -->
                                 <li class="page-item <?php echo ($p == $total_page) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=<?php echo $p + 1; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="Next">
                                         <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 跳至最後一頁 -->
+                                <!-- 右1: 跳至最後一頁 -->
                                 <li class="page-item <?php echo ($p == $total_page) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=<?php echo $total_page; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="Last">
                                         <i class="fa-solid fa-angles-right" aria-hidden="true"></i>
@@ -488,6 +511,7 @@ function createClearSortLink()
                             </ul>
                         </nav>
                     </div>
+
                 </div>
             </div>
         </div>
