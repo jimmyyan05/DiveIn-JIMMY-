@@ -262,19 +262,19 @@ $total_page = ceil($teachersCount / $per_page);
                                                     <div class="modal-body">
                                                         <div class="mb-2">
                                                             <div class="bg-light update-img d-flex justify-content-center mb-2 rounded">
-                                                                <img id="previewImage" src="img/teacher/<?= $teacher["image"] ?>" alt="">
+                                                                <img id="previewImage<?=$teacher["id"]?>" src="img/teacher/<?= $teacher["image"] ?>" alt="">
                                                             </div>
                                                             <label for="" class="form-label">修改圖片</label>
-                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                                            <input id="fileInput<?=$teacher["id"]?>" type="file" class="form-control" name="myFile" accept="image/*">
                                                         </div>
                                                         <div class="mb-2 row">
                                                             <div class="col">
                                                                 <label for="" class="form-label">教練姓名</label>
-                                                                <input type="text" class="form-control" name="teacherName" value="<?= $teacher["name"] ?>" placeholder="請輸入新的名稱">
+                                                                <input type="text" class="form-control" name="teacherName" value="<?= $teacher["name"] ?>" placeholder="請輸入新的名稱" required>
                                                             </div>
                                                             <div class="col">
                                                                 <label for="" class="form-label">教練性別</label>
-                                                                <select class="form-control" name="sex" id="">
+                                                                <select class="form-control" name="sex" id="" required>
                                                                     <option value="1" <?php if ($teacher["sex"] == 1): ?>selected<?php endif; ?>>男性</option>
                                                                     <option value="2" <?php if ($teacher["sex"] == 2): ?>selected<?php endif; ?>>女性</option>
                                                                 </select>
@@ -282,16 +282,16 @@ $total_page = ceil($teachersCount / $per_page);
                                                         </div>
                                                         <div class="mb-2">
                                                             <label for="" class="form-label">教練聯絡方式</label>
-                                                            <input type="text" class="form-control" name="teacherEmail" value="<?= $teacher["email"] ?>" placeholder="請輸入電子信箱">
+                                                            <input type="text" class="form-control" name="teacherEmail" value="<?= $teacher["email"] ?>" placeholder="請輸入電子信箱" required>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">教練年資</label>
-                                                                <input type="text" class="form-control" name="teacherYears" value="<?= $teacher["years"] ?>" placeholder="請輸入教練年資">
+                                                                <input type="text" class="form-control" name="teacherYears" value="<?= $teacher["years"] ?>" placeholder="請輸入教練年資" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">教練等級</label>
-                                                                <select class="form-control" name="level" id="">
+                                                                <select class="form-control" name="level" id="" required>
                                                                     <option value="1" <?= $teacher["level"] == 1 ? "selected" : "" ?>>OWSI 開放水域潛水教練</option>
                                                                     <option value="2" <?= $teacher["level"] == 2 ? "selected" : "" ?>>MSDT 潛水大師教練</option>
                                                                     <option value="3" <?= $teacher["level"] == 3 ? "selected" : "" ?>>教練開發課程助教</option>
@@ -444,21 +444,22 @@ $total_page = ceil($teachersCount / $per_page);
 
 
     <script>
-        // // 上傳圖片預覽
-        // const fileInput = document.querySelector("#fileInput");
-        // fileInput.addEventListener("change", function() {
-        //     const file = event.target.files[0];
-        //     previewImage.src = "";
-        //     if (file) {
-        //         const reader = new FileReader();
-        //         reader.onload = function(e) {
-        //             const previewImage = document.getElementById("previewImage");
-        //             previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
-        //         };
-        //         reader.readAsDataURL(file); // 讀取檔案
-        //     }
-        // })
-
+        // 上傳圖片預覽
+        <?php foreach ($teachers as $teacher): ?>
+        const fileInput<?=$teacher["id"]?> = document.querySelector("#fileInput<?=$teacher["id"]?>");
+        fileInput<?=$teacher["id"]?>.addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const previewImage = document.getElementById("previewImage<?=$teacher["id"]?>");
+            previewImage.src = "";
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
+                };
+                reader.readAsDataURL(file); // 讀取檔案
+            }
+        })
+        <?php endforeach; ?>
         // // 圖片修改第二次時應該怎麼處理呢？
         // const changebtn = document.querySelector("#change-btn")
         // changebtn.addEventListener("click", function() {

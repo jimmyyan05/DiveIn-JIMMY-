@@ -1,6 +1,5 @@
 <?php
 require_once("../db_project_connect.php");
-session_start();
 
 $cateSql = "SELECT * FROM `activity_category_small`";
 $resultCate = $conn->query($cateSql);
@@ -42,6 +41,7 @@ if ($resultTeachers->num_rows > 0) {
 }
 
 $whereClause = "";
+$whereCate = "";
 
 $per_page = 5;
 
@@ -72,12 +72,36 @@ if (isset($_GET["search"])) {
     } else {
         $p = $_GET["p"];
     }
+
+
     $search = $_GET["search"];
     $start_item = ($p - 1) * $per_page;
     $sqlAll = "SELECT * FROM activity WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0";
     $resultAll = $conn->query($sqlAll);
     $allActivitysCount = $resultAll->num_rows;
     // $sql = "SELECT * FROM users WHERE name LIKE '%$search%' AND is_deleted=0";
+    // $sql = "SELECT 
+    // activity.*, 
+    // activity_category_small.name AS smallCategory_name,
+    // activity_category_big.name AS bigCategory_name,
+    // activity_category_big.id AS big_id,
+    // activity_teacher.id AS teacher_id, 
+    // activity_teacher.name AS teacher_name, 
+    //     (SELECT activity_image.imgUrl FROM activity_image 
+    //     WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
+    //     LIMIT 1) AS main_image
+    //     FROM activity
+    // JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+    // JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+    // LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id  -- 連接老師表格
+    // WHERE (activity.name LIKE '%$search%'
+    // OR bigCategory_name LIKE '%$search%'
+    // OR smallCategory_name LIKE '%$search%'
+    // OR activity_teacher.name LIKE '%$search%')
+    // AND activity.isDeleted=0 
+    // $whereClause
+    // LIMIT $start_item,$per_page
+    // ";
     $sql = "SELECT 
     activity.*, 
     activity_category_small.name AS smallCategory_name,
@@ -85,17 +109,21 @@ if (isset($_GET["search"])) {
     activity_category_big.id AS big_id,
     activity_teacher.id AS teacher_id, 
     activity_teacher.name AS teacher_name, 
-        (SELECT activity_image.imgUrl FROM activity_image 
+    (SELECT activity_image.imgUrl FROM activity_image 
         WHERE activity_image.activity_id = activity.id AND activity_image.isMain = 1
         LIMIT 1) AS main_image
-        FROM activity
-    JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
-    JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
-    LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id  -- 連接老師表格
-    WHERE activity.name LIKE '%$search%' AND activity.isDeleted=0 
-    $whereClause
-    LIMIT $start_item,$per_page
-    ";
+FROM activity
+JOIN activity_category_small ON activity.activityCategorySmall_id = activity_category_small.id
+JOIN activity_category_big ON activity_category_small.activityCategoryBig_id = activity_category_big.id
+LEFT JOIN activity_teacher ON activity.activity_teacher_id = activity_teacher.id -- 連接老師表格
+WHERE (activity.name LIKE '%$search%'
+       OR activity_category_big.name LIKE '%$search%'
+       OR activity_category_small.name LIKE '%$search%'
+       OR activity_teacher.name LIKE '%$search%')
+  AND activity.isDeleted=0 
+$whereClause
+LIMIT $start_item, $per_page";
+
 
     $result = $conn->query($sql);
 
@@ -297,7 +325,7 @@ if (isset($_GET["search"])) {
                     <div class="row justify-content-start">
                         <form class="col-2 d-flex justify-content-start" action="" method="get">
                             <div class="input-group mb-3 search-bar justify-content-end gx-0">
-                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入活動關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
+                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
                                     aria-label="Recipient's username" aria-describedby="basic-addon2" name="search" <?php if (isset($_GET["search"])): ?> value="<?= $_GET["search"] ?>" <?php endif; ?>>
                                 <div class="input-group-append p-0">
                                     <button class="btn btn-outline-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -335,16 +363,16 @@ if (isset($_GET["search"])) {
                                                     <?= $big_data["name"] ?>
                                                 </option>
                                             <?php endforeach; ?>
-                                        </select>
-                                        <select class="form-select" id="status-filter" name="status">
+                                        </select> -->
+                            <!-- <select class="form-select" id="status-filter" name="status">
                                             <option value="">所有狀態</option>
                                             <option value="尚未開始報名" <?php if (isset($_GET['status']) && $_GET['status'] == '尚未開始報名') echo 'selected'; ?>>尚未開始報名</option>
                                             <option value="活動報名中" <?php if (isset($_GET['status']) && $_GET['status'] == '活動報名中') echo 'selected'; ?>>活動報名中</option>
                                             <option value="報名結束，等待活動開始" <?php if (isset($_GET['status']) && $_GET['status'] == '報名結束，等待活動開始') echo 'selected'; ?>>報名結束，等待活動開始</option>
                                             <option value="活動進行中！" <?php if (isset($_GET['status']) && $_GET['status'] == '活動進行中！') echo 'selected'; ?>>活動進行中！</option>
                                             <option value="活動結束" <?php if (isset($_GET['status']) && $_GET['status'] == '活動結束') echo 'selected'; ?>>活動結束</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-info ms-2"><i class="fa-solid fa-magnifying-glass fa"></i></button>
+                                        </select> -->
+                            <!-- <button type="submit" class="btn btn-info ms-2"><i class="fa-solid fa-magnifying-glass fa"></i></button>
                                     </div>
                                 </form>
                             </div> -->
@@ -437,19 +465,19 @@ if (isset($_GET["search"])) {
                                                     <div class="modal-body">
                                                         <div class="mb-2">
                                                             <div class="bg-light update-img d-flex justify-content-center mb-2 rounded">
-                                                                <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
+                                                                <img id="previewImage<?= $activity["id"] ?>" src="img/activity/<?= $activity["main_image"] ?>" alt="">
                                                             </div>
                                                             <label for="" class="form-label">修改圖片</label>
-                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                                            <input id="fileInput<?= $activity["id"] ?>" type="file" class="form-control" name="myFile" accept="image/*">
                                                         </div>
                                                         <div class="mb-2">
                                                             <label for="" class="form-label">服務名稱</label>
-                                                            <input type="text" class="form-control" name="activityName" value="<?= $activity["name"] ?>" placeholder="請輸入新的名稱">
+                                                            <input type="text" class="form-control" name="activityName" value="<?= $activity["name"] ?>" placeholder="請輸入新的名稱" required>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">服務類型</label>
-                                                                <select class="form-select " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>">
+                                                                <select class="form-select " name="activityCategoryBig" id="activityCategoryBig<?= $activity["id"] ?>" required>
                                                                     <!--<select class="form-control " name="activityCategoryBig">-->
                                                                     <option selected>請選擇服務類型</option>
                                                                     <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
@@ -459,7 +487,7 @@ if (isset($_GET["search"])) {
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">服務類別</label>
-                                                                <select class="form-select" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>">
+                                                                <select class="form-select" name="activityCategorySmall" id="activityCategorySmall<?= $activity["id"] ?>" required>
                                                                     <option value="<?= $activity['smallCategory_name'] ?>" selected><?= $activity['smallCategory_name'] ?></option>
                                                                 </select>
                                                             </div>
@@ -467,12 +495,12 @@ if (isset($_GET["search"])) {
                                                         <div class="mb-2 row">
                                                             <div class="col">
                                                                 <label for="" class="form-label">費用</label>
-                                                                <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1">
+                                                                <input type="number" class="form-control" name="activityPrice" value="<?= $activity["price"] ?>" min="1" step="1" required>
                                                             </div>
                                                             <div class="col">
                                                                 <label for="" class="form-label">師資</label>
                                                                 <?php $selectedTeacherId = $activity['activity_teacher_id'] ?? null; ?>
-                                                                <select name="activity_teacher_id" class="form-select">
+                                                                <select name="activity_teacher_id" class="form-select" required>
                                                                     <option value="">請選擇師資</option> <!-- 預設空選項 -->
                                                                     <?php foreach ($teachers as $teacher): ?>
                                                                         <option value="<?= htmlspecialchars($teacher['id']) ?>"
@@ -486,40 +514,37 @@ if (isset($_GET["search"])) {
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名開始日</label>
-                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date">
+                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名截止日</label>
-                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date">
+                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">活動開始日</label>
-                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date">
+                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">活動結束日</label>
-                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date">
+                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">開始時間</label>
-                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time">
+                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">結束時間</label>
-                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time">
+                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time" required>
                                                             </div>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="" class="form-label">活動介紹</label>
                                                             <textarea class="form-control" name="activityArticle" rows="5"><?= $activity["description"] ?></textarea>
                                                         </div>
-                                                        <?php if (isset($_SESSION["error"]["updateActivity"])): ?>
-                                                            <h3 class="text-center text-danger"><?= $_SESSION["error"]["updateActivity"] ?></h3>
-                                                        <?php endif; ?>
                                                     </div>
 
                                                     <div class="modal-footer">
@@ -821,28 +846,44 @@ if (isset($_GET["search"])) {
         // });
 
 
+        <?php foreach ($activitys as $activity): ?>
+            const fileInput<?= $activity["id"] ?> = document.querySelector("#fileInput<?= $activity["id"] ?>");
+            fileInput<?= $activity["id"] ?>.addEventListener("change", function(event) {
+                const file = event.target.files[0];
+                const previewImage = document.getElementById("previewImage<?= $activity["id"] ?>");
+                previewImage.src = ""; // 清空之前的預覽
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result; // 設定新的圖片來源
+                    };
+                    reader.readAsDataURL(file); // 讀取檔案
+                }
+            });
+        <?php endforeach; ?>
 
 
-        // 上傳圖片預覽
-        const fileInput = document.querySelector("#fileInput");
-        fileInput.addEventListener("change", function() {
-            const file = event.target.files[0];
-            previewImage.src = "";
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewImage = document.getElementById("previewImage");
-                    previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
-                };
-                reader.readAsDataURL(file); // 讀取檔案
-            }
-        })
-
+        //     <?php foreach ($activitys as $activity): ?>
+        //     // 上傳圖片預覽
+        //     const fileInput<?= $activity["id"] ?> = document.querySelector("#fileInput<?= $activity["id"] ?>");
+        //     fileInput<?= $activity["id"] ?>.addEventListener("change", function() {
+        //         const file = event.target.files[0];
+        //         previewImage.src = "";
+        //         if (file) {
+        //             const reader = new FileReader();
+        //             reader.onload = function(e) {
+        //                 const previewImage<?= $activity["id"] ?> = document.getElementById("previewImage<?= $activity["id"] ?>");
+        //                 previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
+        //             };
+        //             reader.readAsDataURL(file); // 讀取檔案
+        //         }
+        //     })
+        //    <?php endforeach ?>
         // 圖片修改第二次時應該怎麼處理呢？
-        const changebtn = document.querySelector("#change-btn")
-        changebtn.addEventListener("click", function() {
-            previewImage.src = "img/activity/<?= $activity["main_image"] ?>";
-        })
+        // const changebtn = document.querySelector("#change-btn")
+        // changebtn.addEventListener("click", function() {
+        //     previewImage.src = "img/activity/<?= $activity["main_image"] ?>";
+        // })
     </script>
 </body>
 

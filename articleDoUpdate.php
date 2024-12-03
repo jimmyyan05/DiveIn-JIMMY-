@@ -7,55 +7,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['content'];
     $status = $_POST['status'];
 
-    // 更新文章內容
-    $sql_article = "UPDATE article SET title = ?, content = ?, status = ?, upgradeDate = NOW() WHERE id = ?";
-    $stmt = $conn->prepare($sql_article);
-    $stmt->bind_param("ssii", $title, $content, $status, $id);
-    $stmt->execute();
+    try {
+        $conn->begin_transaction();
 
-    // 更新現有圖片的 isMain
-    if (isset($_POST['isMain'])) {
-        foreach ($_POST['isMain'] as $imageId => $isMain) {
-            if ($isMain == 1) {
-                // 先將其他圖片的 isMain 設為 0
-                $sql_reset = "UPDATE article_image SET isMain = 0 WHERE article_id = ? AND id != ?";
-                $stmt_reset = $conn->prepare($sql_reset);
-                $stmt_reset->bind_param("ii", $id, $imageId);
-                $stmt_reset->execute();
+        // 更新文章基本資訊
+        $sql_update_article = "UPDATE article SET title = ?, content = ?, status = ?, upgradeDate = NOW() WHERE id = ?";
+        $stmt_update_article = $conn->prepare($sql_update_article);
+
+        if (!$stmt_update_article) {
+            throw new Exception("SQL 語句準備失敗: " . $conn->error);
+        }
+
+        $stmt_update_article->bind_param("ssii", $title, $content, $status, $id);
+        $stmt_update_article->execute();
+
+        // 更新圖片的 isMain
+        if (!empty($_POST['isMain'])) {
+            foreach ($_POST['isMain'] as $imageId => $isMain) {
+                $sql_update_image = "UPDATE article_image SET isMain = ? WHERE id = ?";
+                $stmt_update_image = $conn->prepare($sql_update_image);
+
+                if (!$stmt_update_image) {
+                    throw new Exception("SQL 語句準備失敗: " . $conn->error);
+                }
+
+                $stmt_update_image->bind_param("ii", $isMain, $imageId);
+                $stmt_update_image->execute();
+            }
+        }
+
+        // 處理新增圖片
+        if (!empty($_FILES['newImage']['name'][0])) {
+            $uploadDir = 'img/article/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
             }
 
-            // 更新該圖片的 isMain
-            $sql_image = "UPDATE article_image SET isMain = ? WHERE id = ?";
-            $stmt_image = $conn->prepare($sql_image);
-            $stmt_image->bind_param("ii", $isMain, $imageId);
-            $stmt_image->execute();
+            foreach ($_FILES['newImage']['name'] as $key => $imageName) {
+                if ($_FILES['newImage']['error'][$key] === UPLOAD_ERR_OK) {
+                    $newImageName = date('YmdHis') . '_' . basename($imageName);
+                    $uploadFile = $uploadDir . $newImageName;
+
+                    if (move_uploaded_file($_FILES['newImage']['tmp_name'][$key], $uploadFile)) {
+                        $newIsMain = isset($_POST['newIsMain']) ? $_POST['newIsMain'] : 0;
+
+                        // 插入新的圖片資料
+                        $sql_insert_image = "INSERT INTO article_image (article_id, imgUrl, isMain, isDeleted) 
+                                             VALUES (?, ?, ?, 0)";
+                        $stmt_insert_image = $conn->prepare($sql_insert_image);
+
+                        if (!$stmt_insert_image) {
+                            throw new Exception("SQL 語句準備失敗: " . $conn->error);
+                        }
+
+                        $stmt_insert_image->bind_param("isi", $id, $uploadFile, $newIsMain);
+                        $stmt_insert_image->execute();
+                    } else {
+                        throw new Exception("上傳檔案失敗: " . $_FILES['newImage']['error'][$key]);
+                    }
+                } else {
+                    throw new Exception("檔案上傳錯誤: " . $_FILES['newImage']['error'][$key]);
+                }
+            }
         }
+
+        $conn->commit();
+        header("Location: articleList.php");
+        exit();
+    } catch (Exception $e) {
+        $conn->rollback();
+        die("錯誤: " . $e->getMessage());
     }
-
-    // 處理新增圖片
-    $uploadDir = 'img/article/';
-    foreach ($_FILES['articleImage']['name'] as $index => $name) {
-        if ($_FILES['articleImage']['error'][$index] === UPLOAD_ERR_OK) {
-            // 生成圖片名稱（使用當前時間戳避免重名）
-            $imageName = date('YmdHis') . '_' . basename($name);
-            $imagePath = $uploadDir . $imageName;
-
-            // 上傳圖片
-            move_uploaded_file($_FILES['articleImage']['tmp_name'][$index], $imagePath);
-
-            // 取得是否為主圖的選擇值
-            // 在此處捕捉該圖片的 `isMain` 值
-            $isMain = isset($_POST['isMain'][$index]) && $_POST['isMain'][$index] == 1 ? 1 : 0;
-
-            // 插入圖片資料
-            $sql_image = "INSERT INTO article_image (article_id, imgUrl, isMain, isDeleted, name) 
-                      VALUES (?, ?, ?, 0, ?)";
-            $stmt_image = $conn->prepare($sql_image);
-            $stmt_image->bind_param("isis", $id, $imagePath, $isMain, $imageName); // 確保 isMain 正確傳遞
-            $stmt_image->execute();
-        }
-    }
-
-    // 重定向到列表頁
-    header("Location: articleList.php?id=$id&update=success");
 }
+
+$conn->close();
+?>

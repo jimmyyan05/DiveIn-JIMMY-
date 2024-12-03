@@ -1,14 +1,4 @@
-<style>
-    .sidebar {
-        position: sticky;
-        top: 0;
-        /* 保證當滾動時，側邊欄固定 */
-        height: 100vh;
-        /* 設定高度為視窗高度 */
-        /* overflow-y: auto; */
-        /* 使側邊欄內容可滾動 */
-    }
-</style>
+
 <!-- Sidebar -->
 <ul class="navbar-nav bg-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -36,8 +26,8 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
-        DiveIn後台管理
+    <div class="sidebar-heading" style="font-size: 13px;text-transform: none !important;">
+        <span>Dive-in 後台管理</span>
     </div>
 
     <!-- Nav Item - 會員管理 -->
@@ -111,7 +101,7 @@
 
     <!-- Nav Item - 優惠券管理 -->
     <li class="nav-item">
-        <a class="nav-link" href="coupon.php">
+        <a class="nav-link" href="coupon_list.php">
             <i class="fa-solid fa-ticket"></i>
             <span>優惠券管理</span></a>
     </li>
