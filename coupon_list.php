@@ -310,7 +310,7 @@ function createClearSortLink()
                                         適用服務
                                         <button class="dropdown-toggle custom-dropdown-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                         <ul class="dropdown-menu" id="serviceDropdown">
-                                            <li><a class="dropdown-item" href="?product_id=all<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">全部</a></li>
+                                            <li><a class="dropdown-item" href="?product_id=全部<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">全部</a></li>
                                             <li><a class="dropdown-item" href="?product_id=商品<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">商品</a></li>
                                             <li><a class="dropdown-item" href="?product_id=租賃<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">租賃</a></li>
                                             <li><a class="dropdown-item" href="?product_id=課程<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">課程</a></li>

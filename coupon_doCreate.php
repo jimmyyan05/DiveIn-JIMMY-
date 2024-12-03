@@ -16,6 +16,8 @@ if (!isset($_POST["code"])) {
     jsonResponse(0, "請循正常管道進入此頁"); // 如果未傳遞 `code`，回傳錯誤訊息
 }
 
+// 接收從前端表單傳遞過來的資料
+
 // 接收前端傳遞的資料
 $code = $_POST["code"];                  // 優惠券代碼
 $name = $_POST["name"];                  // 優惠券名稱
@@ -27,6 +29,15 @@ $usageLimit = $_POST["usageLimit"];      // 使用次數限制
 $startDate = $_POST["startDate"];        // 開始日期
 $endDate = $_POST["endDate"];            // 結束日期
 $now=date('Y-m-d H:i:s');                // 取得當前的日期和時間
+$description= $_POST["description"];
+$minPurchase= $_POST["minPurchase"];
+$maxDiscountValue= $_POST["maxDiscountValue"];
+$userLimit= $_POST["userLimit"];
+
+
+// SQL 語句：插入新的優惠券資料到資料庫
+$sql = "INSERT INTO coupon (code, name, product_id, targetMembers, discountType, discountValue, usageLimit, startDate, endDate, description, minPurchase, maxDiscountValue, userLimit) 
+        VALUES ('$code', '$name', '$product_id', '$targetMembers', '$discountType', '$discountValue', '$usageLimit', '$startDate', '$endDate', '$description', '$minPurchase', '$maxDiscountValue', '$userLimit')";
 
 
 // 驗證：檢查優惠券代碼是否為空
@@ -86,9 +97,7 @@ if (strtotime($startDate) > strtotime($endDate)) {
     jsonResponse(0, "開始日期不得晚於結束日期");
 }
 
-// SQL 語句：插入新的優惠券資料到資料庫
-$sql = "INSERT INTO coupon (code, name, product_id, targetMembers, discountType, discountValue, usageLimit, startDate, endDate) 
-        VALUES ('$code', '$name', '$product_id', '$targetMembers', '$discountType', '$discountValue', '$usageLimit', '$startDate', '$endDate')";
+
 
 // // 執行 SQL 語句並檢查是否成功
 // if ($conn->query($sql) === TRUE) {

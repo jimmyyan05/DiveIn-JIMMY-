@@ -154,18 +154,25 @@ $couponCode = generateUniqueCouponCode(); // 生成唯一代碼
 
                         <!-- 最低消費金額與最大折扣 -->
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="minPurchase" class="form-label">最低消費金額</label>
                                 <input type="number" class="form-control" id="minPurchase" name="minPurchase" required>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="maxDiscountValue" class="form-label">最大折扣金額</label>
                                 <input type="number" class="form-control" id="maxDiscountValue" name="maxDiscountValue" required>
                             </div>
-                            <!-- 使用與用戶限制 -->
-                            <div class="col-md-4">
+                        </div>
+
+                        <!-- 使用與用戶限制 -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <label for="usageLimit" class="form-label">優惠券數量</label>
                                 <input type="number" class="form-control" id="usageLimit" name="usageLimit" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userLimit" class="form-label">每個用戶可使用次數</label>
+                                <input type="number" class="form-control" id="userLimit" name="userLimit" required>
                             </div>
 
                         </div>
@@ -175,6 +182,7 @@ $couponCode = generateUniqueCouponCode(); // 生成唯一代碼
                             <label for="description" class="form-label">優惠券描述</label>
                             <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
+
 
                         <!-- 送出按鈕 -->
                         <div class="d-flex justify-content-end my-3">
