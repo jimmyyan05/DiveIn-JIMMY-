@@ -1,6 +1,6 @@
 <style>
     .coupon-table {
-        max-height: 700px;
+        max-height: 620px;
         overflow-y: auto;
     }
 
