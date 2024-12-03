@@ -29,8 +29,12 @@ if ($filter === 'active') {
 }
 
 // 獲取分類篩選條件
-$category_filter = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+$category_filter = isset($_GET['category']) ? (int)$_GET['category'] : 0; // 大分類
+$subcategory_filter = isset($_GET['subcategory']) ? (int)$_GET['subcategory'] : 0; // 小分類
+
+// 根據大小分類添加篩選條件
 $category_query = $category_filter > 0 ? "AND rcb.id = :category_id" : "";
+$subcategory_query = $subcategory_filter > 0 ? "AND rcs.id = :subcategory_id" : "";
 
 // 取得搜尋條件
 $search = isset($_GET['search']) ? $_GET['search'] : '';
@@ -54,15 +58,18 @@ if ($categories === false) {
 try {
     // 計算總記錄數
     $sql_count = "
-        SELECT COUNT(*)
-        FROM rent_item AS ri
-        LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
-        LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
-        WHERE ri.is_deleted = 0 $filter_query $category_query $search_query
-    ";
+    SELECT COUNT(*)
+    FROM rent_item AS ri
+    LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
+    LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
+    WHERE ri.is_deleted = 0 $filter_query $category_query $subcategory_query $search_query
+";
     $stmt = $pdo->prepare($sql_count);
     if ($category_filter > 0) {
         $stmt->bindParam(':category_id', $category_filter, PDO::PARAM_INT);
+    }
+    if ($subcategory_filter > 0) {
+        $stmt->bindParam(':subcategory_id', $subcategory_filter, PDO::PARAM_INT);
     }
     if ($search) {
         foreach ($keywords as $index => $keyword) {
@@ -85,16 +92,19 @@ try {
     LEFT JOIN rent_category_small AS rcs ON ri.rent_category_small_id = rcs.id
     LEFT JOIN rent_category_big AS rcb ON rcs.rent_category_big_id = rcb.id
     LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 1
-    WHERE ri.is_deleted = 0 $filter_query $category_query $search_query
+    WHERE ri.is_deleted = 0 $filter_query $category_query $subcategory_query $search_query
     GROUP BY ri.id
     ORDER BY $sort_column $sort_order
     LIMIT :start, :limit
-    ";
+";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':start', $start, PDO::PARAM_INT);
     $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
     if ($category_filter > 0) {
         $stmt->bindParam(':category_id', $category_filter, PDO::PARAM_INT);
+    }
+    if ($subcategory_filter > 0) {
+        $stmt->bindParam(':subcategory_id', $subcategory_filter, PDO::PARAM_INT);
     }
     if ($search) {
         foreach ($keywords as $index => $keyword) {
@@ -351,7 +361,7 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                     <?php endforeach; ?>
                                 </div>
                                 <!-- 小分類select選單 -->
-                                <div class="subcategory-select ms-5">
+                                <div class="subcategory-select ms-auto">
                                     <div>
                                         <select id="small-category-select" class="form-select" disabled onchange="updateSubCategory()">
                                             <option value="" selected>小分類</option>
@@ -670,17 +680,43 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
     </script>
     <script>
         // 更新大分類和小分類，並更新頁面
+        // function updateCategoryAndSmallCategory(bigCategoryId) {
+        //     // 更新 URL 並刷新頁面，這會根據大分類顯示該大分類的產品
+        //     window.location.href = `rent_items.php?category=${bigCategoryId}&page=1`; // 頁面重新加載
+        //     updateSmallCategories(bigCategoryId); // 更新小分類
+        // }
         function updateCategoryAndSmallCategory(bigCategoryId) {
-            // 更新 URL 並刷新頁面，這會根據大分類顯示該大分類的產品
-            window.location.href = `rent_items.php?category=${bigCategoryId}&page=1`; // 頁面重新加載
-            updateSmallCategories(bigCategoryId); // 更新小分類
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // 更新大分類參數，清除小分類參數
+            urlParams.set('category', bigCategoryId);
+            urlParams.delete('subcategory'); // 切換大分類時清除小分類
+            urlParams.set('page', 1); // 重置到第一頁
+
+            // 重新導向到篩選後的 URL
+            window.location.href = `rent_items.php?${urlParams.toString()}`;
         }
 
+
+
         // 更新選擇的小分類
+        // function updateSubCategory() {
+        //     const smallCategoryId = document.getElementById('small-category-select').value;
+        //     const bigCategoryId = new URLSearchParams(window.location.search).get('category'); // 從 URL 中獲取大分類 ID
+        //     window.location.href = `rent_items.php?category=${bigCategoryId}&subcategory=${smallCategoryId}&page=1`;
+        // }
         function updateSubCategory() {
             const smallCategoryId = document.getElementById('small-category-select').value;
-            const bigCategoryId = new URLSearchParams(window.location.search).get('category'); // 從 URL 中獲取大分類 ID
-            window.location.href = `rent_items.php?category=${bigCategoryId}&subcategory=${smallCategoryId}&page=1`;
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // 保留大分類的 category 參數
+            const bigCategoryId = urlParams.get('category') || 0;
+            urlParams.set('category', bigCategoryId); // 確保大分類參數
+            urlParams.set('subcategory', smallCategoryId); // 更新小分類參數
+            urlParams.set('page', 1); // 重置到第一頁
+
+            // 重新導向到篩選後的 URL
+            window.location.href = `rent_items.php?${urlParams.toString()}`;
         }
 
         // 在頁面加載時初始化小分類選單

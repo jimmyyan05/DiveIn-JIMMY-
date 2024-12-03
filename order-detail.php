@@ -93,7 +93,7 @@ if ($order['activity_order_id']) {
     WHERE order_items.order_id = ? AND order_items.item_type = 'activity'";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $order['activity_order_id']);  // 使用 activity_order_id 而不是主訂單 id 學到了
     $stmt->execute();
     $activityItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
@@ -139,6 +139,13 @@ function getStatusClass($status)
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include("./topbar.php") ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">訂單詳情</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <a href="order.php" class="btn btn-outline-secondary">
