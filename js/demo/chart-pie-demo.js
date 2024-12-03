@@ -1,4 +1,4 @@
-// 主頁圓餅圖
+// 主頁圓餅
 
 (Chart.defaults.global.defaultFontFamily = "Nunito"),
   '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
