@@ -67,7 +67,7 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">商品列表</li>
+                        <li class="breadcrumb-item active" aria-current="page">會員列表</li>
                     </ol>
                 </nav>
                 <!-- Begin Page Content -->

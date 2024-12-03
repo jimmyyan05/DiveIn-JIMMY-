@@ -1,21 +1,45 @@
 <?php
 require_once("../db_project_connect.php");
 
-// 獲取文章ID並查詢文章資料
-$id = $_GET['id'];
-$sql_article = "SELECT * FROM article WHERE id = ?";
-$stmt = $conn->prepare($sql_article);
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result_article = $stmt->get_result();
-$article = $result_article->fetch_assoc();
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
 
-// 獲取文章圖片，並過濾掉已刪除的圖片
-$sql_images = "SELECT * FROM article_image WHERE article_id = ? AND isDeleted = 0";
-$stmt_images = $conn->prepare($sql_images);
-$stmt_images->bind_param("i", $id);
-$stmt_images->execute();
-$result_images = $stmt_images->get_result();
+    // 查詢指定文章的資料
+    $sql = "SELECT * FROM article WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // 確保查詢有返回結果
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+    } else {
+        // 如果沒有找到資料，顯示錯誤並跳轉回 articleList.php
+        echo "<script>alert('文章未找到！'); window.location.href = 'articleList.php';</script>";
+        exit();
+    }
+
+    // 查詢該文章相關的圖片
+    $sql_images = "SELECT * FROM article_image WHERE article_id = ? AND isDeleted = 0";
+    $stmt_images = $conn->prepare($sql_images);
+    $stmt_images->bind_param("i", $id);
+    $stmt_images->execute();
+    $images_result = $stmt_images->get_result();
+
+    // 確保有相關圖片
+    if ($images_result->num_rows > 0) {
+        $images = $images_result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        $images = []; // 如果沒有圖片，設定為空陣列
+    }
+
+    $stmt->close();
+    $stmt_images->close();
+} else {
+    // 如果沒有傳遞 ID，顯示錯誤或跳轉
+    die("無效的文章ID！");
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,16 +50,6 @@ $result_images = $stmt_images->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>編輯文章</title>
     <?php include "css.php"; ?>
-    <style>
-        #image-<?php echo $image['id']; ?>img {
-            width: 100px;
-            /* 設定圖片的最大寬度 */
-            height: 100px;
-            /* 設定圖片的最大高度 */
-            object-fit: contain;
-            /* 讓圖片保持比例顯示，且不會被壓縮 */
-        }
-    </style>
 </head>
 
 <body id="page-top">
@@ -45,79 +59,112 @@ $result_images = $stmt_images->get_result();
         <div id="content-wrapper" class="d-flex flex-column">
             <?php include "topbar.php"; ?>
 
-            <div id="content">
-                <div class="container-fluid">
-                    <div class="d-flex gap-2 my-3">
-                        <h2 class="mb-4">編輯文章</h2>
-                        <a href="articleList.php" class="btn bg-info text-white" style="height: 70%; line-height: 1.5;">
-                            <i class="fa-solid fa-rotate-left"></i> 返回
-                        </a>
-                    </div>
-                    <form action="articleDoUpdate.php" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="id" value="<?php echo $article['id']; ?>">
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content-wrapper" class="d-flex flex-column">
+                    <div class="row justify-content-start p-4">
+                        <div class="container-fluid">
+                            <div class="d-flex gap-2 my-3">
+                                <h2 class="mb-4">編輯文章</h2>
+                                <a href="articleList.php" class="btn bg-info text-white" style="height: 70%; line-height: 1.5;">
+                                    <i class="fa-solid fa-rotate-left"></i> 返回
+                                </a>
+                            </div>
 
-                        <!-- 文章標題 -->
-                        <div class="mb-3">
-                            <label for="title" class="form-label">文章標題</label>
-                            <input type="text" class="form-control" id="title" name="title" value="<?php echo $article['title']; ?>" required>
-                        </div>
+                            <form action="articleDoUpdate.php" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
 
-                        <!-- 文章詳情 -->
-                        <div class="mb-3">
-                            <label for="content" class="form-label">文章詳情</label>
-                            <textarea class="form-control" id="content" name="content" rows="5" required><?php echo $article['content']; ?></textarea>
-                        </div>
+                                <!-- 文章標題 -->
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">文章標題</label>
+                                    <input type="text" name="title" class="form-control" value="<?php echo $row['title']; ?>" required>
+                                </div>
 
-                        <!-- 發布狀態 -->
-                        <div class="mb-3">
-                            <label for="status" class="form-label">發布狀態</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="0" <?php echo $article['status'] == 0 ? 'selected' : ''; ?>>待發布</option>
-                                <option value="1" <?php echo $article['status'] == 1 ? 'selected' : ''; ?>>發布</option>
-                            </select>
-                        </div>
+                                <div class="mb-3">
+                                    <label for="articleImage" class="form-label">文章照片</label>
 
-                        <!-- 現有圖片顯示與刪除 -->
-                        <div class="mb-3">
-                            <h4>現有圖片</h4>
-                            <?php while ($image = $result_images->fetch_assoc()) { ?>
-                                <div id="image-<?php echo $image['id']; ?>" class="mb-3">
-                                    <div>
-                                        <img src="<?php echo $image['imgUrl']; ?>" alt="文章圖片" style="width: 200px; height: 100px; object-fit: contain;">
+                                    <!-- 顯示所有圖片 -->
+                                    <div class="d-flex gap-3">
+                                        <?php foreach ($images as $image): ?>
+                                            <div style="text-align: center;">
+                                                <img id="preview-<?php echo $image['id']; ?>"
+                                                    src="<?php echo htmlspecialchars($image['imgUrl']); ?>"
+                                                    alt="Image"
+                                                    style="width: 100px; height: 100px; object-fit: contain;" />
 
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteImage(<?php echo $image['id']; ?>)">刪除</button>
+                                                <input type="file"
+                                                    name="updateImage[<?php echo $image['id']; ?>]"
+                                                    class="form-control mt-2"
+                                                    accept=".png,.jpg,.jpeg"
+                                                    onchange="previewUpdatedImage(event, <?php echo $image['id']; ?>)" />
+
+                                                <button type="button"
+                                                    class="btn btn-danger mt-2"
+                                                    onclick="deleteImage(<?php echo $image['id']; ?>)">刪除</button>
+
+                                                <!-- 主圖選擇下拉選單 -->
+                                                <div class="mt-2">
+                                                    <label for="isMain-<?php echo $image['id']; ?>" class="form-label">是否為主圖</label>
+                                                    <select name="isMain[<?php echo $image['id']; ?>]" class="form-select" id="isMain-<?php echo $image['id']; ?>">
+                                                        <option value="0" <?php echo ($image['isMain'] == 0) ? 'selected' : ''; ?>>非主圖</option>
+                                                        <option value="1" <?php echo ($image['isMain'] == 1) ? 'selected' : ''; ?>>主圖</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
                                     </div>
-                                    <div class="my-2">
-                                        <label for="isMain<?php echo $image['id']; ?>" class="form-label">是否為主圖</label>
-                                        <select name="isMain[<?php echo $image['id']; ?>]" class="form-select" id="isMain<?php echo $image['id']; ?>">
-                                            <option value="0" <?php echo $image['isMain'] == 0 ? 'selected' : ''; ?>>非主圖</option>
-                                            <option value="1" <?php echo $image['isMain'] == 1 ? 'selected' : ''; ?>>主圖</option>
-                                        </select>
+
+                                    <!-- 新增圖片 -->
+                                    <div class="mt-3">
+                                        <input type="file"
+                                            name="newImage[]"
+                                            id="newImage"
+                                            class="form-control"
+                                            accept=".png,.jpg,.jpeg"
+                                            multiple />
+                                        <!-- 新增圖片的主圖設定 -->
+                                        <div id="newImageMain" class="mt-2" style="display: none;">
+                                            <label for="newIsMain" class="form-label">是否為主圖</label>
+                                            <select name="newIsMain" id="newIsMain" class="form-select">
+                                                <option value="0">非主圖</option>
+                                                <option value="1">主圖</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            <?php } ?>
+
+                                <!-- 文章詳情 -->
+                                <div class="mb-3">
+                                    <label for="content" class="form-label">文章詳情</label>
+                                    <textarea name="content" class="form-control" rows="5" required><?php echo $row['content']; ?></textarea>
+                                </div>
+
+                                <!-- 發布狀態 -->
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">發布狀態</label>
+                                    <select name="status" class="form-select" required>
+                                        <option value="0" <?php echo ($row['status'] == 0) ? 'selected' : ''; ?>>待發布</option>
+                                        <option value="1" <?php echo ($row['status'] == 1) ? 'selected' : ''; ?>>已發布</option>
+                                    </select>
+                                </div>
+
+                                <!-- 提交按鈕 -->
+                                <button class="btn btn-primary" type="submit">送出更新</button>
+                            </form>
+
+                            <script>
+                                // 如果有選擇新增圖片，顯示主圖選項
+                                document.getElementById("newImage").addEventListener("change", function() {
+                                    if (this.files.length > 0) {
+                                        document.getElementById("newImageMain").style.display = "block";
+                                    } else {
+                                        document.getElementById("newImageMain").style.display = "none";
+                                    }
+                                });
+                            </script>
+
                         </div>
-
-                        <!-- 動態新增圖片欄位 -->
-                        <div id="imageFields">
-                            <div class="imageField mb-3">
-                                <label for="articleImage1" class="form-label">文章照片</label>
-                                <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg">
-                                <label for="isMain1" class="form-label my-2">是否為主圖</label>
-                                <select name="isMain[]" class="form-select">
-                                    <option value="0">非主圖</option>
-                                    <option value="1">主圖</option>
-                                </select>
-                                <button type="button" class="btn btn-warning btn-sm my-2" onclick="removeImageField(this)">取消新增圖片</button>
-                            </div>
-                        </div>
-
-                        <!-- 增加圖片欄位按鈕 -->
-                        <button type="button" class="btn btn-secondary" onclick="addImageField()">新增圖片欄位</button>
-
-                        <!-- 提交按鈕 -->
-                        <button type="submit" class="btn btn-primary">儲存變更</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,67 +172,16 @@ $result_images = $stmt_images->get_result();
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let imageIndex = 1;
-
-        function addImageField() {
-            imageIndex++;
-            const imageField = document.createElement('div');
-            imageField.classList.add('imageField', 'mb-3');
-            imageField.innerHTML = ` 
-                <label for="articleImage${imageIndex}" class="form-label">文章照片</label>
-                <input type="file" class="form-control" name="articleImage[]" accept=".png, .jpg, .jpeg">
-                <label for="isMain${imageIndex}" class="form-label">是否為主圖</label>
-                <select name="isMain[]" class="form-select">
-                    <option value="0">非主圖</option>
-                    <option value="1">主圖</option>
-                </select>
-                <button type="button" class="btn btn-warning btn-sm" onclick="removeImageField(this)">取消新增圖片</button>
-            `;
-            document.getElementById('imageFields').appendChild(imageField);
-        }
-
-        function removeImageField(button) {
-            button.parentElement.remove();
-        }
-
-        function deleteImage(imageId) {
-            $.get('articleimgDoDelete.php', {
-                id: imageId,
-                type: 'image'
-            }, function(response) {
-                if (response === 'success') {
-                    // 刪除成功，刷新頁面
-                    alert("刪除成功！");
-                    document.querySelector(`#image-${imageId}`).remove();
-                    location.reload(); // 重整頁面
-                } else {
-                    alert("刪除失敗：" + response); // 顯示具體錯誤訊息
-                }
-            });
-        }
-    </script>
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
-
-    <!-- bootstrap5的JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
+    <script>
+        // 圖片刪除功能
+        function deleteImage(imageId) {
+            if (confirm("確定要刪除這張圖片嗎？")) {
+                window.location.href = `articleimgDoDelete.php?id=${imageId}`;
+            }
+        }
+    </script>
 </body>
 
 </html>
