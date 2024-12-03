@@ -1,7 +1,4 @@
 <?php
-
-// var_dump($months);  // 檢查實際月份數據
-// var_dump($revenues);  // 檢查收入數據
 require_once("../db_project_connect.php");
 
 // 會員統計
