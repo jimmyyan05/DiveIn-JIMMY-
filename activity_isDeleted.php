@@ -34,7 +34,7 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>服務項目</title>
+    <title>已刪除的服務</title>
 
     <!-- 統一的css -->
      <?php include "css.php"; ?>
@@ -65,7 +65,7 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
-                        <li class="breadcrumb-item"><a href="activity.php">服務列表</a></li>
+                        <li class="breadcrumb-item"><a href="activity.php">服務管理</a></li>
                         <li class="breadcrumb-item active" aria-current="page">已刪除的服務</li>
                     </ol>
                 </nav>
@@ -151,7 +151,7 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
                         <?php endforeach; ?>
                     </table>
                     <?php else: ?>
-                        <div class="text-danger">目前沒有已刪除的師資</div>
+                        <div class="text-danger">目前沒有已刪除的服務</div>
                     <?php endif; ?>
 
 

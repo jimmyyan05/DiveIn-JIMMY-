@@ -514,31 +514,31 @@ LIMIT $start_item, $per_page";
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名開始日</label>
-                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date" required>
+                                                                <input type="date" class="form-control" name="activitySignDate" value="<?= $activity["signUpDate"] ?>" id="sign-start-date<?=$activity["id"]?>" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">報名截止日</label>
-                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date" required>
+                                                                <input type="date" class="form-control" name="activitySignEndDate" value="<?= $activity["signUpEndDate"] ?>" min="<?= $activity["signUpDate"] ?>" id="sign-end-date<?=$activity["id"]?>" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">活動開始日</label>
-                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date" required>
+                                                                <input type="date" class="form-control" name="activityStartDate" value="<?= $activity["startDate"] ?>" min="<?= $activity["signUpEndDate"] ?>" id="start-date<?=$activity["id"]?>" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">活動結束日</label>
-                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date" required>
+                                                                <input type="date" class="form-control" name="activityEndDate" value="<?= $activity["endDate"] ?>" min="<?= $activity["startDate"] ?>" id="end-date<?=$activity["id"]?>" required>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">開始時間</label>
-                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time" required>
+                                                                <input type="time" class="form-control" name="activityStartTime" value="<?= $activity["startTime"] ?>" id="start-time<?=$activity["id"]?>" required>
                                                             </div>
                                                             <div class="mb-2 col">
                                                                 <label for="" class="form-label">結束時間</label>
-                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time" required>
+                                                                <input type="time" class="form-control" name="activityEndTime" value="<?= $activity["endTime"] ?>" min="<?= $activity["startTime"] ?>" id="end-time<?=$activity["id"]?>" required>
                                                             </div>
                                                         </div>
                                                         <div class="mb-3">
@@ -724,43 +724,47 @@ LIMIT $start_item, $per_page";
         <?php endforeach; ?>
 
         //限制日期的選擇
-        const signStartDate = document.getElementById('sign-start-date');
-        const signEndDate = document.getElementById('sign-end-date');
-        const startDate = document.getElementById('start-date');
-        const endDate = document.getElementById('end-date');
-        const startTime = document.getElementById('start-time');
-        const endTime = document.getElementById('end-time');
+        <?php foreach ($activitys as $activity): ?>
+
+        const signStartDate<?=$activity["id"]?> = document.getElementById('sign-start-date<?=$activity["id"]?>');
+        const signEndDate<?=$activity["id"]?> = document.getElementById('sign-end-date<?=$activity["id"]?>');
+        const startDate<?=$activity["id"]?> = document.getElementById('start-date<?=$activity["id"]?>');
+        const endDate<?=$activity["id"]?> = document.getElementById('end-date<?=$activity["id"]?>');
+        const startTime<?=$activity["id"]?> = document.getElementById('start-time<?=$activity["id"]?>');
+        const endTime<?=$activity["id"]?> = document.getElementById('end-time<?=$activity["id"]?>');
 
         // 當報名開始日變更時，動態設定報名截止日的最小值
-        signStartDate.addEventListener('change', function() {
+        signStartDate<?=$activity["id"]?>.addEventListener('change', function() {
             const SignStartDate = this.value; // 獲取選擇的開始日期
             if (SignStartDate) {
-                signEndDate.min = SignStartDate; // 設定截止日的最小值
+                signEndDate<?=$activity["id"]?>.min = SignStartDate; // 設定截止日的最小值
             } else {
-                signEndDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+                signEndDate<?=$activity["id"]?>.removeAttribute('min'); // 如果未選擇日期，移除限制
             }
         });
 
         // 當報名結束日變更時，動態設定活動開始日的最小值
-        signEndDate.addEventListener('change', function() {
+        signEndDate<?=$activity["id"]?>.addEventListener('change', function() {
             const SignEndDate = this.value; // 獲取選擇的開始日期
             if (SignEndDate) {
-                startDate.min = SignEndDate; // 設定截止日的最小值
+                startDate<?=$activity["id"]?>.min = SignEndDate; // 設定截止日的最小值
             } else {
-                startDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+                startDate<?=$activity["id"]?>.removeAttribute('min'); // 如果未選擇日期，移除限制
             }
         });
 
 
         // 當報名截止日變更時，動態設定活動開始日最小值
-        startDate.addEventListener('change', function() {
+        startDate<?=$activity["id"]?>.addEventListener('change', function() {
             const StartDate = this.value; // 獲取選擇的開始日期
             if (StartDate) {
-                endDate.min = StartDate; // 設定截止日的最小值
+                endDate<?=$activity["id"]?>.min = StartDate; // 設定截止日的最小值
             } else {
-                endDate.removeAttribute('min'); // 如果未選擇日期，移除限制
+                endDate<?=$activity["id"]?>.removeAttribute('min'); // 如果未選擇日期，移除限制
             }
         });
+        <?php endforeach; ?>
+
 
 
 

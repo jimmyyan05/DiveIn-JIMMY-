@@ -201,7 +201,7 @@ $total_page = ceil($teachersCount / $per_page);
                             <tr>
                                 <th>編號</th>
                                 <th>姓名</th>
-                                <th>教練照片</th>
+                                <th>照片</th>
                                 <th>聯絡方式</th>
                                 <th>性別</th>
                                 <th>教練等級</th>
