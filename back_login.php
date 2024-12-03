@@ -66,7 +66,7 @@ if(isset($_SESSION["user"])){
                                     <?php endif; ?>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">忘記密碼?</a>
+                                        <a class="small" href="forgot-password.html">忘記密碼？</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="register.php">註冊帳號！</a>
