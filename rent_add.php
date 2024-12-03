@@ -126,7 +126,7 @@ if (isset($_POST['submit'])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>DiveIn-rent-items</title>
+    <title>新增租賃商品</title>
     <!-- 統一的css -->
     <?php include "css.php"; ?>
 

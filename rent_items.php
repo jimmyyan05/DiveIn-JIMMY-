@@ -39,7 +39,20 @@ $subcategory_query = $subcategory_filter > 0 ? "AND rcs.id = :subcategory_id" : 
 // 取得搜尋條件
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $search = trim(preg_replace('/\s+/', ' ', $search)); // 移除多餘空格
+$keywords = explode(' ', $search); // 按空格拆分關鍵字
 $search_query = '';
+
+// 如果有搜尋關鍵字，則構建搜尋查詢
+if ($search) {
+    $search_query = "AND (";
+    foreach ($keywords as $index => $keyword) {
+        // 用 % 包裹每個關鍵字，這樣進行模糊查詢
+        $search_query .= "ri.name LIKE :search{$index} OR ";
+    }
+    // 去除最後多餘的 "OR"
+    $search_query = rtrim($search_query, " OR ");
+    $search_query .= ")";
+}
 
 // 查詢所有大分類名稱 (用於篩選bar)
 $sql_categories = "SELECT id, name FROM rent_category_big";
@@ -163,7 +176,7 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>DiveIn-rent-items</title>
+    <title>租賃管理</title>
 
     <!-- 統一的css -->
     <?php include("./css.php") ?>
@@ -406,14 +419,21 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                 }
                                 ?>
                                 <!-- 查詢租賃商品 -->
-                            <form class="form-inline ml-auto m-3 my-md-0 navbar-search" method="get" action="rent_query.php">
+                            <form class="form-inline ml-auto m-3 my-md-0 navbar-search" method="get" action="rent_items.php">
+                                <!-- 清除搜尋按鈕 -->
+                                <?php if (isset($_GET['search']) && $_GET['search'] !== ''): ?>
+                                    <button class="btn btn-link" type="button" id="clear-search">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                <?php endif; ?>
                                 <div class="input-group">
                                     <input type="text" class="form-control bg-light border-0 small" name="search" placeholder="Search for..."
-                                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"> <!-- 改成 search -->
+                                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
+
                                     </div>
                                 </div>
                             </form>
@@ -504,7 +524,7 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                 <!-- 回到第一頁 -->
 
                                 <li class="page-item <?php if ($page == 1) echo 'disabled'; ?>">
-                                    <a class="page-link" href="rent_items.php?page=<?= $page - 1; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= urlencode($filter); ?>"><i class="fa-solid fa-angle-left"></i></a>
+                                    <a class="page-link" href="rent_items.php?page=<?= $page - 1; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= urlencode($filter); ?>"><i class="fa-solid fa-angles-left"></i></a>
                                 </li>
 
                                 <!-- 回到上一頁 -->
@@ -761,6 +781,19 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                 })
                 .catch(error => console.error('Error fetching small categories:', error));
         }
+    </script>
+    <script>
+        // 清除搜尋欄位並重新載入頁面
+        document.getElementById('clear-search').addEventListener('click', function() {
+            // 清除搜尋框內容
+            const searchInput = document.querySelector('input[name="search"]');
+            searchInput.value = '';
+
+            // 重新載入頁面，並清除 URL 中的搜尋參數
+            const url = new URL(window.location.href);
+            url.searchParams.delete('search');
+            window.location.href = url.toString();
+        });
     </script>
 
 

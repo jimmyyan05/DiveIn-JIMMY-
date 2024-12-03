@@ -59,7 +59,7 @@ try {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>DiveIn-rent-items</title>
+    <title>已刪除租賃商品列表</title>
     <!-- 統一的css -->
     <?php include "css.php"; ?>
 
