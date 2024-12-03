@@ -307,198 +307,15 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <form class="form-inline">
-                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                    </form>
-
-
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
+                <?php include("./topbar.php") ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="rent_items.php">租賃商品列表</a></li>
+                    </ol>
+                </nav>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -506,33 +323,83 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">租賃商品列表</h1>
 
-                    <!-- 顯示分類Bar -->
-                    <div class="container mt-4 ps-0">
-                        <div class="category-nav mb-4">
-                            <button class="btn btn-outline-primary <?php echo $category_filter == 0 ? 'active' : ''; ?>"
-                                onclick="window.location.href='rent_items.php?category=0&sort_by=<?php echo $sort_column; ?>&sort_order=<?php echo $sort_order; ?>'">所有分類</button>
-                            <?php foreach ($categories as $category): ?>
-                                <button class="btn btn-outline-primary <?php echo $category_filter == $category['id'] ? 'active' : ''; ?>"
-                                    onclick="window.location.href='rent_items.php?category=<?php echo $category['id']; ?>'">
-                                    <?php echo $category['name']; ?>
-                                </button>
-                            <?php endforeach; ?>
-                        </div>
+                    <div class="card-header py-3 d-flex justify-content-start align-items-center">
+                        <!-- 新增租賃商品 -->
+                        <a href="rent_add.php" class="btn btn-warning mb-3 my-2"><i class="fa-solid fa-plus"></i> 新增租賃商品</a>
+                        <!-- 刪除租賃商品 -->
+                        <a href="rent_deleted_items.php" class="btn btn-secondary mb-3 ms-3 my-2"><i class="fa-solid fa-trash"></i> 回收桶</a>
                     </div>
 
 
                     <!-- DataTales -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3 d-flex justify-content-between">
-                            <!-- 新增租賃商品 -->
-                            <a href="rent_add.php" class="btn btn-warning mb-3"><i class="fa-solid fa-plus"></i> 新增租賃商品</a>
-                            <!-- 刪除租賃商品 -->
-                            <a href="rent_deleted_items.php" class="btn btn-secondary mb-3 ms-3"><i class="fa-solid fa-trash"></i> 回收桶</a>
-                            <!-- 查詢租賃商品 -->
-                            <form class="form-inline ml-auto my-2 my-md-0 navbar-search" method="get" action="rent_query.php">
+                    <div class="card shadow mb-4 ">
+
+
+                        <!-- 顯示分類Bar -->
+                        <div class="container m-4 p-0">
+                            <div class="d-flex align-items-center">
+                                <div class="category-nav">
+                                    <button class="btn btn-outline-primary <?php echo $category_filter == 0 ? 'active' : ''; ?>"
+                                        onclick="updateCategoryAndSmallCategory(0)">
+                                        所有分類
+                                    </button>
+                                    <?php foreach ($categories as $category): ?>
+                                        <button class="btn btn-outline-primary <?php echo $category_filter == $category['id'] ? 'active' : ''; ?>"
+                                            onclick="updateCategoryAndSmallCategory(<?php echo $category['id']; ?>)">
+                                            <?php echo $category['name']; ?>
+                                        </button>
+                                    <?php endforeach; ?>
+                                </div>
+                                <!-- 小分類select選單 -->
+                                <div class="subcategory-select ms-5">
+                                    <div>
+                                        <select id="small-category-select" class="form-select" disabled onchange="updateSubCategory()">
+                                            <option value="" selected>小分類</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end align-item-center m-2">
+                        <!-- 上架狀態篩選 -->
+
+                        <select id="filter" class="form-select w200px me-3" onchange="location = this.value;">
+                            <option value="?filter=all&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'all' ? 'selected' : '' ?>>所有產品</option>
+                            <option value="?filter=active&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'active' ? 'selected' : '' ?>>上架中</option>
+                            <option value="?filter=expired&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'expired' ? 'selected' : '' ?>>已下架</option>
+                            <option value="?filter=permanent&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'permanent' ? 'selected' : '' ?>>永久上架</option>
+                        </select>
+                    </div>
+
+
+                    <div class="d-flex flex-column ">
+                        <div class="d-flex justify-content-between align-items-center mb-3 ms-3 text-black-50">
+                            <p class="m-0">共有<strong><?= $total_results; ?></strong>件商品</p>
+                            <p class="m-0">
+                                <?php
+                                switch ($filter) {
+                                    case 'active':
+                                        echo '上架中';
+                                        break;
+                                    case 'expired':
+                                        echo '已下架';
+                                        break;
+                                    case 'permanent':
+                                        echo '永久上架';
+                                        break;
+                                    default:
+                                        echo '';
+                                        break;
+                                }
+                                ?>
+                                <!-- 查詢租賃商品 -->
+                            <form class="form-inline ml-auto m-3 my-md-0 navbar-search" method="get" action="rent_query.php">
                                 <div class="input-group">
-                                    <input type="text" class="form-control bg-light border-0 small" name="filter" placeholder="Search for..."
-                                        value="<?php echo isset($_GET['filter']) ? htmlspecialchars($_GET['filter']) : ''; ?>">
+                                    <input type="text" class="form-control bg-light border-0 small" name="search" placeholder="Search for..."
+                                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"> <!-- 改成 search -->
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="fas fa-search fa-sm"></i>
@@ -540,135 +407,138 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                                     </div>
                                 </div>
                             </form>
-                        </div>
+                            </p>
 
-                        <div class="d-flex justify-content-end m-2">
-                            <!-- 上架狀態篩選 -->
-                            <select id="filter" class="form-select w200px me-3" onchange="location = this.value;">
-                                <option value="?filter=all&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'all' ? 'selected' : '' ?>>所有產品</option>
-                                <option value="?filter=active&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'active' ? 'selected' : '' ?>>上架中</option>
-                                <option value="?filter=expired&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'expired' ? 'selected' : '' ?>>已下架</option>
-                                <option value="?filter=permanent&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&category=<?= $category_filter ?>&sort_by=<?= $sort_column ?>&sort_order=<?= $sort_order ?>" <?= $filter === 'permanent' ? 'selected' : '' ?>>永久上架</option>
-                            </select>
-                        </div>
-
-
-                        <div class="d-flex flex-column ">
-                            <div class="d-flex justify-content-start align-items-center mb-3 ms-3 text-black-50">
-                                <p class="m-0">共有<strong><?= $total_results; ?></strong>件商品</p>
-                                <p class="m-0">
-                                    <?php
-                                    switch ($filter) {
-                                        case 'active':
-                                            echo '上架中';
-                                            break;
-                                        case 'expired':
-                                            echo '已下架';
-                                            break;
-                                        case 'permanent':
-                                            echo '永久上架';
-                                            break;
-                                        default:
-                                            echo '';
-                                            break;
-                                    }
-                                    ?>
-                                </p>
-                                ，目前為第 <span class="text-primary"><?php echo $page; ?></span> 頁 / 共<?php echo $total_pages; ?> 頁</p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column ">
-                            <div class="d-flex bg-light p-2 mb-2">
-                                <div class="p-2 column-id sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=id&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
-                                    編號
-                                    <?php if ($sort_column === 'id') : ?>
-                                        <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="p-2 column-image">產品圖片</div>
-                                <div class="p-2 column-name">產品名稱</div>
-                                <div class="p-2 column-price">價格</div>
-                                <div class="p-2 column-deposit">定金</div>
-                                <div class="p-2 column-start sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=start_date&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
-                                    上架時間
-                                    <?php if ($sort_column === 'start_date') : ?>
-                                        <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="p-2 column-end sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=end_date&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
-                                    下架時間
-                                    <?php if ($sort_column === 'end_date') : ?>
-                                        <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="p-2 column-action">操作</div>
-                            </div>
-                            <?php foreach ($products as $index => $product) : ?>
-                                <div class="d-flex p-0 px-2 mb-1 border hover">
-                                    <!-- <div class="p-2 column-seq"><?= $index + 1 + ($page - 1) * $limit; ?></div> -->
-                                    <div class="p-2 column-id d-flex align-items-center"><?= $product['id']; ?></div>
-                                    <div class="p-2 column-image d-flex align-items-center">
-                                        <?php if (isset($products_with_images[$product['id']]) && $products_with_images[$product['id']]['main_img_url']): ?>
-                                            <img src="<?php echo htmlspecialchars($products_with_images[$product['id']]['main_img_url']); ?>" alt="主圖" style="max-width: 150px;">
-                                        <?php else: ?>
-                                            <p>無圖片</p>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="p-2 column-name d-flex align-items-center"><?= $product['name']; ?></div>
-                                    <div class="p-2 column-price d-flex align-items-center"><?= number_format($product['price'], 0); ?> 元</div>
-                                    <div class="p-2 column-deposit d-flex align-items-center"><?= number_format($product['price'] * 0.6, 0); ?> 元</div>
-                                    <div class="p-2 column-start d-flex align-items-center column-date-time">
-                                        <?php
-                                        if ($product['start_date']) {
-                                            echo substr($product['start_date'], 0, 10) . "<br>" . substr($product['start_date'], 11);
-                                        } else {
-                                            echo "未指定日期";
-                                        }
-                                        ?>
-                                    </div>
-                                    <div class="p-2 column-end d-flex align-items-center column-date-time">
-                                        <?php
-                                        if ($product['end_date']) {
-                                            echo substr($product['end_date'], 0, 10) . "<br>" . substr($product['end_date'], 11);
-                                        } else {
-                                            echo "";
-                                        }
-                                        ?>
-                                    </div>
-                                    <div class="p-2 column-action d-flex justify-content-center align-items-center">
-                                        <!-- 檢視 -->
-                                        <button class="btn btn-success btn-sm custom-btn" onclick="viewProductDetails(<?= $product['id']; ?>)">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </button>
-                                        <!-- 編輯 -->
-                                        <a href="rent_edit.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-primary btn-sm custom-btn"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <!-- 刪除 -->
-                                        <a href="rent_delete.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-danger btn-sm custom-btn" onclick="return confirm('確定要刪除這個項目嗎？');"><i class="fa-solid fa-xmark"></i></a>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
                         </div>
                     </div>
+                    <div class="d-flex flex-column ">
+                        <div class="d-flex bg-light p-2 mb-2">
+                            <div class="p-2 column-id sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=id&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
+                                編號
+                                <?php if ($sort_column === 'id') : ?>
+                                    <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
+                                <?php endif; ?>
+                            </div>
+                            <div class="p-2 column-image">產品圖片</div>
+                            <div class="p-2 column-name">產品名稱</div>
+                            <div class="p-2 column-price">價格</div>
+                            <div class="p-2 column-deposit">定金</div>
+                            <div class="p-2 column-start sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=start_date&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
+                                上架時間
+                                <?php if ($sort_column === 'start_date') : ?>
+                                    <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
+                                <?php endif; ?>
+                            </div>
+                            <div class="p-2 column-end sortable" onclick="window.location.href='?filter=<?= $filter; ?>&category=<?= $category_filter; ?>&sort_by=end_date&sort_order=<?= $next_sort_order; ?>&page=<?= $page; ?>'">
+                                下架時間
+                                <?php if ($sort_column === 'end_date') : ?>
+                                    <i class="bi bi-caret-<?= $sort_order === 'asc' ? 'up' : 'down'; ?>-fill"></i>
+                                <?php endif; ?>
+                            </div>
+                            <div class="p-2 column-action">操作</div>
+                        </div>
+                        <?php foreach ($products as $index => $product) : ?>
+                            <div class="d-flex p-0 px-2 mb-1 border hover">
+                                <!-- <div class="p-2 column-seq"><?= $index + 1 + ($page - 1) * $limit; ?></div> -->
+                                <div class="p-2 column-id d-flex align-items-center"><?= $product['id']; ?></div>
+                                <div class="p-2 column-image d-flex align-items-center">
+                                    <?php if (isset($products_with_images[$product['id']]) && $products_with_images[$product['id']]['main_img_url']): ?>
+                                        <img src="<?php echo htmlspecialchars($products_with_images[$product['id']]['main_img_url']); ?>" alt="主圖" style="max-width: 150px;">
+                                    <?php else: ?>
+                                        <p>無圖片</p>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="p-2 column-name d-flex align-items-center"><?= $product['name']; ?></div>
+                                <div class="p-2 column-price d-flex align-items-center"><?= number_format($product['price'], 0); ?> 元</div>
+                                <div class="p-2 column-deposit d-flex align-items-center"><?= number_format($product['price'] * 0.6, 0); ?> 元</div>
+                                <div class="p-2 column-start d-flex align-items-center column-date-time">
+                                    <?php
+                                    if ($product['start_date']) {
+                                        echo substr($product['start_date'], 0, 10) . "<br>" . substr($product['start_date'], 11);
+                                    } else {
+                                        echo "未指定日期";
+                                    }
+                                    ?>
+                                </div>
+                                <div class="p-2 column-end d-flex align-items-center column-date-time">
+                                    <?php
+                                    if ($product['end_date']) {
+                                        echo substr($product['end_date'], 0, 10) . "<br>" . substr($product['end_date'], 11);
+                                    } else {
+                                        echo "";
+                                    }
+                                    ?>
+                                </div>
+                                <div class="p-2 column-action d-flex justify-content-center align-items-center">
+                                    <!-- 檢視 -->
+                                    <button class="btn btn-success btn-sm custom-btn" onclick="viewProductDetails(<?= $product['id']; ?>)">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <!-- 編輯 -->
+                                    <a href="rent_edit.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-primary btn-sm custom-btn"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <!-- 刪除 -->
+                                    <a href="rent_delete.php?id=<?= $product['id']; ?>&page=<?= $page; ?>&filter=<?= $filter; ?>" class="btn btn-danger btn-sm custom-btn" onclick="return confirm('確定要刪除這個項目嗎？');"><i class="fa-solid fa-xmark"></i></a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center m-3" style="height: 80px;">
+                        <!-- 目前頁數顯示 -->
+                        <p class="mb-0">
+                            目前為第 <span class="text-primary"><?php echo $page; ?></span> 頁 / 共<?php echo $total_pages; ?> 頁
+                        </p>
+
+                        <!-- 分頁 -->
+                        <nav class="me-2">
+                            <ul class="pagination mb-0 justify-content-center">
+                                <!-- 回到第一頁 -->
+
+                                <li class="page-item <?php if ($page == 1) echo 'disabled'; ?>">
+                                    <a class="page-link" href="rent_items.php?page=<?= $page - 1; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= urlencode($filter); ?>"><i class="fa-solid fa-angle-left"></i></a>
+                                </li>
+
+                                <!-- 回到上一頁 -->
+                                <li class="page-item <?php if ($page == 1) echo 'disabled'; ?>">
+                                    <a class="page-link" href="rent_items.php?page=<?= $page - 1; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= $filter; ?>">
+                                        <i class="fa-solid fa-angle-left"></i></a>
+                                </li>
+
+                                <!-- 分頁按鈕 -->
+                                <nav class="mx-1" style="margin-right:20px;">
+                                    <ul class="pagination justify-content-center">
+                                        <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                                            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                                                <a class="page-link" href="rent_items.php?page=<?= $i; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= urlencode($filter); ?>"><?= $i; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                    </ul>
+                                </nav>
+
+                                <!-- 下一頁 -->
+                                <li class="page-item <?php if ($page == $total_pages) echo 'disabled'; ?>">
+                                    <a class="page-link" href="rent_items.php?page=<?= $page + 1; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= urlencode($filter); ?>"><i class="fa-solid fa-angle-right"></i></a>
+                                </li>
+
+                                <!-- 到最後一頁 -->
+                                <li class="page-item <?php if ($page == $total_pages) echo 'disabled'; ?>">
+                                    <a class="page-link" href="rent_items.php?page=<?= $total_pages; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= urlencode($filter); ?>"><i class="fa-solid fa-angles-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    </div>
                 </div>
-                <!-- /.container-fluid -->
-                <!-- 分頁 -->
-                <nav class="me-2" style="margin-right:20px;">
-                    <ul class="pagination justify-content-center">
-                        <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
-                            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                                <a class="page-link" href="rent_items.php?page=<?= $i; ?>&sort_by=<?= $sort_column; ?>&sort_order=<?= $sort_order; ?>&filter=<?= $filter; ?>"><?= $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-                    </ul>
-                </nav>
-
-
             </div>
-            <!-- End of Main Content -->
+            <!-- /.container-fluid -->
+
 
 
         </div>
-        <!-- End of Content Wrapper -->
+        <!-- End of Main Content -->
+
+
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -762,6 +632,101 @@ LEFT JOIN rent_image ri_img ON ri.id = ri_img.rent_item_id AND ri_img.is_main = 
                 .catch(error => console.error('Error fetching product details:', error));
         }
     </script>
+    <script>
+        // 更新小分類選單
+        function updateSmallCategories(bigCategoryId, selectedSubCategoryId = null) {
+            const smallCategorySelect = document.getElementById('small-category-select');
+            smallCategorySelect.innerHTML = '<option value="" selected>請選擇</option>';
+            smallCategorySelect.disabled = true;
+
+            if (bigCategoryId === 0) {
+                return; // 如果是 "所有分類"，則不進行任何動作
+            }
+
+            // 發送請求獲取小分類數據
+            fetch(`rent_category.php?big_category_id=${bigCategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        smallCategorySelect.disabled = false; // 啟用小分類選單
+                        data.forEach(smallCategory => {
+                            const option = document.createElement('option');
+                            option.value = smallCategory.id;
+                            option.textContent = smallCategory.name;
+
+                            // 如果有選中的小分類ID，則設置為選中狀態
+                            if (selectedSubCategoryId && selectedSubCategoryId == smallCategory.id) {
+                                option.selected = true;
+                            }
+
+                            smallCategorySelect.appendChild(option);
+                        });
+                    } else {
+                        smallCategorySelect.disabled = true; // 如果沒有小分類，禁用選單
+                    }
+                })
+                .catch(error => console.error('Error fetching small categories:', error));
+        }
+    </script>
+    <script>
+        // 更新大分類和小分類，並更新頁面
+        function updateCategoryAndSmallCategory(bigCategoryId) {
+            // 更新 URL 並刷新頁面，這會根據大分類顯示該大分類的產品
+            window.location.href = `rent_items.php?category=${bigCategoryId}&page=1`; // 頁面重新加載
+            updateSmallCategories(bigCategoryId); // 更新小分類
+        }
+
+        // 更新選擇的小分類
+        function updateSubCategory() {
+            const smallCategoryId = document.getElementById('small-category-select').value;
+            const bigCategoryId = new URLSearchParams(window.location.search).get('category'); // 從 URL 中獲取大分類 ID
+            window.location.href = `rent_items.php?category=${bigCategoryId}&subcategory=${smallCategoryId}&page=1`;
+        }
+
+        // 在頁面加載時初始化小分類選單
+        document.addEventListener("DOMContentLoaded", function() {
+            const categoryId = new URLSearchParams(window.location.search).get('category');
+            const subcategoryId = new URLSearchParams(window.location.search).get('subcategory');
+
+            if (categoryId) {
+                updateSmallCategories(categoryId, subcategoryId);
+            }
+        });
+        // 發送請求獲取小分類數據並根據當前選定的小分類設置選項
+        function updateSmallCategories(bigCategoryId, selectedSubCategoryId = null) {
+            const smallCategorySelect = document.getElementById('small-category-select');
+            smallCategorySelect.innerHTML = '<option value="" selected>請選擇小分類</option>'; // 清空選單並設置默認值
+            smallCategorySelect.disabled = true; // 默認禁用小分類
+
+            if (bigCategoryId === '0') {
+                return; // 如果大分類為 "所有分類"，則不更新小分類選單
+            }
+
+            fetch(`rent_category.php?big_category_id=${bigCategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        smallCategorySelect.disabled = false; // 啟用小分類選單
+                        data.forEach(smallCategory => {
+                            const option = document.createElement('option');
+                            option.value = smallCategory.id;
+                            option.textContent = smallCategory.name;
+
+                            // 如果有選中的小分類ID，則設置為選中狀態
+                            if (selectedSubCategoryId && selectedSubCategoryId == smallCategory.id) {
+                                option.selected = true; // 保持選中狀態
+                            }
+
+                            smallCategorySelect.appendChild(option);
+                        });
+                    } else {
+                        smallCategorySelect.disabled = true; // 如果沒有小分類，禁用選單
+                    }
+                })
+                .catch(error => console.error('Error fetching small categories:', error));
+        }
+    </script>
+
 
 </body>
 
