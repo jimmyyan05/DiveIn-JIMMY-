@@ -95,8 +95,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title>服務項目</title>
+    <title>已刪除列表</title>
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>
