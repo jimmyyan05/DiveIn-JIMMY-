@@ -169,13 +169,13 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                     <thead>
                                         <tr>
                                             <th style="width: 6%;">編號</th>
-                                            <th style="width: 16%;">標題</th>
+                                            <th style="width: 15%;">標題</th>
                                             <th style="width: 15%;">文章圖片</th>
-                                            <th style="width: 37%;">內容</th>
-                                            <th style="width: 6%;">創建時間</th>
-                                            <th style="width: 6%;">更新時間</th>
-                                            <th style="width: 7%;">狀態</th>
-                                            <th style="width: 7%;">操作</th>
+                                            <th style="width: 30%;">內容</th>
+                                            <th style="width: 9%;">創建時間</th>
+                                            <th style="width: 9%;">更新時間</th>
+                                            <th style="width: 8%;">狀態</th>
+                                            <th style="width: 8%;">操作</th>
                                         </tr>
                                     </thead>
                                     <tfoot>

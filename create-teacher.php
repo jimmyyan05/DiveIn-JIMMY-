@@ -67,7 +67,7 @@ require_once("../db_project_connect.php");
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">新增師資</h1>
-                    
+
                     <a href="teacher.php" class="btn btn-info mb-3" title="返回師資列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <div class="container bg-white">
@@ -78,12 +78,12 @@ require_once("../db_project_connect.php");
                                     <img id="previewImage" src="img/teacher/<?= $teacher["main_image"] ?>" alt="">
                                 </div>
                                 <label for="" class="form-label">新增圖片</label>
-                                <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" require>
+                                <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*" required>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col">
                                     <label for="" class="form-label">教練姓名</label>
-                                    <input type="text" class="form-control" name="teacherName" placeholder="請輸入教練姓名">
+                                    <input type="text" class="form-control" name="teacherName" placeholder="請輸入教練姓名" required>
                                 </div>
                                 <div class="col">
                                     <label for="" class="form-label">教練性別</label>
@@ -96,17 +96,17 @@ require_once("../db_project_connect.php");
                             </div>
                             <div class="mb-2">
                                 <label for="" class="form-label">教練聯絡方式</label>
-                                <input type="text" class="form-control" name="teacherEmail" placeholder="請輸入教練的電子信箱">
+                                <input type="text" class="form-control" name="teacherEmail" placeholder="請輸入教練的電子信箱" required>
                             </div>
                             <div class="row mb-2">
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">教練年資</label>
-                                    <input type="number" class="form-control" name="teacherYears" placeholder="請輸入教練年資">
+                                    <input type="number" class="form-control" name="teacherYears" placeholder="請輸入教練年資" required>
                                 </div>
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">教練等級</label>
-                                    <select class="form-control" name="level" id="">
-                                        <option select>請選擇教練等級</option>
+                                    <select class="form-control" name="level" id="" required>
+                                        <option selected>請選擇教練等級</option>
                                         <option value="1">OWSI 開放水域潛水教練</option>
                                         <option value="2">MSDT 潛水大師教練</option>
                                         <option value="3">教練開發課程助教</option>
@@ -168,6 +168,9 @@ require_once("../db_project_connect.php");
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script> <!-- This includes Popper.js, which is required for dropdowns and tooltips in Bootstrap 5 -->

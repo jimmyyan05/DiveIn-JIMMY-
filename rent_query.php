@@ -5,7 +5,7 @@ include 'PDO_connect.php';
 // 獲取查詢參數
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $filter = isset($_GET['filter']) ? $_GET['filter'] : ''; // 搜尋過濾條件
-$limit = 10; 
+$limit = 10;
 $offset = ($page - 1) * $limit;
 
 // 設定基礎查詢語法
@@ -22,6 +22,7 @@ if (!empty($filter)) {
 $sql .= " ORDER BY start_date DESC LIMIT :limit OFFSET :offset";
 $params[':limit'] = $limit;
 $params[':offset'] = $offset;
+
 
 // 準備查詢
 $stmt = $pdo->prepare($sql);
@@ -435,7 +436,7 @@ $totalPages = ceil($totalItems / $limit);
                     </div>
                     <!-- End of Main Content -->
 
-      
+
 
                 </div>
                 <!-- End of Content Wrapper -->
