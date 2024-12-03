@@ -109,7 +109,7 @@ $total_page = ceil($teachersCount / $per_page);
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
-                        <li class="breadcrumb-item"><a href="teacher.php">師資列表</a></li>
+                        <li class="breadcrumb-item"><a href="teacher.php">師資管理</a></li>
                         <li class="breadcrumb-item active" aria-current="page">已刪除的師資</li>
                     </ol>
                 </nav>

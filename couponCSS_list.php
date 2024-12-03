@@ -1,9 +1,8 @@
 <style>
-    table {
-        max-height: 700px;
+    .coupon-table {
+        max-height: 620px;
         overflow-y: auto;
     }
-
 
     .coupon-list {
         font-size: 0.85rem;
@@ -12,6 +11,7 @@
         font-weight: 600;
         padding-inline: 0 !important;
         padding-block: 8px !important;
+
         button {
             padding: 0 !important;
         }
@@ -25,13 +25,14 @@
         padding-block: 8px !important;
         padding-right: 0 !important;
         width: 8rem;
+
         button {
             padding: 0 !important;
         }
     }
 
     .coupon-tbody-list {
-        line-height: 5rem;
+        line-height: 5rem; 
         padding: 0 !important;
     }
 

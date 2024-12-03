@@ -56,7 +56,7 @@ require_once("../db_project_connect.php");
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.html">首頁</a></li>
-                        <li class="breadcrumb-item"><a href="teacher.php">師資列表</a></li>
+                        <li class="breadcrumb-item"><a href="teacher.php">師資管理</a></li>
                         <li class="breadcrumb-item active" aria-current="page">新增師資</li>
                     </ol>
                 </nav>
@@ -87,8 +87,8 @@ require_once("../db_project_connect.php");
                                 </div>
                                 <div class="col">
                                     <label for="" class="form-label">教練性別</label>
-                                    <select class="form-control" name="sex" id="">
-                                        <option selected>請選擇教練性別</option>
+                                    <select class="form-control" name="sex" id="" required>
+                                        <option value ="" selected disabled>請選擇教練性別</option>
                                         <option value="1">男性</option>
                                         <option value="2">女性</option>
                                     </select>
@@ -106,7 +106,7 @@ require_once("../db_project_connect.php");
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">教練等級</label>
                                     <select class="form-control" name="level" id="" required>
-                                        <option selected>請選擇教練等級</option>
+                                        <option value ="" selected disabled>請選擇教練等級</option>
                                         <option value="1">OWSI 開放水域潛水教練</option>
                                         <option value="2">MSDT 潛水大師教練</option>
                                         <option value="3">教練開發課程助教</option>
@@ -188,39 +188,12 @@ require_once("../db_project_connect.php");
     <!-- bootstrap5的JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <!-- 活動的下拉式選單的JS -->
     <script>
-        // const activityCategoryBig = document.querySelector("#activityCategoryBig");
-        // const activityCategorySmall = document.querySelector("#activityCategorySmall");
-        // const categories = <?= json_encode($avticityCategoryArr) ?>;
-
-        // activityCategoryBig.addEventListener("change", function() {
-        //     const bigCategoryId = this.value; // 取得大分類的選擇值
-        //     activityCategorySmall.innerHTML = ""; // 清空小分類選單
-
-        //     if (bigCategoryId && categories[bigCategoryId]) { // 如果選擇的 ID 有對應的資料
-        //         const smallCategories = categories[bigCategoryId]['children']; // 取得該大分類的子分類
-        //         activityCategorySmall.disabled = false; // 啟用小分類選單
-
-        //         // 為小分類選單新增選項
-        //         smallCategories.forEach(smallCategory => {
-        //             const option = document.createElement('option');
-        //             option.value = smallCategory['id'];
-        //             option.textContent = smallCategory['name'];
-        //             activityCategorySmall.appendChild(option);
-        //         });
-        //     } else {
-        //         // 如果沒有選擇大分類，禁用小分類選單並重設選項
-        //         activityCategorySmall.disabled = true;
-        //         const defaultOption = document.createElement('option');
-        //         defaultOption.value = '';
-        //         defaultOption.textContent = '請先選擇活動類型';
-        //         activityCategorySmall.appendChild(defaultOption);
-        //     }
-        // });
+        
+        
         // 上傳圖片預覽
         const fileInput = document.querySelector("#fileInput");
-        fileInput.addEventListener("change", function() {
+        fileInput.addEventListener("change", function(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();

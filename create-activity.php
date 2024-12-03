@@ -108,8 +108,8 @@ if ($resultTeachers->num_rows > 0) {
                             <div class="row">
                                 <div class="mb-2 col">
                                     <label for="" class="form-label">服務類型</label>
-                                    <select class="form-control" name="activityCategoryBig" id="activityCategoryBig">
-                                        <option selected>請選擇服務類型</option>
+                                    <select class="form-control" name="activityCategoryBig" id="activityCategoryBig" required>
+                                        <option value ="" selected disabled>請選擇服務類型</option>
                                         <?php foreach ($avticityCategoryArr as $big_id => $big_data): ?>
                                             <option value="<?= $big_id ?>" required><?= $big_data["name"] ?></option>
                                         <?php endforeach; ?>
@@ -138,7 +138,7 @@ if ($resultTeachers->num_rows > 0) {
                                 </div>
                                 <div class="col">
                                     <label for="" class="form-label">師資</label>
-                                    <select name="teacher" class="form-select"  required>
+                                    <select name="teacher" class="form-control"  required>
                                         <option value="">請選擇師資</option> <!-- 預設空選項 -->
                                         <?php foreach ($teachers as $teacher): ?>
                                             <option value="<?= htmlspecialchars($teacher['id']) ?>">

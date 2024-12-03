@@ -14,15 +14,27 @@ if (isset($_POST['submit'])) {
     $price = $_POST['price'];
     $start_date = $_POST['start_date'];
     $end_date = !empty($_POST['end_date']) ? $_POST['end_date'] : null;
+    $description = $_POST['description'];
+    $stock = $_POST['stock'];
+    $rent_category_big = $_POST['rent_category_big'];
+    $rent_category_small = $_POST['rent_category_small'];
 
     // 更新產品資料
-    $sql = "UPDATE rent_item SET name = :name, price = :price, start_date = :start_date, end_date = :end_date WHERE id = :id";
+    $sql = "UPDATE rent_item 
+    SET name = :name, price = :price, start_date = :start_date, end_date = :end_date,
+        description = :description, stock = :stock, rent_category_big_id = :rent_category_big,
+        rent_category_small_id = :rent_category_small 
+    WHERE id = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':id', $id);
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':price', $price);
     $stmt->bindParam(':start_date', $start_date);
     $stmt->bindParam(':end_date', $end_date);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':stock', $stock);
+    $stmt->bindParam(':rent_category_big', $rent_category_big);
+    $stmt->bindParam(':rent_category_small', $rent_category_small);
     $stmt->execute();
 
     if (isset($_FILES['image']) && count($_FILES['image']['name']) > 0) {
@@ -98,6 +110,17 @@ if (isset($_GET['id'])) {
     $stmt->execute();
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 }
+// 取得大分類資料
+$sql_big = "SELECT id, name FROM rent_category_big";
+$stmt_big = $pdo->query($sql_big);
+$big_categories = $stmt_big->fetchAll();
+
+// 取得小分類資料
+$sql_small = "SELECT id, name FROM rent_category_small WHERE rent_category_big_id = :big_category_id";
+$stmt_small = $pdo->prepare($sql_small);
+$stmt_small->bindParam(':big_category_id', $product['rent_category_big_id']);
+$stmt_small->execute();
+$small_categories = $stmt_small->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +134,7 @@ if (isset($_GET['id'])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>DiveIn-rent-items</title>
+    <title>編輯租賃商品</title>
     <!-- 統一的css -->
     <?php include("./css.php") ?>
 
@@ -219,7 +242,7 @@ if (isset($_GET['id'])) {
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">編輯租賃商品</h1>
-                
+
 
                     <!-- DataTales -->
                     <div class="card shadow mb-4">
@@ -241,6 +264,46 @@ if (isset($_GET['id'])) {
                                         <div class="mb-3">
                                             <label for="name" class="form-label">價格</label>
                                             <input type="text" class="form-control" id="price" name="price" value="<?php echo $product['price']; ?>" required>
+                                        </div>
+
+                                        <!-- 大分類 -->
+                                        <div class="mb-3">
+                                            <label for="rent_category_big" class="form-label">大分類</label>
+                                            <select class="form-select" id="rent_category_big" name="rent_category_big" required>
+                                                <option value="">請選擇大分類</option>
+                                                <?php foreach ($big_categories as $big_category): ?>
+                                                    <option value="<?php echo $big_category['id']; ?>"
+                                                        <?php echo $product['rent_category_big_id'] == $big_category['id'] ? 'selected' : ''; ?>>
+                                                        <?php echo $big_category['name']; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <!-- 小分類 -->
+                                        <div class="mb-3">
+                                            <label for="rent_category_small" class="form-label">小分類</label>
+                                            <select class="form-select" id="rent_category_small" name="rent_category_small" required>
+                                                <option value="">請先選擇大分類</option>
+                                                <?php foreach ($small_categories as $small_category): ?>
+                                                    <option value="<?php echo $small_category['id']; ?>"
+                                                        <?php echo $product['rent_category_small_id'] == $small_category['id'] ? 'selected' : ''; ?>>
+                                                        <?php echo $small_category['name']; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <!-- 產品描述 -->
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">產品描述</label>
+                                            <textarea class="form-control" id="description" name="description" rows="3"><?php echo $product['description']; ?></textarea>
+                                        </div>
+
+                                        <!-- 庫存 -->
+                                        <div class="mb-3">
+                                            <label for="stock" class="form-label">庫存</label>
+                                            <input type="number" class="form-control" id="stock" name="stock" value="<?php echo $product['stock']; ?>" required>
                                         </div>
                                         <div class="mb-3">
                                             <label for="start_date" class="form-label">上架時間</label>

@@ -94,7 +94,7 @@ $total_page = ceil($teachersCount / $per_page);
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>課程師資</title>
+    <title>師資管理</title>
 
     <!-- Custom fonts for this template -->
     <!-- <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -146,7 +146,7 @@ $total_page = ceil($teachersCount / $per_page);
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">師資列表</li>
+                        <li class="breadcrumb-item active" aria-current="page">師資管理</li>
                     </ol>
                 </nav>
 
@@ -161,7 +161,7 @@ $total_page = ceil($teachersCount / $per_page);
                     <div class="row justify-content-start">
                         <form class="col-2 d-flex justify-content-start" action="" method="get">
                             <div class="input-group mb-3 search-bar justify-content-end gx-0">
-                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入活動關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
+                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
                                     aria-label="Recipient's username" aria-describedby="basic-addon2" name="search" <?php if (isset($_GET["search"])): ?> value="<?= $_GET["search"] ?>" <?php endif; ?>>
                                 <div class="input-group-append p-0">
                                     <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -201,7 +201,7 @@ $total_page = ceil($teachersCount / $per_page);
                             <tr>
                                 <th>編號</th>
                                 <th>姓名</th>
-                                <th>教練照片</th>
+                                <th>照片</th>
                                 <th>聯絡方式</th>
                                 <th>性別</th>
                                 <th>教練等級</th>
