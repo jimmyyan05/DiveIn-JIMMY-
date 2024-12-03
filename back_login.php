@@ -33,9 +33,9 @@ if(isset($_SESSION["user"])){
                             <div class="col-lg-4 d-none bg-login-image"></div>
                             <div class="col">
                                 <div class="p-5">
-                                    <div class="d-flex align-items-center justify-content-center" style=" margin-left:-30px; " >
+                                    <div class="d-flex align-items-center justify-content-center" style=" margin-left:-45px; " >
                                         <img style="width: 10em " src="img/icon-3.png" alt="">
-                                        <h1 class="text-gray-900 mt-4" style="margin-left:-30px;">DIVE<sup>IN</sup></h1>
+                                        <h1 class="text-gray-900 mt-4" style="margin-left:-30px;">Dive-in</h1>
                                     </div>
                                     <?php if(isset($_SESSION["error"]["times"]) && $_SESSION["error"]["times"]>6): ?>
                                     <h3 class="text-danger">輸入錯誤次數太多, 請稍後再來</h3>
@@ -66,7 +66,7 @@ if(isset($_SESSION["user"])){
                                     <?php endif; ?>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">忘記密碼?</a>
+                                        <a class="small" href="forgot-password.html">忘記密碼？</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="register.php">註冊帳號！</a>
