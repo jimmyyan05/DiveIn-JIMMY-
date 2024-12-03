@@ -1,4 +1,28 @@
+<style>
+    .sidebar {
+        position: sticky;
+        top: 0;
+        /* 保證當滾動時，側邊欄固定 */
+        height: 100vh;
+        /* 設定高度為視窗高度 */
+        /* overflow-y: auto; */
+        /* 使側邊欄內容可滾動 */
+    }
 
+    .sidebar-brand-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .sidebar-brand-icon .img-fit {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+</style>
 <!-- Sidebar -->
 <ul class="navbar-nav bg-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -52,13 +76,6 @@
             <span>訂單管理</span></a>
     </li>
 
-    <!-- Nav Item - 商品管理 -->
-    <li class="nav-item">
-        <a class="nav-link" href="product.php">
-            <i class="fa-solid fa-anchor"></i>
-            <span>商品管理</span></a>
-    </li>
-
     <!-- Nav Item - 分類管理 -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefour"
@@ -71,12 +88,21 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">所有分類</h6>
                 <a class="collapse-item" href="category.php">商品分類</a>
-                <a class="collapse-item" href="">租賃分類</a>
-                <a class="collapse-item" href="activityCategory.php">課程分類</a>
+                <!-- <a class="collapse-item" href="">租賃分類</a> -->
+                <a class="collapse-item" href="activityCategory.php">服務分類</a>
                 <a class="collapse-item" href="brand.php">品牌</a>
             </div>
         </div>
     </li>
+
+    <!-- Nav Item - 商品管理 -->
+    <li class="nav-item">
+        <a class="nav-link" href="product.php">
+            <i class="fa-solid fa-anchor"></i>
+            <span>商品管理</span></a>
+    </li>
+
+
 
     <!-- Nav Item - 租賃管理 -->
     <li class="nav-item">
@@ -85,19 +111,23 @@
             <span>租賃管理</span></a>
     </li>
 
-    <!-- Nav Item - 課程管理 -->
+    <!-- Nav Item - 服務管理 -->
     <li class="nav-item">
         <a class="nav-link" href="activity.php">
             <i class="fa-brands fa-readme"></i>
-            <span>課程管理</span></a>
+            <span>服務管理</span></a>
     </li>
+
+
 
     <!-- Nav Item - 教練管理 -->
     <li class="nav-item">
         <a class="nav-link" href="teacher.php">
             <i class="fa-solid fa-person-chalkboard"></i>
-            <span>教練管理</span></a>
+            <span>師資管理</span></a>
     </li>
+
+
 
     <!-- Nav Item - 優惠券管理 -->
     <li class="nav-item">
@@ -112,6 +142,8 @@
             <i class="fa-solid fa-newspaper"></i>
             <span>文章管理</span></a>
     </li>
+
+
 
 
 
@@ -164,7 +196,7 @@
 
 <!-- End of Sidebar -->
 
-<head>
+<!-- <head>
     <style>
         .sidebar-brand-icon {
             display: flex;
@@ -180,4 +212,4 @@
             display: block;
         }
     </style>
-</head>
+</head> -->

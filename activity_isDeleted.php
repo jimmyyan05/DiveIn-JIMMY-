@@ -79,6 +79,8 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
                     <a href="activity.php" class="btn btn-info mb-3" title="返回服務列表"><i class="fa-solid fa-reply fa-fw"></i></a>
 
                     <!-- 服務列表 -->
+                    <?php if ($activityCount > 0): ?>
+
                     <table class="table table-hover">
                         <tr>
                             <th>編號</th>
@@ -148,6 +150,9 @@ $activitys = $result->fetch_all(MYSQLI_ASSOC);
                             </tr>
                         <?php endforeach; ?>
                     </table>
+                    <?php else: ?>
+                        <div class="text-danger">目前沒有已刪除的師資</div>
+                    <?php endif; ?>
 
 
                 </div>
