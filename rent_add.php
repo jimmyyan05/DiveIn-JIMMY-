@@ -1,24 +1,54 @@
 <!-- php -->
 <?php
 include 'PDO_connect.php';
+ob_clean(); // 清理輸出緩衝區，確保無額外 HTML 輸出
+
+// 當 AJAX 請求帶有 big_category_id 參數時，處理並返回小分類資料
+if (isset($_GET['big_category_id']) && !empty($_GET['big_category_id'])) {
+    $big_category_id = $_GET['big_category_id'];
+
+    // 查詢小分類資料
+    $sql_small = "SELECT id, name FROM rent_category_small WHERE rent_category_big_id = :big_category_id";
+    $stmt_small = $pdo->prepare($sql_small);
+    $stmt_small->bindParam(':big_category_id', $big_category_id, PDO::PARAM_INT);
+    $stmt_small->execute();
+
+    $small_categories = [];
+    while ($row_small = $stmt_small->fetch()) {
+        $small_categories[] = $row_small;  // 把每個小分類的資料存入陣列
+    }
+
+    // 將結果轉換為 JSON 格式並回傳
+    echo json_encode($small_categories);
+    exit();  // 退出 PHP 腳本，防止之後的 HTML 被輸出
+}
+
+
 
 if (isset($_POST['submit'])) {
     // 取得表單資料
     $name = $_POST['name'];
     $price = $_POST['price'];
-    // $type = $_POST['type'];
-    // $description = $_POST['description'];
-    // $deposit = $_POST['deposit'];
+    $description = $_POST['description'];
+    $stock = $_POST['stock'];
     $start_date = $_POST['start_date'];
     $end_date = !empty($_POST['end_date']) ? $_POST['end_date'] : null;
+    $rent_category_big = $_POST['rent_category_big'];
+    $rent_category_small = $_POST['rent_category_small'];
 
     // 準備 SQL 語句插入資料
-    $sql = "INSERT INTO rent_item (name, price, start_date, end_date) VALUES (:name, :price, :start_date, :end_date)";
+    $sql = "INSERT INTO rent_item (name, price, description, stock, start_date, end_date, rent_category_big_id, rent_category_small_id) 
+        VALUES (:name, :price, :description, :stock, :start_date, :end_date, :rent_category_big, :rent_category_small)";
+
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':price', $price);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':stock', $stock);
     $stmt->bindParam(':start_date', $start_date);
     $stmt->bindParam(':end_date', $end_date);
+    $stmt->bindParam(':rent_category_big', $rent_category_big);
+    $stmt->bindParam(':rent_category_small', $rent_category_small);
 
     // 執行插入操作
     if ($stmt->execute()) {
@@ -221,6 +251,40 @@ if (isset($_POST['submit'])) {
                                         <label for="price" class="form-label">價格</label>
                                         <input type="number" step="0.01" class="form-control" id="price" name="price" required>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label for="rent_category_big" class="form-label">大分類</label>
+                                        <select class="form-select" id="rent_category_big" name="rent_category_big" required>
+                                            <option value="">請選擇大分類</option>
+                                            <!-- PHP 動態載入大分類 -->
+                                            <?php
+                                            $sql_big = "SELECT id, name FROM rent_category_big";
+                                            $stmt_big = $pdo->query($sql_big);
+                                            while ($row_big = $stmt_big->fetch()) {
+                                                echo "<option value=\"{$row_big['id']}\">{$row_big['name']}</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="rent_category_small" class="form-label">小分類</label>
+                                        <select class="form-select" id="rent_category_small" name="rent_category_small" required>
+                                            <option value="">請先選擇大分類</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">產品描述</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="stock" class="form-label">庫存</label>
+                                        <input type="number" class="form-control" id="stock" name="stock" required>
+                                    </div>
+
+
                                     <div class="mb-3">
                                         <label for="start_date" class="form-label">上架時間</label>
                                         <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
@@ -304,6 +368,31 @@ if (isset($_POST['submit'])) {
 
         <!-- Page level custom scripts -->
         <script src="js/demo/datatables-demo.js"></script>
+        <script>
+            document.getElementById('rent_category_big').addEventListener('change', function() {
+                const bigCategoryId = this.value;
+                const smallCategorySelect = document.getElementById('rent_category_small');
+
+                // 清空小分類選單
+                smallCategorySelect.innerHTML = '<option value="">請先選擇大分類</option>';
+
+                if (bigCategoryId) {
+                    // 發送 AJAX 請求取得對應的小分類
+                    fetch(`rent_add.php?big_category_id=${bigCategoryId}`)
+                        .then(response => response.json()) // 解析 JSON 格式的資料
+                        .then(data => {
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = item.name;
+                                smallCategorySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching small categories:', error));
+                }
+            });
+        </script>
+
 
 </body>
 
