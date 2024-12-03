@@ -26,7 +26,7 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    <div class="sidebar-heading" style="font-size: 13px;">
         DiveIn後台管理
     </div>
 
