@@ -64,7 +64,7 @@ $result = $conn->query($sql);
 $totalSql = "
     SELECT COUNT(*) AS total
     FROM article a
-    WHERE a.isDeleted = 0";
+    WHERE a.isDeleted = 1";
 
 // 同樣加入搜尋與過濾條件
 if ($searchTerm !== '') {
@@ -73,15 +73,13 @@ if ($searchTerm !== '') {
 if ($statusFilter !== '') {
     $totalSql .= " AND a.status = " . (int)$statusFilter;
 }
-if ($isDeletedFilter === '1') {
-    $totalSql .= " AND a.isDeleted = 1";
-}
 
 // 執行總數查詢並計算總頁數
 $totalResult = $conn->query($totalSql);
 $totalRow = $totalResult->fetch_assoc();
 $totalItems = $totalRow['total'];
 $totalPages = ceil($totalItems / $itemsPerPage);
+
 
 ?>
 
