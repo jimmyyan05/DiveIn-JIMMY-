@@ -96,8 +96,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title>服務項目</title>
+    <title>文章列表</title>
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>
@@ -178,7 +177,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th style="width: 8%;">操作</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
+                                    <!-- <tfoot>
                                         <tr>
                                             <th>編號</th>
                                             <th>標題</th>
@@ -189,7 +188,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th>狀態</th>
                                             <th>操作</th>
                                         </tr>
-                                    </tfoot>
+                                    </tfoot> -->
                                     <tbody>
                                         <?php
                                         // 計算從哪一個序號開始

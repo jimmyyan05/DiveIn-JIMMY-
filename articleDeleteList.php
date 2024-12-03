@@ -64,7 +64,7 @@ $result = $conn->query($sql);
 $totalSql = "
     SELECT COUNT(*) AS total
     FROM article a
-    WHERE a.isDeleted = 0";
+    WHERE a.isDeleted = 1";
 
 // 同樣加入搜尋與過濾條件
 if ($searchTerm !== '') {
@@ -73,15 +73,13 @@ if ($searchTerm !== '') {
 if ($statusFilter !== '') {
     $totalSql .= " AND a.status = " . (int)$statusFilter;
 }
-if ($isDeletedFilter === '1') {
-    $totalSql .= " AND a.isDeleted = 1";
-}
 
 // 執行總數查詢並計算總頁數
 $totalResult = $conn->query($totalSql);
 $totalRow = $totalResult->fetch_assoc();
 $totalItems = $totalRow['total'];
 $totalPages = ceil($totalItems / $itemsPerPage);
+
 
 ?>
 
@@ -95,8 +93,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title>服務項目</title>
+    <title>已刪除列表</title>
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>
@@ -171,7 +168,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th style="width: 8%;">操作</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
+                                    <!-- <tfoot>
                                         <tr>
                                             <th>編號</th>
                                             <th>標題</th>
@@ -182,7 +179,7 @@ $totalPages = ceil($totalItems / $itemsPerPage);
                                             <th>狀態</th>
                                             <th>操作</th>
                                         </tr>
-                                    </tfoot>
+                                    </tfoot> -->
                                     <tbody>
                                         <?php
                                         // 計算從哪一個序號開始

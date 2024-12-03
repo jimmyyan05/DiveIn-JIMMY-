@@ -161,13 +161,21 @@ function createClearSortLink()
 
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">優惠券列表</li>
+                    </ol>
+                </nav>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+
+
 
                     <!-- Page Heading -->
                     <div class="d-flex align-items-center">
@@ -183,30 +191,33 @@ function createClearSortLink()
                                 <i class="fa-solid fa-left-long fa-fw"></i>
                             </a>
                         <?php endif; ?>
-                        <h1 class="h3 text-gray-800 mb-4">優惠券列表</h1>
-                    </div>
+                        <div class="d-flex justify-content-between container-fluid p-0">
+                            <h1 class="h3 text-gray-800 m-0">優惠券列表</h1>
+                            <!-- 搜尋功能的 HTML 表單 -->
+                            <div class="col-12 col-sm-8 col-md-3 p-0 mt-3">
+                                <form method="get" action="coupon_list.php">
+                                    <div class="input-group">
+                                        <!-- 輸入框：搜尋優惠券名稱或代碼 -->
+                                        <input type="search" class="form-control" name="search" placeholder="搜尋優惠券名稱或代碼" value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
 
+                                        <!-- 搜尋按鈕 -->
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i>
+                                        </button>
+                                    </div>
 
-                    <!-- 搜尋功能的 HTML 表單 -->
-                    <div class="col-12 col-sm-8 col-md-6 col-lg-5 p-0 mb-4 mt-3">
-                        <form method="get" action="coupon_list.php">
-                            <div class="input-group">
-                                <!-- 輸入框：搜尋優惠券名稱或代碼 -->
-                                <input type="search" class="form-control" name="search" placeholder="搜尋優惠券名稱或代碼" value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
-
-                                <!-- 搜尋按鈕 -->
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i>
-                                </button>
+                                    <!-- 保留篩選條件 -->
+                                    <input type="hidden" name="status" value="<?php echo isset($_GET['status']) ? $_GET['status'] : 'all'; ?>">
+                                    <input type="hidden" name="targetMembers" value="<?php echo isset($_GET['targetMembers']) ? $_GET['targetMembers'] : 'all'; ?>">
+                                    <input type="hidden" name="product_id" value="<?php echo isset($_GET['product_id']) ? $_GET['product_id'] : 'all'; ?>">
+                                    <input type="hidden" name="discountType" value="<?php echo isset($_GET['discountType']) ? $_GET['discountType'] : 'all'; ?>">
+                                </form>
                             </div>
-
-                            <!-- 保留篩選條件 -->
-                            <input type="hidden" name="status" value="<?php echo isset($_GET['status']) ? $_GET['status'] : 'all'; ?>">
-                            <input type="hidden" name="targetMembers" value="<?php echo isset($_GET['targetMembers']) ? $_GET['targetMembers'] : 'all'; ?>">
-                            <input type="hidden" name="product_id" value="<?php echo isset($_GET['product_id']) ? $_GET['product_id'] : 'all'; ?>">
-                            <input type="hidden" name="discountType" value="<?php echo isset($_GET['discountType']) ? $_GET['discountType'] : 'all'; ?>">
-                        </form>
+                        </div>
                     </div>
+
+
+
                 </div>
 
                 <!-- Main Page Content -->
@@ -287,14 +298,15 @@ function createClearSortLink()
                         </div>
                     </div>
 
+
                     <!-- 優惠券列表 -->
-                    <div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+                    <div class="table-responsive coupon-table">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">ID</th>
-                                    <th class="coupon-list-name" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">優惠券名稱 | 代碼</th>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">ID</th>
+                                    <th class="coupon-list-name" scope="col">優惠券名稱 | 代碼</th>
+                                    <th class="coupon-list" scope="col">
                                         適用服務
                                         <button class="dropdown-toggle custom-dropdown-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                         <ul class="dropdown-menu" id="serviceDropdown">
@@ -311,7 +323,7 @@ function createClearSortLink()
                                         </ul>
                                     </th>
 
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         目標會員
                                         <button class="dropdown-toggle custom-dropdown-sm" type="submit" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                         <ul class="dropdown-menu">
@@ -326,19 +338,19 @@ function createClearSortLink()
                                         </ul>
                                     </th>
 
-                                    <th class="coupon-list"  scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         折扣方式
                                         <button class="dropdown-toggle custom-dropdown-sm" type="submit" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="?discountType=折數<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">折數</a></li>
-                                            <li><a class="dropdown-item" href="?discountType=金額<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">金額</a></li>
+                                            <li><a class="dropdown-item" href="?discountType=percentage<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">折數</a></li>
+                                            <li><a class="dropdown-item" href="?discountType=fixed<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">金額</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
                                             </li>
                                             <li><a class="dropdown-item" href="?discountType=all<?php echo isset($_GET['urlParams']) ? $_GET['urlParams'] : ''; ?>">清除篩選</a></li>
                                         </ul>
                                     </th>
-                                    <th class="coupon-list"  scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         折扣額度
                                         <a href="?sort_by=discountValue&order=<?php echo $order == 'ASC' ? 'desc' : 'asc'; ?>">
                                             <button class="btn btn-link btn-sm">
@@ -346,7 +358,7 @@ function createClearSortLink()
                                             </button>
                                         </a>
                                     </th>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         可使用
                                         <a href="?sort_by=usageLimit&order=<?php echo $order == 'ASC' ? 'desc' : 'asc'; ?>">
                                             <button class="btn btn-link btn-sm">
@@ -354,7 +366,7 @@ function createClearSortLink()
                                             </button>
                                         </a>
                                     </th>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         已使用
                                         <a href="?sort_by=usedCount&order=<?php echo $order == 'ASC' ? 'desc' : 'asc'; ?>">
                                             <button class="btn btn-link btn-sm">
@@ -362,7 +374,7 @@ function createClearSortLink()
                                             </button>
                                         </a>
                                     </th>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         開始日期
                                         <a href="?sort_by=startDate&order=<?php echo $order == 'ASC' ? 'desc' : 'asc'; ?>">
                                             <button class="btn btn-link btn-sm">
@@ -370,7 +382,7 @@ function createClearSortLink()
                                             </button>
                                         </a>
                                     </th>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                    <th class="coupon-list" scope="col">
                                         結束日期
                                         <a href="?sort_by=endDate&order=<?php echo $order == 'ASC' ? 'desc' : 'asc'; ?>">
                                             <button class="btn btn-link btn-sm">
@@ -378,7 +390,8 @@ function createClearSortLink()
                                             </button>
                                         </a>
                                     </th>
-                                    <th class="coupon-list" scope="col" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">操作</th>
+                                    <th class="coupon-list" scope="col">操作</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -433,48 +446,72 @@ function createClearSortLink()
                     <!-- 優惠券列表 結束 -->
 
                     <!-- 分頁導航 -->
-                    <div class="d-flex justify-content-center mt-4">
+                    <div class="d-flex justify-content-center my-3">
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
-                                <!-- 跳至第 1 頁 -->
+                                <!-- 左1: 跳至第 1 頁 -->
                                 <li class="page-item <?php echo ($p == 1) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=1<?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="First">
-                                        <span aria-hidden="true">««</span>
+                                        <i class="fa-solid fa-angles-left" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 上一頁 -->
+                                <!-- 左2: 上一頁 -->
                                 <li class="page-item <?php echo ($p == 1) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=<?php echo $p - 1; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="Previous">
-                                        <span aria-hidden="true">«</span>
+                                        <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 分頁數字按鈕 -->
-                                <?php for ($i = 1; $i <= $total_page; $i++): ?>
-                                    <li class="page-item <?php echo ($i == $p) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?p=<?php echo $i; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>">
-                                            <?php echo $i; ?>
-                                        </a>
-                                    </li>
-                                <?php endfor; ?>
+                                <!-- 固定顯示 5 頁碼 -->
+                                <?php
+                                // 計算顯示的頁碼範圍
+                                $start_page = max(1, $p - 2);  // 顯示的起始頁
+                                $end_page = min($total_page, $start_page + 4);  // 顯示的結束頁 (固定顯示 5 頁)
 
-                                <!-- 下一頁 -->
+                                // 顯示第一頁和左側 '...'
+                                if ($start_page > 1) {
+                                    echo '<li class="page-item"><a class="page-link" href="?p=1">1</a></li>';
+                                    if ($start_page > 2) {
+                                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                    }
+                                }
+
+                                // 顯示頁碼
+                                for ($i = $start_page; $i <= $end_page; $i++) {
+                                    if ($i == $p) {
+                                        // 當前頁標記為 active
+                                        echo '<li class="page-item active"><a class="page-link" href="?p=' . $i . (isset($search) && $search !== '' ? '&search=' . urlencode($search) : '') . (isset($status) && $status !== 'all' ? '&status=' . $status : '') . '">' . $i . '</a></li>';
+                                    } else {
+                                        // 顯示其他頁碼
+                                        echo '<li class="page-item"><a class="page-link" href="?p=' . $i . (isset($search) && $search !== '' ? '&search=' . urlencode($search) : '') . (isset($status) && $status !== 'all' ? '&status=' . $status : '') . '">' . $i . '</a></li>';
+                                    }
+                                }
+
+                                // 顯示右側 '...' 和最後一頁
+                                if ($end_page < $total_page) {
+                                    echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                    echo '<li class="page-item"><a class="page-link" href="?p=' . $total_page . '">' . $total_page . '</a></li>';
+                                }
+                                ?>
+
+                                <!-- 右2: 下一頁 -->
                                 <li class="page-item <?php echo ($p == $total_page) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=<?php echo $p + 1; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="Next">
-                                        <span aria-hidden="true">»</span>
+                                        <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 跳至最後一頁 -->
+                                <!-- 右1: 跳至最後一頁 -->
                                 <li class="page-item <?php echo ($p == $total_page) ? 'disabled' : ''; ?>">
                                     <a class="page-link" href="?p=<?php echo $total_page; ?><?php echo isset($search) && $search !== '' ? '&search=' . urlencode($search) : ''; ?><?php echo isset($status) && $status !== 'all' ? '&status=' . $status : ''; ?>" aria-label="Last">
-                                        <span aria-hidden="true">»»</span>
+                                        <i class="fa-solid fa-angles-right" aria-hidden="true"></i>
                                     </a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
+
                 </div>
             </div>
         </div>

@@ -40,156 +40,167 @@ $row = $result->fetch_assoc();
 
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
-                <?php include "topbar.php"; ?>
+                <?php include "topbar.php" ?>
                 <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item"><a href="coupon_list.php">優惠券列表</a></li>
+                        <li class="breadcrumb-item"><a href="coupon_view.php?id=<?= $id ?>">優惠券基本資訊</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">編輯優惠券</li>
+                    </ol>
+                </nav>
+                <!-- 優惠券新增表單 -->
                 <div class="container mt-5">
                     <div class="d-flex align-items-center">
-                        <a class="btn btn-primary btn-sm me-2 mb-4" href="coupon_view.php?id=<?php echo $row['id']; ?>"><i class="fa-solid fa-left-long fa-fw"></i></a>
-                        <h1 class="h3 text-gray-800 mb-4">優惠券基本資訊</h1>
+                        <a class="btn btn-primary btn-sm me-2 mb-4" href="coupon_view.php?id=<?= $id ?>"><i class="fa-solid fa-left-long fa-fw"></i></a>
+                        <h1 class="h3 text-gray-800 mb-4">編輯優惠券</h1>
                     </div>
-                    <!-- 優惠券新增表單 -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-sm">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            確認刪除該筆資料?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                            <a href="coupon_doDelete.php?id=<?= $row["id"] ?>" class="btn btn-danger">確認</a>
-                                        </div>
+                    <div class="card-body">
+                        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">確認刪除</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        確認刪除該筆資料?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                        <a href="coupon_doDelete.php?id=<?= $row["id"] ?>" class="btn btn-danger">確認</a>
                                     </div>
                                 </div>
                             </div>
-                            <form action="coupon_doUpdate.php" method="POST">
-                                <!-- 隱藏 ID 用於更新 -->
-                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <!-- 優惠券代碼輸入欄位 -->
-                                <div class="mb-3">
-                                    <label for="code" class="form-label">優惠券代碼</label>
-                                    <input type="text" name="code" class="form-control" value="<?php echo htmlspecialchars($row['code']); ?>" readonly>
-                                </div>
-
-                                <!-- 優惠券名稱輸入欄位 -->
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">優惠券名稱</label>
-                                    <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($row['name']); ?>" required>
-                                </div>
-
-                                <!-- 折扣類型選擇欄位 -->
-                                <div class="mb-3">
-                                    <label for="discountType" class="form-label">折扣類型</label>
-                                    <select name="discountType" class="form-select" required>
-                                        <option value="percentage" <?php echo ($row['discountType'] == 'percentage' ? 'selected' : ''); ?>>折數</option>
-                                        <option value="fixed" <?php echo ($row['discountType'] == 'fixed' ? 'selected' : ''); ?>>金額</option>
-                                    </select>
-                                </div>
-
-                                <!-- 折扣數值輸入欄位 -->
-                                <div class="mb-3">
-                                    <label for="discountValue" class="form-label">折扣數值</label>
-                                    <input type="number" name="discountValue" class="form-control" value="<?php echo htmlspecialchars($row['discountValue']); ?>" required>
-                                </div>
-
-                                <!-- 開始日期欄位 -->
-                                <div class="mb-3">
-                                    <label for="startDate" class="form-label">開始日期</label>
-                                    <!-- 使用 date 函數將日期轉換為 YYYY-MM-DD 格式 -->
-                                    <input type="date" name="startDate" class="form-control" value="<?php echo htmlspecialchars(date('Y-m-d', strtotime($row['startDate']))); ?>" required>
-                                </div>
-                                <!-- readonly -->
-
-                                <!-- 結束日期欄位 -->
-                                <div class="mb-3">
-                                    <label for="endDate" class="form-label">結束日期</label>
-                                    <!-- 使用 date 函數將 endDate 轉換為 YYYY-MM-DD 格式 -->
-                                    <input type="date" name="endDate" class="form-control" value="<?php echo htmlspecialchars(date('Y-m-d', strtotime($row['endDate']))); ?>" required>
-                                </div>
-
-                                <!-- 最低消費金額欄位 -->
-                                <div class="mb-3">
-                                    <label for="minPurchase" class="form-label">最低消費金額</label>
-                                    <input type="number" name="minPurchase" class="form-control" value="<?php echo htmlspecialchars($row['minPurchase']); ?>" required>
-                                </div>
-
-                                <!-- 最大折扣金額欄位 -->
-                                <div class="mb-3">
-                                    <label for="maxDiscountValue" class="form-label">最大折扣金額</label>
-                                    <input type="number" name="maxDiscountValue" class="form-control" value="<?php echo htmlspecialchars($row['maxDiscountValue']); ?>" required>
-                                </div>
-
-                                <!-- 目標會員欄位 -->
-                                <div class="mb-3">
-                                    <label for="targetMembers" class="form-label">目標會員</label>
-                                    <select name="targetMembers" class="form-select" required>
-                                        <option value="全部會員" <?php echo ($row['targetMembers'] == '全部會員' ? 'selected' : ''); ?>>全部會員</option>
-                                        <option value="新會員" <?php echo ($row['targetMembers'] == '新會員' ? 'selected' : ''); ?>>新會員</option>
-                                        <option value="VIP會員" <?php echo ($row['targetMembers'] == 'VIP會員' ? 'selected' : ''); ?>>VIP會員</option>
-                                        <option value="學生會員" <?php echo ($row['targetMembers'] == '學生會員' ? 'selected' : ''); ?>>學生會員</option>
-                                    </select>
-                                </div>
-
-                                <!-- 產品類型欄位 -->
-                                <div class="mb-3">
-                                    <label for="product_id" class="form-label">適用服務</label>
-                                    <select name="product_id" class="form-select" required>
-                                        <option value="全部" <?php echo ($row['product_id'] == '全部' ? 'selected' : ''); ?>>全部</option>
-                                        <option value="商品" <?php echo ($row['product_id'] == '商品' ? 'selected' : ''); ?>>商品</option>
-                                        <option value="租賃" <?php echo ($row['product_id'] == '租賃' ? 'selected' : ''); ?>>租賃</option>
-                                        <option value="課程" <?php echo ($row['product_id'] == '課程' ? 'selected' : ''); ?>>課程</option>
-                                        <option value="活動" <?php echo ($row['product_id'] == '活動' ? 'selected' : ''); ?>>活動</option>
-                                        <option value="揪團" <?php echo ($row['product_id'] == '揪團' ? 'selected' : ''); ?>>揪團</option>
-                                    </select>
-                                </div>
-
-                                <!-- 優惠券數量欄位 -->
-                                <div class="mb-3">
-                                    <label for="usageLimit" class="form-label">優惠券數量</label>
-                                    <input type="number" name="usageLimit" class="form-control" value="<?php echo htmlspecialchars($row['usageLimit']); ?>" required>
-                                </div>
-
-                                <!-- 使用者數量限制欄位 -->
-                                <div class="mb-3">
-                                    <label for="userLimit" class="form-label">每個用戶可使用次數</label>
-                                    <input type="number" name="userLimit" class="form-control" value="<?php echo htmlspecialchars($row['userLimit']); ?>" required>
-                                </div>
-
-                                <!-- 優惠券描述欄位 -->
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">優惠券描述</label>
-                                    <textarea name="description" rows="3" class="form-control" required><?php echo htmlspecialchars($row['description']); ?></textarea>
-                                </div>
-
-                                <!-- 送出按鈕 -->
-                                <button type="submit" class="btn btn-primary">儲存</button>
-                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" type="button">刪除</button>
-                            </form>
                         </div>
+                        <form action="coupon_doUpdate.php" method="POST">
+                            <!-- 隱藏 ID 用於更新 -->
+                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                            <!-- 優惠券代碼輸入欄位 -->
+                            <div class="mb-3">
+                                <label for="code" class="form-label">優惠券代碼</label>
+                                <input type="text" name="code" class="form-control" value="<?php echo htmlspecialchars($row['code']); ?>" readonly>
+                            </div>
+
+                            <!-- 優惠券名稱輸入欄位 -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">優惠券名稱</label>
+                                <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($row['name']); ?>" required>
+                            </div>
+
+                            <!-- 折扣類型選擇欄位 -->
+                            <div class="mb-3">
+                                <label for="discountType" class="form-label">折扣類型</label>
+                                <select name="discountType" class="form-select" required>
+                                    <option value="percentage" <?php echo ($row['discountType'] == 'percentage' ? 'selected' : ''); ?>>折數</option>
+                                    <option value="fixed" <?php echo ($row['discountType'] == 'fixed' ? 'selected' : ''); ?>>金額</option>
+                                </select>
+                            </div>
+
+                            <!-- 折扣數值輸入欄位 -->
+                            <div class="mb-3">
+                                <label for="discountValue" class="form-label">折扣數值</label>
+                                <input type="number" name="discountValue" class="form-control" value="<?php echo htmlspecialchars($row['discountValue']); ?>" required>
+                            </div>
+
+                            <!-- 開始日期欄位 -->
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">開始日期</label>
+                                <!-- 使用 date 函數將日期轉換為 YYYY-MM-DD 格式 -->
+                                <input type="date" name="startDate" class="form-control" value="<?php echo htmlspecialchars(date('Y-m-d', strtotime($row['startDate']))); ?>" required>
+                            </div>
+                            <!-- readonly -->
+
+                            <!-- 結束日期欄位 -->
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">結束日期</label>
+                                <!-- 使用 date 函數將 endDate 轉換為 YYYY-MM-DD 格式 -->
+                                <input type="date" name="endDate" class="form-control" value="<?php echo htmlspecialchars(date('Y-m-d', strtotime($row['endDate']))); ?>" required>
+                            </div>
+
+                            <!-- 最低消費金額欄位 -->
+                            <div class="mb-3">
+                                <label for="minPurchase" class="form-label">最低消費金額</label>
+                                <input type="number" name="minPurchase" class="form-control" value="<?php echo htmlspecialchars($row['minPurchase']); ?>" required>
+                            </div>
+
+                            <!-- 最大折扣金額欄位 -->
+                            <div class="mb-3">
+                                <label for="maxDiscountValue" class="form-label">最大折扣金額</label>
+                                <input type="number" name="maxDiscountValue" class="form-control" value="<?php echo htmlspecialchars($row['maxDiscountValue']); ?>" required>
+                            </div>
+
+                            <!-- 目標會員欄位 -->
+                            <div class="mb-3">
+                                <label for="targetMembers" class="form-label">目標會員</label>
+                                <select name="targetMembers" class="form-select" required>
+                                    <option value="全部會員" <?php echo ($row['targetMembers'] == '全部會員' ? 'selected' : ''); ?>>全部會員</option>
+                                    <option value="新會員" <?php echo ($row['targetMembers'] == '新會員' ? 'selected' : ''); ?>>新會員</option>
+                                    <option value="VIP會員" <?php echo ($row['targetMembers'] == 'VIP會員' ? 'selected' : ''); ?>>VIP會員</option>
+                                    <option value="學生會員" <?php echo ($row['targetMembers'] == '學生會員' ? 'selected' : ''); ?>>學生會員</option>
+                                </select>
+                            </div>
+
+                            <!-- 產品類型欄位 -->
+                            <div class="mb-3">
+                                <label for="product_id" class="form-label">適用服務</label>
+                                <select name="product_id" class="form-select" required>
+                                    <option value="全部" <?php echo ($row['product_id'] == '全部' ? 'selected' : ''); ?>>全部</option>
+                                    <option value="商品" <?php echo ($row['product_id'] == '商品' ? 'selected' : ''); ?>>商品</option>
+                                    <option value="租賃" <?php echo ($row['product_id'] == '租賃' ? 'selected' : ''); ?>>租賃</option>
+                                    <option value="課程" <?php echo ($row['product_id'] == '課程' ? 'selected' : ''); ?>>課程</option>
+                                    <option value="活動" <?php echo ($row['product_id'] == '活動' ? 'selected' : ''); ?>>活動</option>
+                                    <option value="揪團" <?php echo ($row['product_id'] == '揪團' ? 'selected' : ''); ?>>揪團</option>
+                                </select>
+                            </div>
+
+                            <!-- 優惠券數量欄位 -->
+                            <div class="mb-3">
+                                <label for="usageLimit" class="form-label">優惠券數量</label>
+                                <input type="number" name="usageLimit" class="form-control" value="<?php echo htmlspecialchars($row['usageLimit']); ?>" required>
+                            </div>
+
+                            <!-- 使用者數量限制欄位 -->
+                            <div class="mb-3">
+                                <label for="userLimit" class="form-label">每個用戶可使用次數</label>
+                                <input type="number" name="userLimit" class="form-control" value="<?php echo htmlspecialchars($row['userLimit']); ?>" required>
+                            </div>
+
+                            <!-- 優惠券描述欄位 -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label">優惠券描述</label>
+                                <textarea name="description" rows="3" class="form-control" required><?php echo htmlspecialchars($row['description']); ?></textarea>
+                            </div>
+
+                            <!-- 送出按鈕 -->
+                            <div class="d-flex justify-content-end my-4">
+                                <div>
+                                    <button type="submit" class="btn btn-primary mr-2">儲存</button>
+                                </div>
+                                <div>
+                                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" type="button">刪除</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End of Main Content -->
+    </div>
+    <!-- End of Main Content -->
 
-        <!-- Footer -->
-        <!-- <footer class="sticky-footer bg-white">
+    <!-- Footer -->
+    <!-- <footer class="sticky-footer bg-white">
 <div class="container my-auto">
     <div class="copyright text-center my-auto">
         <span>Copyright &copy; Your Website 2020</span>
     </div>
 </div>
 </footer> -->
-        <!-- End of Footer -->
+    <!-- End of Footer -->
 
     </div>
     <!-- End of Content Wrapper -->

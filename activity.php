@@ -278,7 +278,7 @@ LIMIT $start_item, $per_page";
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>服務項目</title>
+    <title>服務管理</title>
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>
@@ -309,7 +309,7 @@ LIMIT $start_item, $per_page";
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">服務列表</li>
+                        <li class="breadcrumb-item active" aria-current="page">服務管理</li>
                     </ol>
                 </nav>
 
@@ -325,7 +325,7 @@ LIMIT $start_item, $per_page";
                     <div class="row justify-content-start">
                         <form class="col-2 d-flex justify-content-start" action="" method="get">
                             <div class="input-group mb-3 search-bar justify-content-end gx-0">
-                                <input type="text" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
+                                <input type="search" class="form-control" placeholder="<?php if (!isset($_GET["search"])): ?>輸入關鍵字 <?php else: ?><?= $_GET["search"] ?><?php endif; ?>"
                                     aria-label="Recipient's username" aria-describedby="basic-addon2" name="search" <?php if (isset($_GET["search"])): ?> value="<?= $_GET["search"] ?>" <?php endif; ?>>
                                 <div class="input-group-append p-0">
                                     <button class="btn btn-outline-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -390,8 +390,8 @@ LIMIT $start_item, $per_page";
                                 <th>編號</th>
                                 <th>名稱</th>
                                 <th>圖片</th>
-                                <th>類型</th>
-                                <th>子分類</th>
+                                <th>服務類型</th>
+                                <th>服務類別</th>
                                 <th>報名日期</th>
                                 <th>活動日期</th>
                                 <th>活動時間</th>
