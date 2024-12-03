@@ -10,7 +10,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
     if ($conn->query($sql) === TRUE) {
         // 成功，重定向到文章列表頁
-        header("Location: articleList.php?status=1&isDeleted=1");
+        header("Location: articleList.php");
         exit;
     } else {
         // 失敗，顯示錯誤信息
