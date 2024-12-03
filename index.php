@@ -1,38 +1,80 @@
 <?php
+
+// var_dump($months);  // 檢查實際月份數據
+// var_dump($revenues);  // 檢查收入數據
 require_once("../db_project_connect.php");
-// 第一個SQL查詢 (會員統計)
+
+// 會員統計
 $sql_users = "SELECT 
- COUNT(*) as total_users,
- COUNT(CASE WHEN is_certify = 1 THEN 1 END) as certify_count,
- COUNT(CASE WHEN level_id = 2 THEN 1 END) as vip_count 
+COUNT(*) as total_users,
+COUNT(CASE WHEN is_certify = 1 THEN 1 END) as certify_count,
+COUNT(CASE WHEN level_id = 2 THEN 1 END) as vip_count 
 FROM users 
 WHERE is_deleted = 0";
 
 $result_users = $conn->query($sql_users);
 $row_users = $result_users->fetch_assoc();
-
 $usersCount = $row_users['total_users'];
 $certifyRate = round(($row_users['certify_count'] / $row_users['total_users']) * 100, 1);
 $vipRate = round(($row_users['vip_count'] / $row_users['total_users']) * 100, 1);
 
-// 第二個SQL查詢 (收入分析)
+// 收入分析
 $sql_revenue = "SELECT 
-   SUM(CASE WHEN item_type = 'product' THEN price * quantity ELSE 0 END) as product_revenue,
-   SUM(CASE WHEN item_type = 'rental' THEN price * quantity ELSE 0 END) as rental_revenue,
-   SUM(CASE WHEN item_type = 'activity' THEN price * quantity ELSE 0 END) as activity_revenue
+  SUM(CASE WHEN item_type = 'product' THEN price * quantity ELSE 0 END) as product_revenue,
+  SUM(CASE WHEN item_type = 'rental' THEN price * quantity ELSE 0 END) as rental_revenue,
+  SUM(CASE WHEN item_type = 'activity' THEN price * quantity ELSE 0 END) as activity_revenue
 FROM order_items";
 
 $result_revenue = $conn->query($sql_revenue);
 $row_revenue = $result_revenue->fetch_assoc();
-
 $total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row_revenue['activity_revenue'];
+
+// 訂單分析 
+$sql_orders = "SELECT 
+ COUNT(*) as total_orders,
+ COUNT(CASE WHEN activity_order_id IS NOT NULL THEN 1 END) as activity_orders
+FROM orders";
+
+$result_orders = $conn->query($sql_orders);
+$row_orders = $result_orders->fetch_assoc();
+$orderRate = round(($row_orders['activity_orders'] / $row_orders['total_orders']) * 100, 1);
+
+// 月收入分析
+$all_months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+
+$sql_monthly = "SELECT 
+   MONTH(o.created_at) as month_num,
+   COALESCE(SUM(oi.price * oi.quantity), 0) as revenue
+FROM orders o
+LEFT JOIN order_items oi ON o.id = oi.order_id
+WHERE o.created_at IS NOT NULL  # 移除年份限制
+GROUP BY MONTH(o.created_at)
+ORDER BY month_num";
+
+$result = $conn->query($sql_monthly);
+$filled_revenues = array_fill(0, 12, 0);
+
+while ($row = $result->fetch_assoc()) {
+    $month_index = $row['month_num'] - 1;
+    $filled_revenues[$month_index] = (float)$row['revenue'];
+}
+
+// 檢查數據
+// var_dump($filled_revenues);
+
 ?>
 
+<!-- 資料輸出到JavaScript -->
 <script>
     window.revenueData = {
         product: <?= round(($row_revenue['product_revenue'] / $total) * 100) ?>,
         rental: <?= round(($row_revenue['rental_revenue'] / $total) * 100) ?>,
         activity: <?= round(($row_revenue['activity_revenue'] / $total) * 100) ?>
+    };
+
+    window.monthlyChartData = {
+        months: <?= json_encode($all_months) ?>,
+        revenues: <?= json_encode($revenues) ?>
     };
 </script>
 
@@ -135,7 +177,7 @@ $total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-Danger text-uppercase mb-1">VIP比例
+                                            <div class="text-xs font-weight-bold text-Danger text-uppercase mb-1">白銀會員比例
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
@@ -167,7 +209,7 @@ $total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?= $orderRate ?>%</div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="progress progress-sm mr-2">
@@ -200,7 +242,7 @@ $total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">月度收入趨勢</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -275,55 +317,26 @@ $total = $row_revenue['product_revenue'] + $row_revenue['rental_revenue'] + $row
             </div>
             <!-- End of Main Content -->
 
-            <?php include("./footer.php") ?>
-
         </div>
         <!-- End of Content Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+        <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+        <!-- Page level custom scripts -->
+        <script src="js/demo/chart-area-demo.js"></script>
+        <script src="js/demo/chart-pie-demo.js"></script>
 
 </body>
 
