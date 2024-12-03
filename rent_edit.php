@@ -134,7 +134,7 @@ $small_categories = $stmt_small->fetchAll();
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>DiveIn-rent-items</title>
+    <title>編輯租賃商品</title>
     <!-- 統一的css -->
     <?php include("./css.php") ?>
 
