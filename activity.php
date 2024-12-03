@@ -465,10 +465,10 @@ LIMIT $start_item, $per_page";
                                                     <div class="modal-body">
                                                         <div class="mb-2">
                                                             <div class="bg-light update-img d-flex justify-content-center mb-2 rounded">
-                                                                <img id="previewImage" src="img/activity/<?= $activity["main_image"] ?>" alt="">
+                                                                <img id="previewImage<?= $activity["id"] ?>" src="img/activity/<?= $activity["main_image"] ?>" alt="">
                                                             </div>
                                                             <label for="" class="form-label">修改圖片</label>
-                                                            <input id="fileInput" type="file" class="form-control" name="myFile" accept="image/*">
+                                                            <input id="fileInput<?= $activity["id"] ?>" type="file" class="form-control" name="myFile" accept="image/*">
                                                         </div>
                                                         <div class="mb-2">
                                                             <label for="" class="form-label">服務名稱</label>
@@ -846,28 +846,44 @@ LIMIT $start_item, $per_page";
         // });
 
 
+        <?php foreach ($activitys as $activity): ?>
+            const fileInput<?= $activity["id"] ?> = document.querySelector("#fileInput<?= $activity["id"] ?>");
+            fileInput<?= $activity["id"] ?>.addEventListener("change", function(event) {
+                const file = event.target.files[0];
+                const previewImage = document.getElementById("previewImage<?= $activity["id"] ?>");
+                previewImage.src = ""; // 清空之前的預覽
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result; // 設定新的圖片來源
+                    };
+                    reader.readAsDataURL(file); // 讀取檔案
+                }
+            });
+        <?php endforeach; ?>
 
 
-        // 上傳圖片預覽
-        const fileInput = document.querySelector("#fileInput");
-        fileInput.addEventListener("change", function() {
-            const file = event.target.files[0];
-            previewImage.src = "";
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewImage = document.getElementById("previewImage");
-                    previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
-                };
-                reader.readAsDataURL(file); // 讀取檔案
-            }
-        })
-
+        //     <?php foreach ($activitys as $activity): ?>
+        //     // 上傳圖片預覽
+        //     const fileInput<?= $activity["id"] ?> = document.querySelector("#fileInput<?= $activity["id"] ?>");
+        //     fileInput<?= $activity["id"] ?>.addEventListener("change", function() {
+        //         const file = event.target.files[0];
+        //         previewImage.src = "";
+        //         if (file) {
+        //             const reader = new FileReader();
+        //             reader.onload = function(e) {
+        //                 const previewImage<?= $activity["id"] ?> = document.getElementById("previewImage<?= $activity["id"] ?>");
+        //                 previewImage.src = e.target.result; // 設定預覽圖片為選擇的檔案
+        //             };
+        //             reader.readAsDataURL(file); // 讀取檔案
+        //         }
+        //     })
+        //    <?php endforeach ?>
         // 圖片修改第二次時應該怎麼處理呢？
-        const changebtn = document.querySelector("#change-btn")
-        changebtn.addEventListener("click", function() {
-            previewImage.src = "img/activity/<?= $activity["main_image"] ?>";
-        })
+        // const changebtn = document.querySelector("#change-btn")
+        // changebtn.addEventListener("click", function() {
+        //     previewImage.src = "img/activity/<?= $activity["main_image"] ?>";
+        // })
     </script>
 </body>
 

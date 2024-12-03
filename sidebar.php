@@ -26,8 +26,8 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading" style="font-size: 13px;">
-        DiveIn後台管理
+    <div class="sidebar-heading" style="font-size: 13px;text-transform: none !important;">
+        <span>Dive-in 後台管理</span>
     </div>
 
     <!-- Nav Item - 會員管理 -->
