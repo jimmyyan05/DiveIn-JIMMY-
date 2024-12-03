@@ -45,7 +45,7 @@ foreach ($bigCates as $cate) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>類別－服務項目</title>
+    <title>服務分類</title>
 
     <!-- 統一的css -->
     <?php include "css.php"; ?>

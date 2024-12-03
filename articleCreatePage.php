@@ -23,10 +23,19 @@ require_once("../db_project_connect.php");
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
-            <!-- Topbar -->
-            <?php include "topbar.php"; ?>
+            
 
             <div id="content">
+                <!-- Topbar -->
+                <?php include "topbar.php"; ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item"><a href="articleList.php">文章列表</a></li>
+                        <li class="breadcrumb-item active">新增文章</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <div class="d-flex gap-2 my-3">
                         <h2 class="mb-4">新增文章</h2>

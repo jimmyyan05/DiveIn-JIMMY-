@@ -46,7 +46,7 @@ if ($result) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>SB Admin 2 - Tables</title>
+    <title>商品分類</title>
     <?php include("./css.php") ?>
     <style>
         body {

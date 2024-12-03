@@ -113,10 +113,18 @@ $totalPages = ceil($totalItems / $itemsPerPage);
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
-            <!-- Topbar -->
-            <?php include "topbar.php"; ?>
+
 
             <div id="content">
+                <!-- Topbar -->
+                <?php include "topbar.php"; ?>
+                <!-- 麵包屑 -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb rounded-0 p-3">
+                        <li class="breadcrumb-item"><a href="index.php">首頁</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">文章列表</li>
+                    </ol>
+                </nav>
                 <div class="container-fluid">
                     <!-- Page Heading 與搜尋框的行 -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
