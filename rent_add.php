@@ -1,6 +1,7 @@
 <!-- php -->
 <?php
-include 'PDO_connect.php';
+require_once("../db_project_connect.php");
+
 ob_clean(); // 清理輸出緩衝區，確保無額外 HTML 輸出
 
 // 當 AJAX 請求帶有 big_category_id 參數時，處理並返回小分類資料

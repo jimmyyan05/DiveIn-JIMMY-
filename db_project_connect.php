@@ -1,7 +1,7 @@
 <?php
 // 資料庫設定
 $servername = "localhost";
-$username = "admin";
+$username = "jimmy";
 $password = "12345";
 $dbname = "test01";
 

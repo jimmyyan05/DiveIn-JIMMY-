@@ -1,6 +1,6 @@
 <!-- php -->
 <?php
-include 'PDO_connect.php';
+require_once("../db_project_connect.php");
 
 // 每頁顯示的記錄數
 $limit = 10;

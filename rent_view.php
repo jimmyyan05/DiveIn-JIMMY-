@@ -1,5 +1,6 @@
 <?php
-include 'PDO_connect.php';
+require_once("../db_project_connect.php");
+
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($id > 0) {

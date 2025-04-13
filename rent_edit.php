@@ -1,5 +1,6 @@
 <?php
-include 'PDO_connect.php';
+require_once("../db_project_connect.php");
+
 
 // 分頁參數
 $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;

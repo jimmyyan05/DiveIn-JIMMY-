@@ -1,6 +1,7 @@
 <!-- php -->
 <?php
-include 'PDO_connect.php';
+require_once("../db_project_connect.php");
+
 
 // 獲取查詢參數
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;

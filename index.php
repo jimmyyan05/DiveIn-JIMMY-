@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once("../db_project_connect.php");
 // 第一個SQL查詢 (會員統計)
 $sql_users = "SELECT 
@@ -35,7 +39,7 @@ FROM orders";
 
 $result_orders = $conn->query($sql_orders);
 $row_orders = $result_orders->fetch_assoc();
-$orderRate = round(($row_orders['activity_orders'] / $row_orders['total_orders'])*100, 1);
+$orderRate = round(($row_orders['activity_orders'] / $row_orders['total_orders']) * 100, 1);
 
 ?>
 
@@ -80,7 +84,7 @@ $orderRate = round(($row_orders['activity_orders'] / $row_orders['total_orders']
             <div id="content">
                 <?php include("./topbar.php") ?>
                 <!-- Begin Page Content -->
-                 <!-- 麵包屑 -->
+                <!-- 麵包屑 -->
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb rounded-0 p-3">
                         <li class="breadcrumb-item active">首頁</li>
@@ -91,7 +95,7 @@ $orderRate = round(($row_orders['activity_orders'] / $row_orders['total_orders']
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">首頁</h1>
-                        
+
                     </div>
 
                     <!-- Content Row -->
